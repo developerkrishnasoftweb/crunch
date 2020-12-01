@@ -1,6 +1,5 @@
+import 'package:crunch/LoginScreen/Login.dart';
 import 'package:flutter/material.dart';
-import 'LoginScreen/Login.dart';
-import 'Color/Constant.dart' as cnst;
 
 void main() {
   runApp(MyApp());
@@ -16,11 +15,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Login(),
-      theme: ThemeData(
-          accentColor: cnst.appPrimaryMaterialColor,
-          primaryColor: cnst.appPrimaryMaterialColor
-      ),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => Login(),
+      },
     );
   }
 }

@@ -1,4 +1,12 @@
+import 'package:crunch/Common/CustomButton.dart';
+import 'package:crunch/Common/TextField.dart';
+import 'package:crunch/LoginScreen/SignUp.dart';
+import 'package:crunch/Screens/ChangePassword.dart';
+import 'package:crunch/Screens/Home.dart';
+import 'package:crunch/main.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../Color/Constant.dart' as cnst;
 
 class Login extends StatefulWidget {
   @override
@@ -6,76 +14,90 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+
+  TextEditingController Email = TextEditingController();
+  TextEditingController Password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          children: [
-            SizedBox(height: 10.0,),
-            TextFormField(
-              textAlign: TextAlign.start,
-              keyboardType: TextInputType.text,
-              obscureText: true,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18.0,
-              ),
-              controller: email,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) {
-                FocusScope.of(context).unfocus();
-              },
-              decoration: InputDecoration(
-                //filled: true,
-                //fillColor: Colors.grey.withOpacity(0.1),
-                hintText: "Email",
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                border: OutlineInputBorder(
-                    borderSide:
-                    BorderSide(color: Colors.grey.shade100, width: 0.1),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 15,
-                ),
-              ),
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          width: size.width,
+          height: size.height,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/images/spalsh.png"),
+                fit: BoxFit.fill,
+              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.softLight),
             ),
-            SizedBox(height: 10.0,),
-            TextFormField(
-              textAlign: TextAlign.start,
-              keyboardType: TextInputType.text,
-              obscureText: true,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18.0,
-              ),
-              controller: password,
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) {
-                FocusScope.of(context).unfocus();
-              },
-              decoration: InputDecoration(
-                //filled: true,
-                //fillColor: Colors.grey.withOpacity(0.1),
-                hintText: "Password",
-                floatingLabelBehavior: FloatingLabelBehavior.never,
-                border: OutlineInputBorder(
-                    borderSide:
-                    BorderSide(color: Colors.grey.shade100, width: 0.1),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: 15,
+          ),
+          child: Container(
+            height: size.height,
+            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 100.0, 0, 0),
+                  width: size.width *0.6,
+                  height: size.height * 0.13,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/White_CrunchTM.png"),
+                        fit: BoxFit.fill
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(height: 150.0,),
+                CustomTextField(hint: "Email",textcontroller: Email,obtext: false,textColor: cnst.AppColors.whitecolor,
+                        texticon: Icon(Icons.mail_outline_rounded,size: 25.0,color: cnst.AppColors.whitecolor,),),
+                SizedBox(height: 16.0,),
+                CustomTextField(hint: "Password",textcontroller: Password,obtext: true,textColor: cnst.AppColors.whitecolor,
+                  texticon: Icon(Icons.lock_open_rounded,size: 25.0,color: cnst.AppColors.whitecolor,),),
+                SizedBox(height: 16.0,),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
+                  },
+                  child: Container(
+                    width: size.width *0.85,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "Forgot Password?",
+                        style: TextStyle(
+                          color: cnst.AppColors.whitecolor,
+                          fontSize: 15,),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 100.0,),
+                CustomButton(
+                  title: "LOGIN", btncolor: cnst.appPrimaryMaterialColor,
+                  ontap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()))
+                ),
+                SizedBox(height: 50.0,),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
+                  },
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      "Create New Account",
+                      style: TextStyle(
+                        color: cnst.AppColors.whitecolor,
+                        fontSize: 15,),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            TextField(),
-            Text("Hello"),
-          ],
+          )
         ),
       ),
     );
