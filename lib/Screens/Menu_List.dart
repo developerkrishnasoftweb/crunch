@@ -16,6 +16,7 @@ class Product {
 
 class _Menu_listState extends State<Menu_list> {
   List<int> count = [1, 1, 1];
+  bool addproduct = false;
   final List<String> categories = [
     "vegetables",
     "bakery",
@@ -49,10 +50,12 @@ class _Menu_listState extends State<Menu_list> {
         centerTitle: true,
       ),
       body:SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
           child: Column(
             children: [
+              buildCompleteVerticalList(context, products, "SouthIndian"),
               buildCompleteVerticalList(context, products, "SouthIndian"),
             ],
           ),
@@ -90,97 +93,103 @@ class _Menu_listState extends State<Menu_list> {
           itemCount: products.length,
           itemBuilder: (context, index) {
             return Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width / 2.5,
-                child: buildProductCard(
-                  index,
-                    context,
-                    products[index].image,
-                    products[index].productName,
-                    products[index].productType,
-                    products[index].price),
-              ),
-            );
-          }),
-    );
-  }
-
-  Widget buildProductCard(
-      index, BuildContext context, String image, String name, String type, String price,
-      {bool favourites = false}) {
-    return GestureDetector(
-      onTap: () {
-        // Navigator.push(
-        //     context, MaterialPageRoute(builder: (context) => ProductInfo()));
-      },
-      child: Container(
-        color: Colors.red,
-        margin: EdgeInsets.all(5.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(
-              image,
-              width: MediaQuery.of(context).size.width / 3.0,
-              height: MediaQuery.of(context).size.width / 3.5,
-              fit: BoxFit.fill,
-            ),
-            SizedBox(width: 10.0,),
-            Container(
-              width: MediaQuery.of(context).size.width / 2.0,
-              height: MediaQuery.of(context).size.width / 3.5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.symmetric(
+                  vertical: 12.0,),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                      borderRadius: BorderRadius.circular(1),
+                      child: Image.asset(
+                        "assets/images/spalsh.png",
+                        height: 100,
+                        width: 130,
+                        fit: BoxFit.fill,
+                      )),
                   Container(
+                    width: MediaQuery.of(context).size.width / 1.6,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.radio_button_checked_outlined),
+                            Icon(Icons.check_box_outlined,size: 20,),
                             SizedBox(width: 5.0,),
-                            Text(name, style: TextStyle(fontWeight: FontWeight.w500)),
+                            Text(
+                              "items[index].name",
+                              style: Theme.of(context).textTheme.title,
+                            ),
                           ],
                         ),
-                        Container(
-                          child: Text(type, style: TextStyle(color: Colors.grey[500], fontSize: 10)),
-                        )
-                      ],
-                    ),
-                  ),
-
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(price,
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          "items[index].category",
+                          style: Theme.of(context).textTheme.subtitle2,
+                        ),
+                        SizedBox(
+                          height: 35,
+                        ),
                         Row(
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            buildIconButton(Icons.remove, index, products, count),
-                            Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                color: cnst.AppColors.greencolor,
+                            Text("\$122",
+                                textAlign: TextAlign.right,
+                                style: Theme.of(context).textTheme.title),
+                            addproduct == false
+                            ?GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  addproduct = !addproduct;
+                                });
+                              },
+                              child:Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 75,
+                                    height: 25,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(3.0),
+                                      color: cnst.AppColors.greencolor,
+                                    ),
+                                    child: Center(
+                                      child: Text("ADD",
+                                          style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0,color: cnst.AppColors.whitecolor)),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ],
                               ),
-                              child: Center(
-                                child: Text('${count[index]}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle1),
-                              ),
-                            ),
-                            buildIconButton(Icons.add, index, products, count),
-                            SizedBox(
-                              width: 40,
+                            )
+                            :Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                buildIconButton(Icons.remove, index, products, count),
+                                Container(
+                                  width: 25,
+                                  height: 25,
+                                  decoration: BoxDecoration(
+                                    color: cnst.AppColors.greencolor,
+                                  ),
+                                  child: Center(
+                                    child: Text('${count[index]}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1),
+                                  ),
+                                ),
+                                buildIconButton(Icons.add, index, products, count),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -189,45 +198,15 @@ class _Menu_listState extends State<Menu_list> {
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
+            );
+          }),
     );
   }
 
-  Container buildButton(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 1.5, bottom: 1.5, left: 4, right: 3),
-      //width: 30,
-      decoration: BoxDecoration(
-        color: Colors.green,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Text(
-            "4.2",
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.button.copyWith(fontSize: 10),
-          ),
-          SizedBox(
-            width: 1,
-          ),
-          Icon(
-            Icons.star,
-            size: 10,
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-        ],
-      ),
-    );
-  }
-  
   Container buildIconButton(IconData icon, int index, items, count) {
     return Container(
-      width: 30,
-      height: 30,
+      width: 25,
+      height: 25,
       decoration: BoxDecoration(
           border: Border.all(color: cnst.AppColors.greencolor, width: 2)),
       child: Center(
@@ -235,7 +214,12 @@ class _Menu_listState extends State<Menu_list> {
           onTap: (){
             setState(() {
               if (icon == Icons.remove) {
-                if (count[index] > 0) count[index]--;
+                if (count[index] > 0)
+                  count[index]--;
+                else
+                  setState(() {
+                    addproduct = !addproduct;
+                  });
               } else {
                 count[index]++;
               }

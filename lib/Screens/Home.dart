@@ -7,6 +7,7 @@ import 'package:crunch/Screens/setLocation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Color/Constant.dart' as cnst;
+import 'Account.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -29,12 +30,12 @@ class _HomeState extends State<Home> {
         actions: [
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Account()));
             },
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Icon(
-                Icons.power_settings_new,
+                Icons.person,
                 size: 23,
                 color: cnst.AppColors.blackcolor,
               ),
