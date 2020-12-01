@@ -25,7 +25,6 @@ class _AccountState extends State<Account> {
               Container(
                 color: cnst.AppColors.whitecolor,
                 padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-                child: ,
               ),
             ],
           ),
