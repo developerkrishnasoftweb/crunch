@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Static/Constant.dart' as cnst;
 
 class ForgotPassword extends StatefulWidget {
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import '../Color/Constant.dart' as cnst;
+import '../Static/Constant.dart' as cnst;
 
 class AddRatings extends StatefulWidget {
   @override

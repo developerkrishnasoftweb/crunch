@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'LoginScreen/Login.dart';
-import 'Color/Constant.dart' as cnst;
+import 'Static/Constant.dart' as cnst;
 
 void main() {
   runApp(MyApp());

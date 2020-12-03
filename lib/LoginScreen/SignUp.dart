@@ -3,7 +3,7 @@ import 'package:crunch/Screens/Home.dart';
 
 import '../Common/TextField.dart';
 import 'package:flutter/material.dart';
-import '../Color/Constant.dart' as cnst;
+import '../Static/Constant.dart' as cnst;
 import 'Login.dart';
 
 class SignUp extends StatefulWidget {

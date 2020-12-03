@@ -3,10 +3,9 @@ import 'package:crunch/Common/TextField.dart';
 import 'package:crunch/LoginScreen/SignUp.dart';
 import 'package:crunch/Screens/ChangePassword.dart';
 import 'package:crunch/Screens/Home.dart';
-import 'package:crunch/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../Color/Constant.dart' as cnst;
+import '../Static/Constant.dart' as cnst;
 
 class Login extends StatefulWidget {
   @override

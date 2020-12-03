@@ -1,6 +1,7 @@
 import 'package:crunch/Screens/AddRatings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../Static/Constant.dart' as cnst;
 
 class Rating extends StatefulWidget {
   @override

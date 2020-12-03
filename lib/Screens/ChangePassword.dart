@@ -3,7 +3,7 @@ import 'package:crunch/Common/TextField.dart';
 import 'package:crunch/Screens/Home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import '../Color/Constant.dart' as cnst;
+import '../Static/Constant.dart' as cnst;
 
 class ChangePassword extends StatefulWidget {
   @override

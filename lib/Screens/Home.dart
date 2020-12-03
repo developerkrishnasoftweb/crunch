@@ -1,12 +1,13 @@
 import 'dart:ui';
 
+import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/LoginScreen/Login.dart';
 import 'package:crunch/Screens/Menu_List.dart';
 import 'package:crunch/Screens/Rating.dart';
 import 'package:crunch/Screens/setLocation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../Color/Constant.dart' as cnst;
+import '../Static/Constant.dart' as cnst;
 import 'Account.dart';
 
 class Home extends StatefulWidget {
@@ -25,17 +26,16 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.white,
         elevation: 0.0,
         centerTitle: true,
-        leading: Icon(Icons.menu,color: Colors.black,),
         title: Text("Crunch",style: TextStyle(color: Colors.black),),
         actions: [
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Account()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SetLocation()));
             },
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Icon(
-                Icons.person,
+                Icons.location_on,
                 size: 23,
                 color: cnst.AppColors.blackcolor,
               ),
@@ -56,12 +56,7 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context) => SetLocation()));
-        },
-        child: Icon(Icons.add),
-      ),
+      bottomNavigationBar: AppBottomBar(currentindex: 0,),
     );
   }
 

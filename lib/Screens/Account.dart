@@ -1,6 +1,6 @@
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:flutter/material.dart';
-import '../Color/Constant.dart' as cnst;
+import '../Static/Constant.dart' as cnst;
 class Account extends StatefulWidget {
   @override
   _AccountState createState() => _AccountState();

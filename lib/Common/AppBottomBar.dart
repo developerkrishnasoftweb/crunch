@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Color/Constant.dart' as cnst;
+import '../Static/Constant.dart' as cnst;
 class AppBottomBar extends StatefulWidget {
   int currentindex;
   AppBottomBar({this.currentindex});
