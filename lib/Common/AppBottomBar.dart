@@ -1,3 +1,7 @@
+import 'package:crunch/Screens/Account.dart';
+import 'package:crunch/Screens/Home.dart';
+import 'package:crunch/Screens/Menu_List.dart';
+import 'package:crunch/Screens/Rating.dart';
 import 'package:flutter/material.dart';
 import '../Static/Constant.dart' as cnst;
 class AppBottomBar extends StatefulWidget {
@@ -8,15 +12,29 @@ class AppBottomBar extends StatefulWidget {
 }
 
 class _AppBottomBarState extends State<AppBottomBar> {
-  int curindex = 0;
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: curindex,
+      currentIndex: widget.currentindex,
+      selectedItemColor: cnst.appPrimaryMaterialColor,
+      unselectedItemColor: Colors.grey,
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
       onTap: (index){
-        setState(() {
-          curindex = index;
-        });
+        switch(index){
+          case 0:
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Home()));
+            break;
+          case 1:
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Menu_list()));
+            break;
+          case 2:
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Rating()));
+            break;
+          case 3:
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Account()));
+            break;
+        }
       },
       items: [
         BottomNavigationBarItem(
@@ -39,10 +57,10 @@ class _AppBottomBarState extends State<AppBottomBar> {
     );
   }
   Icon buildIcon(icon){
-    return Icon(icon,color: cnst.AppColors.blackcolor,);
+    return Icon(icon);
   }
   Text buildText(String name){
-    return Text(name,style: TextStyle(color: cnst.AppColors.blackcolor,));
+    return Text(name);
   }
 }
 

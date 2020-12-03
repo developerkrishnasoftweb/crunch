@@ -16,11 +16,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Login(),
       theme: ThemeData(
           accentColor: cnst.appPrimaryMaterialColor,
           primaryColor: cnst.appPrimaryMaterialColor
       ),
+      initialRoute: "/",
+      routes: {
+        "/" : (context) => Login(),
+      },
     );
   }
 }
