@@ -58,36 +58,67 @@ class _HomeState extends State<Home> {
                 height: size.height * 0.28,
               ),
               SizedBox(height: 10.0,),
-              Carousel(
-                items: carousel1,
-                width: size.width,
-                height: size.height * 0.13,
-              ),
               Container(
-                width: size.width * 0.9,
-                // height: size.height * 0.8,
+                width: size.width * 0.95,
+                height: size.height * 0.15,
                 child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
-                      return Container(
-                        child: Row(
-                          children: [
-                            Container(
-                                child: Image.asset(
-                                  "assets/products/img1.jpg",
-                                  width: 200,height: 200,
-                                )
-                            )
-                          ],
-                        ),
-                      );
+                      return buildProductItem();
                     }),
+              ),
+              Container(
+                width: size.width * 0.95,
+                height: size.height * 0.385,
+                child: ListView.builder(
+                  itemCount: 6,
+                    itemBuilder: (context, index){
+                      return Row(
+                        children: [
+                          Container(
+                            height: 150,width: 150,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/products/img1.jpg")
+                                )
+                            ),
+                          ),
+                          Container(
+                            child: Column(
+                              children: [
+                                Text("data"),
+                                Text("data"),
+                                Text("data"),
+                                Text("data"),
+                              ],
+                            ),
+                          ),
+
+                        ],
+                      );
+                    }
+                )
               ),
             ],
           ),
         ),
       ),
       bottomNavigationBar: AppBottomBar(currentindex: 0,),
+    );
+  }
+
+  Container buildProductItem(){
+    return Container(
+      width: 200,
+        margin: EdgeInsets.all(2.0),
+        child: Row(
+          children: [
+            Image.asset("assets/products/img1.jpg",height: 190,width: 100,),
+            Image.asset("assets/products/img1.jpg",height: 150,width: 100,),
+          ],
+        )
     );
   }
 }
