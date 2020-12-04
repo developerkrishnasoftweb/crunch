@@ -337,10 +337,11 @@ class _Menu_listState extends State<Menu_list> {
                       buildCheckBox("Mango Jalapeno Dip", "49", item2),
                       buildCheckBox("Peri Peri Mayo Dip", "49", item3),
                       buildCheckBox("Brabecue Mayo Dip", "49", item4),
-                      buildCheckBox("Plain Mayo Dip", "49", item5),
+                      //buildCheckBox("Plain Mayo Dip", "49", item5),
                       // buildCheckBox("Cheesy Mayo Dip","49",item6),
                       // buildCheckBox("Texas Bbq Sauce","49",item7),
                       // buildCheckBox("Red Devil Sauce","49",item8),
+                      // buildCheckBox("Garlic Mayo Dip","49",item9),
                       // buildCheckBox("Garlic Mayo Dip","49",item9),
                       ListTile(
                           title: new Text("Desert"),
