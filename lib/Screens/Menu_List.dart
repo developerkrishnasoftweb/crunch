@@ -1,7 +1,9 @@
 import 'package:crunch/Common/AppBottomBar.dart';
+import 'package:crunch/Common/CustomButton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../Static/Constant.dart' as cnst;
+import 'Home.dart';
 
 class Menu_list extends StatefulWidget {
   @override
@@ -85,9 +87,181 @@ class _Menu_listState extends State<Menu_list> {
     );
   }
 
+  GestureDetector buildList(List<Product> products,BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        _settingModalBottomSheet(context);
+      },
+      child: Container(
+        height: MediaQuery.of(context).size.height *0.55,
+        width: MediaQuery.of(context).size.width,
+        child: ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: products.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 12.0,),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ClipRRect(
+                      clipBehavior: Clip.hardEdge,
+                        borderRadius: BorderRadius.circular(3),
+                        child: Image.asset(
+                          "assets/images/spalsh.png",
+                          height: 115,
+                          width: 130,
+                          fit: BoxFit.cover,
+                        )),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 1.71,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.check_box_outlined,size: 20,),
+                              SizedBox(width: 5.0,),
+                              Text(
+                                "Special Masala Dosa",
+                                style: Theme.of(context).textTheme.title,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "Dosa spreaded with melted butter and spiced potato",
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("\u20B9122",
+                                  textAlign: TextAlign.right,
+                                  style: Theme.of(context).textTheme.title),
+                              addproduct == false
+                              ?GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    addproduct = !addproduct;
+                                  });
+                                },
+                                child:Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 81,
+                                      height: 27,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(3.0),
+                                        color: cnst.AppColors.greencolor,
+                                      ),
+                                      child: Center(
+                                        child: Text("ADD",
+                                            style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0,color: cnst.AppColors.whitecolor)),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                  ],
+                                ),
+                              )
+                              :Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  buildIconButton(Icons.remove, index, products, count,27.0,27.0),
+                                  Container(
+                                    width: 27,
+                                    height: 27,
+                                    decoration: BoxDecoration(
+                                      color: cnst.AppColors.greencolor,
+                                    ),
+                                    child: Center(
+                                      child: Text('${count[index]}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1),
+                                    ),
+                                  ),
+                                  buildIconButton(Icons.add, index, products, count,27.0,27.0),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+      ),
+    );
+  }
+
+  GestureDetector buildIconButton(IconData icon, int index, items, count,double height,width) {
+    return GestureDetector(
+      onTap: (){
+        setState(() {
+          if (icon == Icons.remove) {
+            if (count[index] > 0)
+              count[index]--;
+            else
+              setState(() {
+                addproduct = !addproduct;
+              });
+          } else {
+            count[index]++;
+          }
+        });
+      },
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(1),
+            border: Border.all(color: cnst.AppColors.greencolor, width: 2)),
+        child: Center(
+          child: Icon(icon,size: 16.0,color: cnst.AppColors.blackcolor,)
+        ),
+      ),
+    );
+  }
+
+  CheckboxListTile buildCheckBox(){
+    return CheckboxListTile(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Mexican Mayo Dip"),
+            Text("\u20B949"),
+          ],
+        ),
+        value: cheackvalue,
+        onChanged: (val){
+          setState(() {
+            cheackvalue = val;
+          });
+        }
+    );
+  }
+
   _settingModalBottomSheet(context){
     showModalBottomSheet(
-      isScrollControlled: true,
+        isScrollControlled: true,
         context: context,
         builder: (BuildContext bc){
           return Container(
@@ -133,10 +307,10 @@ class _Menu_listState extends State<Menu_list> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                buildIconButton(Icons.remove, 0, products, count),
+                                buildIconButton(Icons.remove, 0, products, count,45.0,30.0),
                                 Container(
                                   width: 27,
-                                  height: 27,
+                                  height: 45,
                                   decoration: BoxDecoration(
                                     color: cnst.AppColors.greencolor,
                                   ),
@@ -147,21 +321,26 @@ class _Menu_listState extends State<Menu_list> {
                                             .subtitle1),
                                   ),
                                 ),
-                                buildIconButton(Icons.add, 0, products, count),
+                                buildIconButton(Icons.add, 0, products, count,45.0,30.0),
                               ],
                             ),
-                            Container(
-                              width: 81,
-                              height: 27,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(3.0),
-                                color: cnst.AppColors.greencolor,
-                              ),
-                              child: Center(
-                                child: Text("ADD \$308",
-                                    style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.0,color: cnst.AppColors.whitecolor)),
-                              ),
+                            CustomButton(
+                              width: MediaQuery.of(context).size.width * 0.65,height:45,
+                                title: "ADD \u20B9308", btncolor: cnst.appPrimaryMaterialColor,
+                                ontap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()))
                             ),
+                            // Container(
+                            //   width: 81,
+                            //   height: 27,
+                            //   decoration: BoxDecoration(
+                            //     borderRadius: BorderRadius.circular(3.0),
+                            //     color: cnst.AppColors.greencolor,
+                            //   ),
+                            //   child: Center(
+                            //     child: Text("ADD \u20B9308",
+                            //         style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.0,color: cnst.AppColors.whitecolor)),
+                            //   ),
+                            // ),
 
                           ],
                         ),
@@ -174,178 +353,6 @@ class _Menu_listState extends State<Menu_list> {
             ),
           );
         }
-    );
-  }
-
-  CheckboxListTile buildCheckBox(){
-    return CheckboxListTile(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Mexican Mayo Dip"),
-            Text("\$49"),
-          ],
-        ),
-        value: cheackvalue,
-        onChanged: (val){
-          setState(() {
-            cheackvalue = val;
-          });
-        }
-        );
-  }
-
-  GestureDetector buildList(List<Product> products,BuildContext context) {
-    return GestureDetector(
-      onTap: (){
-        _settingModalBottomSheet(context);
-      },
-      child: Container(
-        height: MediaQuery.of(context).size.height *0.5,
-        width: MediaQuery.of(context).size.width,
-        child: ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 12.0,),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ClipRRect(
-                      clipBehavior: Clip.hardEdge,
-                        borderRadius: BorderRadius.circular(3),
-                        child: Image.asset(
-                          "assets/images/spalsh.png",
-                          height: 120,
-                          width: 120,
-                          fit: BoxFit.fill,
-                        )),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 1.6,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.check_box_outlined,size: 20,),
-                              SizedBox(width: 5.0,),
-                              Text(
-                                "items[index].name",
-                                style: Theme.of(context).textTheme.title,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            "items[index].category",
-                            style: Theme.of(context).textTheme.subtitle2,
-                          ),
-                          SizedBox(
-                            height: 35,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("\$122",
-                                  textAlign: TextAlign.right,
-                                  style: Theme.of(context).textTheme.title),
-                              addproduct == false
-                              ?GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    addproduct = !addproduct;
-                                  });
-                                },
-                                child:Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 81,
-                                      height: 27,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(3.0),
-                                        color: cnst.AppColors.greencolor,
-                                      ),
-                                      child: Center(
-                                        child: Text("ADD",
-                                            style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0,color: cnst.AppColors.whitecolor)),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                  ],
-                                ),
-                              )
-                              :Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  buildIconButton(Icons.remove, index, products, count),
-                                  Container(
-                                    width: 27,
-                                    height: 27,
-                                    decoration: BoxDecoration(
-                                      color: cnst.AppColors.greencolor,
-                                    ),
-                                    child: Center(
-                                      child: Text('${count[index]}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle1),
-                                    ),
-                                  ),
-                                  buildIconButton(Icons.add, index, products, count),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-      ),
-    );
-  }
-
-  GestureDetector buildIconButton(IconData icon, int index, items, count) {
-    return GestureDetector(
-      onTap: (){
-        setState(() {
-          if (icon == Icons.remove) {
-            if (count[index] > 0)
-              count[index]--;
-            else
-              setState(() {
-                addproduct = !addproduct;
-              });
-          } else {
-            count[index]++;
-          }
-        });
-      },
-      child: Container(
-        width: 27,
-        height: 27,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(1),
-            border: Border.all(color: cnst.AppColors.greencolor, width: 2)),
-        child: Center(
-          child: Icon(icon,size: 16.0,color: cnst.AppColors.blackcolor,)
-        ),
-      ),
     );
   }
 }
