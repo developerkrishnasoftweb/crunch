@@ -9,8 +9,10 @@ class Menu_list extends StatefulWidget {
   @override
   _Menu_listState createState() => _Menu_listState();
 }
+
 class Product {
   Product(this.image, this.productName, this.productType, this.price);
+
   String image;
   String productName;
   String productType;
@@ -20,39 +22,60 @@ class Product {
 class _Menu_listState extends State<Menu_list> {
   List<int> count = [1, 1, 1];
   bool addproduct = false;
-  bool cheackvalue = false;
+  bool item1 = false,
+      item2 = false,
+      item3 = false,
+      item4 = false,
+      item5 = false,
+      item6 = false,
+      item7 = false,
+      item8 = false,
+      item9 = false,
+      item10 = false,
+      item11 = false,
+      item12 = false,
+      item13 = false,
+      item14 = false;
   final List<String> categories = [
     "vegetables",
     "bakery",
     "foodgrain",
   ];
   final List<Product> products = [
-    Product("assets/images/spalsh.png", "locale.freshRedOnios",
-        "Pajeroma", "\$30.0"),
+    Product("assets/images/spalsh.png", "locale.freshRedOnios", "Pajeroma",
+        "\$30.0"),
     Product("assets/images/CrunchTM.png", "locale.freshRedTomatoes",
         "Lecoil Eeva", "\$44.0"),
-    Product("assets/images/spalsh.png", "locale.mediumPotatoes",
-        "Pajeroma", "\$29.0"),
+    Product("assets/images/spalsh.png", "locale.mediumPotatoes", "Pajeroma",
+        "\$29.0"),
   ];
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(Icons.arrow_back_ios_sharp,color: Colors.black,)),
+            child: Icon(
+              Icons.arrow_back_ios_sharp,
+              color: Colors.black,
+            )),
         backgroundColor: Colors.white,
         elevation: 0.0,
         title: ListTile(
-          title: Text("Truck 21 | UK10Aj1075",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-          subtitle: Text("Adarsh Balniketan, Century Gate, 12-C, Roorkee ",style: TextStyle(color: Colors.black,fontSize: 12.0),),
+          title: Text(
+            "Truck 21 | UK10Aj1075",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(
+            "Adarsh Balniketan, Century Gate, 12-C, Roorkee ",
+            style: TextStyle(color: Colors.black, fontSize: 12.0),
+          ),
         ),
       ),
-      body:SingleChildScrollView(
+      body: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
@@ -64,9 +87,10 @@ class _Menu_listState extends State<Menu_list> {
           ),
         ),
       ),
-      bottomNavigationBar: AppBottomBar(currentindex: 1,),
+      bottomNavigationBar: AppBottomBar(
+        currentindex: 1,
+      ),
     );
-
   }
 
   Column buildCompleteVerticalList(
@@ -82,18 +106,18 @@ class _Menu_listState extends State<Menu_list> {
                   .subtitle1
                   .copyWith(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
-        buildList(category,context),
+        buildList(category, context),
       ],
     );
   }
 
-  GestureDetector buildList(List<Product> products,BuildContext context) {
+  GestureDetector buildList(List<Product> products, BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         _settingModalBottomSheet(context);
       },
       child: Container(
-        height: MediaQuery.of(context).size.height *0.55,
+        height: MediaQuery.of(context).size.height * 0.55,
         width: MediaQuery.of(context).size.width,
         child: ListView.builder(
             physics: NeverScrollableScrollPhysics(),
@@ -102,13 +126,14 @@ class _Menu_listState extends State<Menu_list> {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 12.0,),
+                  vertical: 12.0,
+                ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ClipRRect(
-                      clipBehavior: Clip.hardEdge,
+                        clipBehavior: Clip.hardEdge,
                         borderRadius: BorderRadius.circular(3),
                         child: Image.asset(
                           "assets/images/spalsh.png",
@@ -124,8 +149,13 @@ class _Menu_listState extends State<Menu_list> {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.check_box_outlined,size: 20,),
-                              SizedBox(width: 5.0,),
+                              Icon(
+                                Icons.check_box_outlined,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 5.0,
+                              ),
                               Text(
                                 "Special Masala Dosa",
                                 style: Theme.of(context).textTheme.title,
@@ -149,56 +179,64 @@ class _Menu_listState extends State<Menu_list> {
                                   textAlign: TextAlign.right,
                                   style: Theme.of(context).textTheme.title),
                               addproduct == false
-                              ?GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    addproduct = !addproduct;
-                                  });
-                                },
-                                child:Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 81,
-                                      height: 27,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(3.0),
-                                        color: cnst.AppColors.greencolor,
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          addproduct = !addproduct;
+                                        });
+                                      },
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 81,
+                                            height: 27,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(3.0),
+                                              color: cnst.AppColors.greencolor,
+                                            ),
+                                            child: Center(
+                                              child: Text("ADD",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 17.0,
+                                                      color: cnst.AppColors
+                                                          .whitecolor)),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                        ],
                                       ),
-                                      child: Center(
-                                        child: Text("ADD",
-                                            style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17.0,color: cnst.AppColors.whitecolor)),
-                                      ),
+                                    )
+                                  : Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        buildIconButton(Icons.remove, index,
+                                            products, count, 27.0, 27.0),
+                                        Container(
+                                          width: 27,
+                                          height: 27,
+                                          decoration: BoxDecoration(
+                                            color: cnst.AppColors.greencolor,
+                                          ),
+                                          child: Center(
+                                            child: Text('${count[index]}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle1),
+                                          ),
+                                        ),
+                                        buildIconButton(Icons.add, index,
+                                            products, count, 27.0, 27.0),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                  ],
-                                ),
-                              )
-                              :Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  buildIconButton(Icons.remove, index, products, count,27.0,27.0),
-                                  Container(
-                                    width: 27,
-                                    height: 27,
-                                    decoration: BoxDecoration(
-                                      color: cnst.AppColors.greencolor,
-                                    ),
-                                    child: Center(
-                                      child: Text('${count[index]}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle1),
-                                    ),
-                                  ),
-                                  buildIconButton(Icons.add, index, products, count,27.0,27.0),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                ],
-                              ),
                             ],
                           ),
                         ],
@@ -212,9 +250,10 @@ class _Menu_listState extends State<Menu_list> {
     );
   }
 
-  GestureDetector buildIconButton(IconData icon, int index, items, count,double height,width) {
+  GestureDetector buildIconButton(
+      IconData icon, int index, items, count, double height, width) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         setState(() {
           if (icon == Icons.remove) {
             if (count[index] > 0)
@@ -232,74 +271,92 @@ class _Menu_listState extends State<Menu_list> {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(1),
+            borderRadius: BorderRadius.circular(1),
             border: Border.all(color: cnst.AppColors.greencolor, width: 2)),
         child: Center(
-          child: Icon(icon,size: 16.0,color: cnst.AppColors.blackcolor,)
-        ),
+            child: Icon(
+          icon,
+          size: 16.0,
+          color: cnst.AppColors.blackcolor,
+        )),
       ),
     );
   }
 
-  CheckboxListTile buildCheckBox(){
-    return CheckboxListTile(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Row buildCheckBox(String title, price, _check) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontSize: 15.0),
+        ),
+        Row(
           children: [
-            Text("Mexican Mayo Dip"),
-            Text("\u20B949"),
+            Text("\u20B9${price}"),
+            Checkbox(
+              value: _check,
+              onChanged: (val) {
+                setState(() {
+                  _check = val;
+                });
+              },
+            ),
           ],
         ),
-        value: cheackvalue,
-        onChanged: (val){
-          setState(() {
-            cheackvalue = val;
-          });
-        }
+      ],
     );
   }
-
-  _settingModalBottomSheet(context){
+  _settingModalBottomSheet(context) {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
-        builder: (BuildContext bc){
+        builder: (BuildContext bc) {
           return Container(
             margin: EdgeInsets.only(bottom: 10),
             child: new Wrap(
+              spacing: 01.0,
               children: <Widget>[
                 new ListTile(
                     title: new Text("Crunch Fish Shots W Dip"),
                     subtitle: Text("Served with regular size dip"),
                     trailing: Icon(Icons.cancel_outlined),
-                    onTap: () => {}
+                    onTap: () => {}),
+                Divider(
+                  thickness: 1,
                 ),
-                Divider(thickness: 1,),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 0),
                   child: Column(
                     children: [
                       ListTile(
                           title: new Text("Extra Dip"),
-                          subtitle: Text("You can Choose up to 9 options"),
-                          onTap: () => {}
-                      ),
-                      buildCheckBox(),
+                          subtitle: Text("You can Choose up to 5 options"),
+                          onTap: () => {}),
+                      buildCheckBox("Mexican Mayo Dip", "49", item1),
+                      buildCheckBox("Mango Jalapeno Dip", "49", item2),
+                      buildCheckBox("Peri Peri Mayo Dip", "49", item3),
+                      buildCheckBox("Brabecue Mayo Dip", "49", item4),
+                      buildCheckBox("Plain Mayo Dip", "49", item5),
+                      // buildCheckBox("Cheesy Mayo Dip","49",item6),
+                      // buildCheckBox("Texas Bbq Sauce","49",item7),
+                      // buildCheckBox("Red Devil Sauce","49",item8),
+                      // buildCheckBox("Garlic Mayo Dip","49",item9),
                       ListTile(
                           title: new Text("Desert"),
                           subtitle: Text("Please select any on option"),
-                          onTap: () => {}
-                      ),
-                      buildCheckBox(),
+                          onTap: () => {}),
+                      buildCheckBox(
+                          "Chocolava Cake W Cashew Nuts", "49", item10),
                       ListTile(
                           title: new Text("Sprinklers"),
                           subtitle: Text("Please select any on option"),
-                          onTap: () => {}
-                      ),
-                      buildCheckBox(),
+                          onTap: () => {}),
+                      buildCheckBox("Peri-peri Sprinkler", "49", item11),
                       Container(
-                        margin: EdgeInsets.only(top: 10,bottom: 10.0),
-                        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                        margin: EdgeInsets.only(top: 10, bottom: 10.0),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 5, vertical: 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -307,7 +364,8 @@ class _Menu_listState extends State<Menu_list> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                buildIconButton(Icons.remove, 0, products, count,45.0,30.0),
+                                buildIconButton(Icons.remove, 0, products,
+                                    count, 45.0, 30.0),
                                 Container(
                                   width: 27,
                                   height: 45,
@@ -321,38 +379,46 @@ class _Menu_listState extends State<Menu_list> {
                                             .subtitle1),
                                   ),
                                 ),
-                                buildIconButton(Icons.add, 0, products, count,45.0,30.0),
+                                buildIconButton(
+                                    Icons.add, 0, products, count, 45.0, 30.0),
                               ],
                             ),
                             CustomButton(
-                              width: MediaQuery.of(context).size.width * 0.65,height:45,
-                                title: "ADD \u20B9308", btncolor: cnst.appPrimaryMaterialColor,
-                                ontap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()))
-                            ),
-                            // Container(
-                            //   width: 81,
-                            //   height: 27,
-                            //   decoration: BoxDecoration(
-                            //     borderRadius: BorderRadius.circular(3.0),
-                            //     color: cnst.AppColors.greencolor,
-                            //   ),
-                            //   child: Center(
-                            //     child: Text("ADD \u20B9308",
-                            //         style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15.0,color: cnst.AppColors.whitecolor)),
-                            //   ),
-                            // ),
-
+                                width: MediaQuery.of(context).size.width * 0.65,
+                                height: 45,
+                                title: "ADD \u20B9308",
+                                btncolor: cnst.appPrimaryMaterialColor,
+                                ontap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Home()))),
                           ],
                         ),
                       )
                     ],
                   ),
-
                 ),
               ],
             ),
           );
-        }
-    );
+        });
   }
+
+// CheckboxListTile buildCheckBox(String title, price,_check){
+//   return CheckboxListTile(
+//       title: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Text(title),
+//           Text("\u20B9${price}"),
+//         ],
+//       ),
+//       value: _check,
+//       onChanged: (val){
+//         setState(() {
+//           _check = val;
+//         });
+//       }
+//   );
+// }
 }
