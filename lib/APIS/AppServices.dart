@@ -12,7 +12,7 @@ class AppServices{
 
   static Future<DataClass> SellerSignUp(body) async {
     print("body: ${body.toString()}");
-    String url = API_URL + 'Registration/selleraddAPI';
+    String url = API_BASE_URL + 'Registration/selleraddAPI';
     print("Seller Registration URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
