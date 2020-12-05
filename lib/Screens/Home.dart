@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/Carouel.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Static/Constant.dart' as cnst;
@@ -35,7 +37,10 @@ class _HomeState extends State<Home> {
         actions: [
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SetLocation()));
+
+              AppServices.createAlbum().then((value) => null);
+
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => SetLocation()));
             },
             child: Padding(
               padding: const EdgeInsets.all(10.0),
