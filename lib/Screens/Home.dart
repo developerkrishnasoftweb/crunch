@@ -66,40 +66,21 @@ class _HomeState extends State<Home> {
                     shrinkWrap: true,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
-                      return buildProductItem();
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset("assets/products/img1.jpg"),
+                      );
                     }),
               ),
               Container(
                 width: size.width * 0.95,
                 height: size.height * 0.385,
                 child: ListView.builder(
-                  itemCount: 6,
-                    itemBuilder: (context, index){
-                      return Row(
-                        children: [
-                          Container(
-                            height: 150,width: 150,
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: AssetImage("assets/products/img1.jpg")
-                                )
-                            ),
-                          ),
-                          Container(
-                            child: Column(
-                              children: [
-                                Text("data"),
-                                Text("data"),
-                                Text("data"),
-                                Text("data"),
-                              ],
-                            ),
-                          ),
-
-                        ],
-                      );
-                    }
-                )
+                    shrinkWrap: true,
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      return buildProductItem();
+                    }),
               ),
             ],
           ),
@@ -111,12 +92,10 @@ class _HomeState extends State<Home> {
 
   Container buildProductItem(){
     return Container(
-      width: 200,
-        margin: EdgeInsets.all(2.0),
         child: Row(
-          children: [
-            Image.asset("assets/products/img1.jpg",height: 190,width: 100,),
-            Image.asset("assets/products/img1.jpg",height: 150,width: 100,),
+          children: <Widget>[
+            Image.asset("assets/products/img1.jpg",height: 150,width: 150,),
+            Container(child: Text("Burger"),)
           ],
         )
     );
