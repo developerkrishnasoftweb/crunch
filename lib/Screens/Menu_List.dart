@@ -180,63 +180,63 @@ class _Menu_listState extends State<Menu_list> {
                                   style: Theme.of(context).textTheme.title),
                               addproduct == false
                                   ? GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          addproduct = !addproduct;
-                                        });
-                                      },
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            width: 81,
-                                            height: 27,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(3.0),
-                                              color: cnst.AppColors.greencolor,
-                                            ),
-                                            child: Center(
-                                              child: Text("ADD",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 17.0,
-                                                      color: cnst.AppColors
-                                                          .whitecolor)),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 20,
-                                          ),
-                                        ],
+                                onTap: () {
+                                  setState(() {
+                                    addproduct = !addproduct;
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 81,
+                                      height: 27,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(3.0),
+                                        color: cnst.AppColors.greencolor,
                                       ),
-                                    )
-                                  : Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        buildIconButton(Icons.remove, index,
-                                            products, count, 27.0, 27.0),
-                                        Container(
-                                          width: 27,
-                                          height: 27,
-                                          decoration: BoxDecoration(
-                                            color: cnst.AppColors.greencolor,
-                                          ),
-                                          child: Center(
-                                            child: Text('${count[index]}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .subtitle1),
-                                          ),
-                                        ),
-                                        buildIconButton(Icons.add, index,
-                                            products, count, 27.0, 27.0),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                      ],
+                                      child: Center(
+                                        child: Text("ADD",
+                                            style: TextStyle(
+                                                fontWeight:
+                                                FontWeight.bold,
+                                                fontSize: 17.0,
+                                                color: cnst.AppColors
+                                                    .whitecolor)),
+                                      ),
                                     ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                  ],
+                                ),
+                              )
+                                  : Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  buildIconButton(Icons.remove, index,
+                                      products, count, 27.0, 27.0),
+                                  Container(
+                                    width: 27,
+                                    height: 27,
+                                    decoration: BoxDecoration(
+                                      color: cnst.AppColors.greencolor,
+                                    ),
+                                    child: Center(
+                                      child: Text('${count[index]}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1),
+                                    ),
+                                  ),
+                                  buildIconButton(Icons.add, index,
+                                      products, count, 27.0, 27.0),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ],
@@ -275,10 +275,10 @@ class _Menu_listState extends State<Menu_list> {
             border: Border.all(color: cnst.AppColors.greencolor, width: 2)),
         child: Center(
             child: Icon(
-          icon,
-          size: 16.0,
-          color: cnst.AppColors.blackcolor,
-        )),
+              icon,
+              size: 16.0,
+              color: cnst.AppColors.blackcolor,
+            )),
       ),
     );
   }
@@ -357,7 +357,7 @@ class _Menu_listState extends State<Menu_list> {
                       Container(
                         margin: EdgeInsets.only(top: 10, bottom: 10.0),
                         padding:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 5, vertical: 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

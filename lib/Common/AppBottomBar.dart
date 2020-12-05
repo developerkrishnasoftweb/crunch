@@ -63,4 +63,3 @@ class _AppBottomBarState extends State<AppBottomBar> {
     return Text(name);
   }
 }
-
