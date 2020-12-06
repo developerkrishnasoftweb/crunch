@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Common/AppBottomBar.dart';
@@ -25,8 +26,18 @@ List<CarouselItems> carousel1 = [
   CarouselItems(image: AssetImage("assets/products/img3.jpg")),
 ];
 class _HomeState extends State<Home> {
+
+  List CategorysItem = List();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getData();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(CategorysItem.length);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -37,8 +48,7 @@ class _HomeState extends State<Home> {
         actions: [
           GestureDetector(
             onTap: (){
-
-              AppServices.createAlbum().then((value) => null);
+              _getData();
 
               // Navigator.push(context, MaterialPageRoute(builder: (context) => SetLocation()));
             },
@@ -69,7 +79,7 @@ class _HomeState extends State<Home> {
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
-                    itemCount: items.length,
+                    itemCount: CategorysItem.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -104,5 +114,27 @@ class _HomeState extends State<Home> {
           ],
         )
     );
+  }
+
+  Future _getData() async {
+    var d = {
+      "access_token": "04fc7877ce7e5f771328b2a1434cb040ad1b2c0f",
+      "app_key": "f14qd3se9a6juzbmoit85c0nrvhykgwp",
+      "app_secret": "0ecb9930ec89b68dbc923d3ecedc43f37901cf61",
+      "restID": "k13cv5ho",
+      "last_updated_on": "",
+      "data_type": "json"
+    };
+    await AppServices.getCategories(d).then((data) {
+      if(data.data == "1") {
+        // print(""+data.value[0]['details'].toString());
+        // print("helooo "+data.Categories.length.toString());
+        setState(() {
+          CategorysItem = data.Categories;
+        });
+      }else {
+        print("not working");
+      }
+    });
   }
 }

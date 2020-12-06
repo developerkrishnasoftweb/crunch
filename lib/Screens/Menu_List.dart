@@ -114,10 +114,9 @@ class _Menu_listState extends State<Menu_list> {
   GestureDetector buildList(List<Product> products, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        _settingModalBottomSheet(context);
+        // _settingModalBottomSheet(context);
       },
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.55,
         width: MediaQuery.of(context).size.width,
         child: ListView.builder(
             physics: NeverScrollableScrollPhysics(),
@@ -125,124 +124,87 @@ class _Menu_listState extends State<Menu_list> {
             itemCount: products.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12.0,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ClipRRect(
-                        clipBehavior: Clip.hardEdge,
-                        borderRadius: BorderRadius.circular(3),
-                        child: Image.asset(
-                          "assets/images/spalsh.png",
-                          height: 115,
-                          width: 130,
-                          fit: BoxFit.cover,
-                        )),
-                    Container(
-                      width: MediaQuery.of(context).size.width / 1.71,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 15.0),
+                child: Container(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Stack(
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.check_box_outlined,
-                                size: 20,
-                              ),
-                              SizedBox(
-                                width: 5.0,
-                              ),
-                              Text(
-                                "Special Masala Dosa",
-                                style: Theme.of(context).textTheme.title,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            "Dosa spreaded with melted butter and spiced potato",
-                            style: Theme.of(context).textTheme.subtitle2,
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("\u20B9122",
-                                  textAlign: TextAlign.right,
-                                  style: Theme.of(context).textTheme.title),
-                              addproduct == false
-                                  ? GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    addproduct = !addproduct;
-                                  });
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      width: 81,
-                                      height: 27,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(3.0),
-                                        color: cnst.AppColors.greencolor,
-                                      ),
-                                      child: Center(
-                                        child: Text("ADD",
-                                            style: TextStyle(
-                                                fontWeight:
-                                                FontWeight.bold,
-                                                fontSize: 17.0,
-                                                color: cnst.AppColors
-                                                    .whitecolor)),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                  ],
-                                ),
-                              )
-                                  : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  buildIconButton(Icons.remove, index,
-                                      products, count, 27.0, 27.0),
-                                  Container(
-                                    width: 27,
-                                    height: 27,
-                                    decoration: BoxDecoration(
-                                      color: cnst.AppColors.greencolor,
-                                    ),
-                                    child: Center(
-                                      child: Text('${count[index]}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle1),
-                                    ),
-                                  ),
-                                  buildIconButton(Icons.add, index,
-                                      products, count, 27.0, 27.0),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                          ClipRRect(
+                              clipBehavior: Clip.hardEdge,
+                              borderRadius: BorderRadius.circular(3),
+                              child: Image.asset(
+                                "assets/products/img1.jpg",
+                                height: 85,
+                                width: 85,
+                                fit: BoxFit.fill,
+                              )),
+                          Positioned(
+                            right: 2.0,
+                            top: 2.0,
+                            child: Icon(
+                              Icons.check_box_outlined,
+                              size: 15,
+                              color: cnst.AppColors.greencolor,
+                            ),
+                          )
                         ],
                       ),
-                    ),
-                  ],
+                      Container(
+                        width: MediaQuery.of(context).size.width / 1.95,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Special Masala Dosa",
+                              style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 3,
+                            ),
+                            Text(
+                              "Dosa spreaded with melted butter and spiced potato",
+                              style: TextStyle(fontSize: 12.0),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("\u20B9122",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _settingModalBottomSheet(context);
+                          });
+                        },
+                        child:Container(
+                            width: 79,
+                            height: 27,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                BorderRadius.circular(3.0),
+                                border: Border.all(width: 1)
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("ADD",style: TextStyle(fontWeight: FontWeight.bold),),
+                                SizedBox(width: 2,),
+                                Icon(Icons.add,size: 15.0,color: cnst.appPrimaryMaterialColor,)
+                              ],
+                            )
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             }),
