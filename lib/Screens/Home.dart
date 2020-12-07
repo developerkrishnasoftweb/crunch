@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/Carouel.dart';
+import 'package:crunch/Screens/Menu_List.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -107,16 +108,19 @@ class _HomeState extends State<Home> {
                         addAutomaticKeepAlives: true,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.all(5.0),
-                            width: 120,
-                            height: 150,
-                            decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(5.0),
-                                image: DecorationImage(
-                                    image:
-                                        AssetImage("assets/images/cate.png"))),
+                          return GestureDetector(
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Menu_list())),
+                            child: Container(
+                              margin: EdgeInsets.all(5.0),
+                              width: 120,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  image: DecorationImage(
+                                      image:
+                                          AssetImage("assets/images/cate.png"))),
+                            ),
                           );
                         },
                       )),
