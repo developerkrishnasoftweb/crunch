@@ -1,5 +1,7 @@
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/CustomButton.dart';
+import 'package:crunch/Common/CustomCheckBox.dart';
+import 'package:crunch/Common/CustomCounterBtn.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../Static/Constant.dart' as cnst;
@@ -22,7 +24,7 @@ class Product {
 class _Menu_listState extends State<Menu_list> {
   List<int> count = [1, 1, 1];
   bool addproduct = false;
-  bool item1 = false,
+  bool item1 = true,
       item2 = false,
       item3 = false,
       item4 = false,
@@ -178,14 +180,15 @@ class _Menu_listState extends State<Menu_list> {
                           ],
                         ),
                       ),
-                      GestureDetector(
+                      addproduct == false
+                      ? GestureDetector(
                         onTap: () {
                           setState(() {
                             _settingModalBottomSheet(context);
                           });
                         },
                         child:Container(
-                            width: 79,
+                            width: 78,
                             height: 27,
                             decoration: BoxDecoration(
                                 borderRadius:
@@ -202,7 +205,12 @@ class _Menu_listState extends State<Menu_list> {
                               ],
                             )
                         ),
-                      ),
+                      )
+                          : CustomCounterBtn(width: 26.0,height: 27.0,index: 0,addproduct: addproduct,ontap: () {
+                            setState(() {
+                              addproduct = false;
+                            });
+                      } ),
                     ],
                   ),
                 ),
@@ -212,68 +220,12 @@ class _Menu_listState extends State<Menu_list> {
     );
   }
 
-  GestureDetector buildIconButton(
-      IconData icon, int index, items, count, double height, width) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          if (icon == Icons.remove) {
-            if (count[index] > 0)
-              count[index]--;
-            else
-              setState(() {
-                addproduct = !addproduct;
-              });
-          } else {
-            count[index]++;
-          }
-        });
-      },
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(1),
-            border: Border.all(color: cnst.appPrimaryMaterialColor, width: 2)),
-        child: Center(
-            child: Icon(
-              icon,
-              size: 16.0,
-              color: cnst.AppColors.blackcolor,
-            )),
-      ),
-    );
-  }
-
-  Row buildCheckBox(String title, price, _check) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 15.0),
-        ),
-        Row(
-          children: [
-            Text("\u20B9${price}"),
-            Checkbox(
-              value: _check,
-              onChanged: (val) {
-                setState(() {
-                  _check = val;
-                });
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
   _settingModalBottomSheet(context) {
     showModalBottomSheet(
+
         isScrollControlled: true,
         context: context,
-        builder: (BuildContext bc) {
+        builder: (BuildContext context) {
           return Container(
             margin: EdgeInsets.only(bottom: 10),
             child: new Wrap(
@@ -292,73 +244,43 @@ class _Menu_listState extends State<Menu_list> {
                   thickness: 1,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 2, vertical: 0),
+                  padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   child: Column(
                     children: [
                       ListTile(
                           title: new Text("Extra Dip"),
                           subtitle: Text("You can Choose up to 5 options"),
                           onTap: () => {}),
-                      buildCheckBox("Mexican Mayo Dip", "49", item1),
-                      buildCheckBox("Mango Jalapeno Dip", "49", item2),
-                      buildCheckBox("Peri Peri Mayo Dip", "49", item3),
-                      buildCheckBox("Brabecue Mayo Dip", "49", item4),
-                      buildCheckBox("Plain Mayo Dip", "49", item5),
-                      // buildCheckBox("Cheesy Mayo Dip","49",item6),
-                      // buildCheckBox("Texas Bbq Sauce","49",item7),
-                      // buildCheckBox("Red Devil Sauce","49",item8),
-                      // buildCheckBox("Garlic Mayo Dip","49",item9),
-                      // buildCheckBox("Garlic Mayo Dip","49",item9),
-                      // ListTile(
-                      //     title: new Text("Desert"),
-                      //     subtitle: Text("Please select any on option"),
-                      //     onTap: () => {}),
-                      // buildCheckBox(
-                      //     "Chocolava Cake W Cashew Nuts", "49", item10),
+                      CustomCheckBox(title:"Mexican Mayo Dip",price: "49",cvalue: item1,),
+                      CustomCheckBox(title:"Mango Jalapeno Dip",price: "49",cvalue: item2,),
+                      CustomCheckBox(title:"Mexican Mayo Dip",price: "49",cvalue: item3,),
+                      CustomCheckBox(title:"Peri Peri Mayo Dip",price: "49",cvalue: item4,),
+                      CustomCheckBox(title:"Brabecue Mayo Dip",price: "49",cvalue: item5,),
+                      CustomCheckBox(title:"Cheesy Mayo Dip",price: "49",cvalue: item6,),
                       ListTile(
                           title: new Text("Sprinklers"),
                           subtitle: Text("Please select any on option"),
                           onTap: () => {}),
-                      buildCheckBox("Peri-peri Sprinkler", "49", item11),
+                      CustomCheckBox(title:"Peri-peri Sprinkler",price: "49",cvalue: item6,),
                       Container(
                         margin: EdgeInsets.only(top: 10, bottom: 10.0),
                         padding:
-                        EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                buildIconButton(Icons.remove, 0, products,
-                                    count, 45.0, 30.0),
-                                Container(
-                                  width: 27,
-                                  height: 45,
-                                  decoration: BoxDecoration(
-                                    color: cnst.appPrimaryMaterialColor,
-                                  ),
-                                  child: Center(
-                                    child: Text('${count[0]}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1),
-                                  ),
-                                ),
-                                buildIconButton(
-                                    Icons.add, 0, products, count, 45.0, 30.0),
-                              ],
-                            ),
+                            CustomCounterBtn(width: 30.0,height: 43.0,index: 0,),
                             CustomButton(
                                 width: MediaQuery.of(context).size.width * 0.65,
                                 height: 45,
                                 title: "ADD \u20B9308",
                                 btncolor: cnst.appPrimaryMaterialColor,
-                                ontap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Home()))),
+                                ontap: () {
+                                  setState(() {
+                                    addproduct = true;
+                                    Navigator.pop(context);
+                                  });
+                                }),
                           ],
                         ),
                       )
@@ -370,22 +292,4 @@ class _Menu_listState extends State<Menu_list> {
           );
         });
   }
-
-// CheckboxListTile buildCheckBox(String title, price,_check){
-//   return CheckboxListTile(
-//       title: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           Text(title),
-//           Text("\u20B9${price}"),
-//         ],
-//       ),
-//       value: _check,
-//       onChanged: (val){
-//         setState(() {
-//           _check = val;
-//         });
-//       }
-//   );
-// }
 }

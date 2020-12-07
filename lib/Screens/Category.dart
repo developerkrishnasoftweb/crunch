@@ -11,15 +11,6 @@ class Categorys extends StatefulWidget {
   _CategorysState createState() => _CategorysState();
 }
 
-List<String> items = [
-  "burger",
-  "french fries",
-  "sandwiches",
-  "chips",
-  "pizza",
-  "ice cream"
-];
-
 class _CategorysState extends State<Categorys> {
   @override
   Widget build(BuildContext context) {
@@ -56,7 +47,7 @@ class _CategorysState extends State<Categorys> {
               child: Center(
                 child: Container(
                   width: size.width * 0.9,
-                  height: size.height * 0.9,
+                  height: size.height * 0.83,
                   child: ListView.builder(
                       itemCount: widget.category.length,
                       itemBuilder: (context, index) {
@@ -104,7 +95,7 @@ class _CategorysState extends State<Categorys> {
                     begin: FractionalOffset.topLeft,
                     end: FractionalOffset.bottomLeft,
                     colors: [
-                      Colors.red.withOpacity(0.4),
+                      Colors.pinkAccent.withOpacity(0.4),
                       Colors.pinkAccent.withOpacity(0.4),
                     ],
                     stops: [

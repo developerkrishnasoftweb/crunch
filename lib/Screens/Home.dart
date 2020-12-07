@@ -74,7 +74,7 @@ class _HomeState extends State<Home> {
       ),
       body: CategorysItem.length > 0
           ? SingleChildScrollView(
-            child: Column(
+              child: Column(
                 children: [
                   Carousel(
                     items: carousel,
@@ -86,8 +86,12 @@ class _HomeState extends State<Home> {
                     child: SizedBox(
                       height: 17.0,
                       child: FlatButton(
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Categorys(category: CategorysItem)));
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Categorys(category: CategorysItem)));
                         },
                         // padding: const EdgeInsets.only(right: 15.0),
                         child: Text("see more"),
@@ -95,46 +99,27 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   Container(
-                    width: size.width * 0.95,
-                    height: size.height * 0.14,
-                    child: ListView.builder(
+                      width: size.width * 0.95,
+                      height: size.height * 0.14,
+                      child: ListView.builder(
                         itemCount: 8,
                         semanticChildCount: 3,
                         addAutomaticKeepAlives: true,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           return Container(
-                                      margin: EdgeInsets.all(5.0),
-                                      width: 120,height: 150,
-                                      decoration: BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius: BorderRadius.circular(5.0),
-                                          image: DecorationImage(
-                                            image: AssetImage("assets/images/cate.png")
-                                          )
-                                      ),
-                                    );
+                            margin: EdgeInsets.all(5.0),
+                            width: 120,
+                            height: 150,
+                            decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(5.0),
+                                image: DecorationImage(
+                                    image:
+                                        AssetImage("assets/images/cate.png"))),
+                          );
                         },
-                      ),
-                    // child: ListView.builder(
-                    //     scrollDirection: Axis.horizontal,
-                    //     shrinkWrap: true,
-                    //     controller: _controller,
-                    //     itemCount: 7,
-                    //     itemBuilder: (context, index) {
-                    //       return Container(
-                    //         margin: EdgeInsets.all(5.0),
-                    //         width: 120,height: 150,
-                    //         decoration: BoxDecoration(
-                    //           color: Colors.red,
-                    //           borderRadius: BorderRadius.circular(5.0),
-                    //             image: DecorationImage(
-                    //               image: AssetImage("assets/images/cate.png")
-                    //             )
-                    //         ),
-                    //       );
-                    //     }),
-                  ),
+                      )),
                   Container(
                     width: size.width * 0.95,
                     height: size.height * 0.385,
@@ -147,7 +132,7 @@ class _HomeState extends State<Home> {
                   ),
                 ],
               ),
-          )
+            )
           : Center(child: CircularProgressIndicator()),
       bottomNavigationBar: AppBottomBar(
         currentindex: 0,
