@@ -1,5 +1,13 @@
+import 'package:crunch/LoginScreen/SignUp.dart';
+import 'package:crunch/Screens/Category.dart';
+import 'package:crunch/Screens/ChangePassword.dart';
+import 'package:crunch/Screens/Menu_List.dart';
+import 'package:crunch/Screens/Rating.dart';
+import 'package:crunch/Screens/setLocation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'LoginScreen/Login.dart';
+import 'Screens/Home.dart';
 import 'Static/Constant.dart' as cnst;
 
 void main() {
@@ -23,6 +31,14 @@ class _MyAppState extends State<MyApp> {
       initialRoute: "/",
       routes: {
         "/" : (context) => Login(),
+        // "/SignUp" : (context) => SignUp(),
+        // "/ForgotPassword" : (context) => Login(),
+        // "/Home" : (context) => Home(),
+        // "/MenuList" : (context) => Menu_list(),
+        // "/Rating" : (context) => Rating(),
+        // "/Category" : (context) => Categorys(),
+        // "/SetLocation" : (context) => SetLocation(),
+        // "/ChangePassword" : (context) => ChangePassword(),
       },
     );
   }

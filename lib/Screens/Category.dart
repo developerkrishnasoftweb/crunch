@@ -4,27 +4,41 @@ import '../Static/Constant.dart' as cnst;
 import 'Menu_List.dart';
 import 'setLocation.dart';
 
-class Category extends StatefulWidget {
+class Categorys extends StatefulWidget {
+  List category;
+  Categorys({this.category});
   @override
-  _CategoryState createState() => _CategoryState();
+  _CategorysState createState() => _CategorysState();
 }
 
-List<String> items = ["burger","french fries","sandwiches","chips","pizza","ice cream"];
+List<String> items = [
+  "burger",
+  "french fries",
+  "sandwiches",
+  "chips",
+  "pizza",
+  "ice cream"
+];
 
-class _CategoryState extends State<Category> {
+class _CategorysState extends State<Categorys> {
   @override
   Widget build(BuildContext context) {
+    print(widget.category);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.0,
         centerTitle: true,
-        title: Text("Category",style: TextStyle(color: Colors.black),),
+        title: Text(
+          "Category",
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           GestureDetector(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SetLocation()));
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SetLocation()));
             },
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -37,27 +51,32 @@ class _CategoryState extends State<Category> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            width: size.width * 0.9,
-            height: size.height * 0.9,
-            child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return buildList(size,index);
-                }),
-          ),
-        ),
+      body: widget.category.length > 0
+          ? SingleChildScrollView(
+              child: Center(
+                child: Container(
+                  width: size.width * 0.9,
+                  height: size.height * 0.9,
+                  child: ListView.builder(
+                      itemCount: widget.category.length,
+                      itemBuilder: (context, index) {
+                        return buildList(size, index,widget.category);
+                      }),
+                ),
+              ),
+            )
+          : Center(child: CircularProgressIndicator()),
+      bottomNavigationBar: AppBottomBar(
+        currentindex: 2,
       ),
-      bottomNavigationBar: AppBottomBar(currentindex: 2,),
     );
   }
 
-  GestureDetector buildList(size,index) {
+  GestureDetector buildList(size, index,List _categorys) {
     return GestureDetector(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Menu_list()));
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Menu_list()));
       },
       child: Container(
         width: size.width * 0.9,
@@ -97,7 +116,7 @@ class _CategoryState extends State<Category> {
             alignment: Alignment(0.0, 0.03),
             child: Container(
               child: Text(
-                items[index],
+                _categorys[index]["categoryname"],
                 style: TextStyle(fontSize: 27.0, color: Colors.white),
               ),
             ),

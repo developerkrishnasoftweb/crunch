@@ -234,7 +234,7 @@ class _Menu_listState extends State<Menu_list> {
         height: height,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(1),
-            border: Border.all(color: cnst.AppColors.greencolor, width: 2)),
+            border: Border.all(color: cnst.appPrimaryMaterialColor, width: 2)),
         child: Center(
             child: Icon(
               icon,
@@ -282,7 +282,11 @@ class _Menu_listState extends State<Menu_list> {
                 new ListTile(
                     title: new Text("Crunch Fish Shots W Dip"),
                     subtitle: Text("Served with regular size dip"),
-                    trailing: Icon(Icons.cancel_outlined),
+                    trailing: GestureDetector(
+                      onTap: (){
+                        Navigator.pop(context);
+                      },
+                        child: Icon(Icons.cancel_outlined)),
                     onTap: () => {}),
                 Divider(
                   thickness: 1,
@@ -305,12 +309,12 @@ class _Menu_listState extends State<Menu_list> {
                       // buildCheckBox("Red Devil Sauce","49",item8),
                       // buildCheckBox("Garlic Mayo Dip","49",item9),
                       // buildCheckBox("Garlic Mayo Dip","49",item9),
-                      ListTile(
-                          title: new Text("Desert"),
-                          subtitle: Text("Please select any on option"),
-                          onTap: () => {}),
-                      buildCheckBox(
-                          "Chocolava Cake W Cashew Nuts", "49", item10),
+                      // ListTile(
+                      //     title: new Text("Desert"),
+                      //     subtitle: Text("Please select any on option"),
+                      //     onTap: () => {}),
+                      // buildCheckBox(
+                      //     "Chocolava Cake W Cashew Nuts", "49", item10),
                       ListTile(
                           title: new Text("Sprinklers"),
                           subtitle: Text("Please select any on option"),
@@ -333,7 +337,7 @@ class _Menu_listState extends State<Menu_list> {
                                   width: 27,
                                   height: 45,
                                   decoration: BoxDecoration(
-                                    color: cnst.AppColors.greencolor,
+                                    color: cnst.appPrimaryMaterialColor,
                                   ),
                                   child: Center(
                                     child: Text('${count[0]}',

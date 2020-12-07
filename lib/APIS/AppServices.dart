@@ -35,33 +35,6 @@ class AppServices{
         }
   }
 
-  // static Future<DataClass> createAlbum() async {
-  //
-  //   String url = API_BASE_URL;
-  //
-  //   final http.Response response = await http.post(url,
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json; charset=UTF-8',
-  //       },
-  //       body: jsonEncode(<String, String>{
-  //         "access_token": "04fc7877ce7e5f771328b2a1434cb040ad1b2c0f",
-  //         "app_key": "f14qd3se9a6juzbmoit85c0nrvhykgwp",
-  //         "app_secret": "0ecb9930ec89b68dbc923d3ecedc43f37901cf61",
-  //         "restID": "k13cv5ho",
-  //         "last_updated_on": "",
-  //         "data_type": "json"
-  //       }),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     print("working "+response.body.toString());
-  //     return DataClass.fromJson(jsonDecode(response.body));
-  //   } else {
-  //     // If the server did not return a 201 CREATED response,
-  //     // then throw an exception.
-  //     throw Exception('Failed to load album');
-  //   }
-  // }
-
   static Future<DataClass> SellerSignUp(body) async {
     print("body: ${body.toString()}");
     String url = API_BASE_URL + 'Registration/selleraddAPI';
