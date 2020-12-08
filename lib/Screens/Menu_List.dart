@@ -8,6 +8,10 @@ import '../Static/Constant.dart' as cnst;
 import 'Home.dart';
 
 class Menu_list extends StatefulWidget {
+  List productitem,restaurants;
+  String CategoryId;
+  Menu_list({this.productitem, this.CategoryId,this.restaurants});
+
   @override
   _Menu_listState createState() => _Menu_listState();
 }
@@ -22,6 +26,12 @@ class Product {
 }
 
 class _Menu_listState extends State<Menu_list> {
+  void initState() {
+    // TODO: implement initState
+    _getItemsData();
+  }
+  bool isLoading = true;
+  List _items = [];
   List<int> count = [1, 1, 1];
   bool addproduct = false;
   bool item1 = true,
@@ -52,8 +62,29 @@ class _Menu_listState extends State<Menu_list> {
         "\$29.0"),
   ];
 
+  _getItemsData() {
+    for (int i = 0; i < widget.productitem.length; i++) {
+      if (widget.productitem[i]["item_categoryid"] == widget.CategoryId) {
+        setState(() {
+          isLoading = false;
+        });
+        setState(() {
+          _items.add(widget.productitem[i]);
+        });
+      }else{
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+    // if (int.parse(widget.CategoryId) == widget.productitem[])
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(widget.CategoryId +
+        " " +
+        widget.productitem[0]['item_categoryid'].toString());
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
@@ -77,18 +108,26 @@ class _Menu_listState extends State<Menu_list> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-          child: Column(
-            children: [
-              buildCompleteVerticalList(context, products, "SouthIndian"),
-              buildCompleteVerticalList(context, products, "SouthIndian"),
-            ],
+      body:
+          isLoading
+          ? Center(child: CircularProgressIndicator())
+          : _items.length > 0
+            ? SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                child: Column(
+                  children: [
+                    buildCompleteVerticalList(context, _items, "Items"),
+                    // buildCompleteVerticalList(context, products, "SouthIndian"),
+                  ],
+                ),
+              ),
+            )
+          :Center(
+            child: Text("No Items Available",
+                style: TextStyle(fontSize: 20, color: Colors.black38)),
           ),
-        ),
-      ),
       bottomNavigationBar: AppBottomBar(
         currentindex: 1,
       ),
@@ -96,7 +135,7 @@ class _Menu_listState extends State<Menu_list> {
   }
 
   Column buildCompleteVerticalList(
-      BuildContext context, List<Product> category, String heading) {
+      BuildContext context, itemsProduct, String heading) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -108,12 +147,12 @@ class _Menu_listState extends State<Menu_list> {
                   .subtitle1
                   .copyWith(fontSize: 18, fontWeight: FontWeight.bold)),
         ),
-        buildList(category, context),
+        buildList(itemsProduct, context),
       ],
     );
   }
 
-  GestureDetector buildList(List<Product> products, BuildContext context) {
+  GestureDetector buildList(List products, BuildContext context) {
     return GestureDetector(
       onTap: () {
         // _settingModalBottomSheet(context);
@@ -126,7 +165,8 @@ class _Menu_listState extends State<Menu_list> {
             itemCount: products.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 15.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15.0),
                 child: Container(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,8 +177,8 @@ class _Menu_listState extends State<Menu_list> {
                           ClipRRect(
                               clipBehavior: Clip.hardEdge,
                               borderRadius: BorderRadius.circular(3),
-                              child: Image.asset(
-                                "assets/products/img1.jpg",
+                              child: Image.network(
+                                products[index]['item_image_url'],
                                 height: 85,
                                 width: 85,
                                 fit: BoxFit.fill,
@@ -161,56 +201,72 @@ class _Menu_listState extends State<Menu_list> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              "Special Masala Dosa",
-                              style: TextStyle(fontSize: 16.0,fontWeight: FontWeight.bold),
+                              products[index]['itemname'],
+                              style: TextStyle(
+                                  fontSize: 14.0, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(
                               height: 3,
                             ),
                             Text(
-                              "Dosa spreaded with melted butter and spiced potato",
-                              style: TextStyle(fontSize: 12.0),
+                                products[index]['itemdescription'],
+                              style: TextStyle(fontSize: 13.0),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            Text("\u20B9122",
+                            Text("\u20B9 "+ products[index]['price'],
                                 textAlign: TextAlign.right,
-                                style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.bold)),
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
                       addproduct == false
-                      ? GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _settingModalBottomSheet(context);
-                          });
-                        },
-                        child:Container(
-                            width: 78,
-                            height: 27,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(3.0),
-                                border: Border.all(width: 1)
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text("ADD",style: TextStyle(fontWeight: FontWeight.bold),),
-                                SizedBox(width: 2,),
-                                Icon(Icons.add,size: 15.0,color: cnst.appPrimaryMaterialColor,)
-                              ],
+                          ? GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _settingModalBottomSheet(context);
+                                });
+                              },
+                              child: Container(
+                                  width: 78,
+                                  height: 27,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(3.0),
+                                      border: Border.all(width: 1)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "ADD",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      Icon(
+                                        Icons.add,
+                                        size: 15.0,
+                                        color: cnst.appPrimaryMaterialColor,
+                                      )
+                                    ],
+                                  )),
                             )
-                        ),
-                      )
-                          : CustomCounterBtn(width: 26.0,height: 27.0,index: 0,addproduct: addproduct,ontap: () {
-                            setState(() {
-                              addproduct = false;
-                            });
-                      } ),
+                          : CustomCounterBtn(
+                              width: 26.0,
+                              height: 27.0,
+                              index: 0,
+                              addproduct: addproduct,
+                              ontap: () {
+                                setState(() {
+                                  addproduct = false;
+                                });
+                              }),
                     ],
                   ),
                 ),
@@ -222,7 +278,6 @@ class _Menu_listState extends State<Menu_list> {
 
   _settingModalBottomSheet(context) {
     showModalBottomSheet(
-
         isScrollControlled: true,
         context: context,
         builder: (BuildContext context) {
@@ -235,9 +290,9 @@ class _Menu_listState extends State<Menu_list> {
                     title: new Text("Crunch Fish Shots W Dip"),
                     subtitle: Text("Served with regular size dip"),
                     trailing: GestureDetector(
-                      onTap: (){
-                        Navigator.pop(context);
-                      },
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
                         child: Icon(Icons.cancel_outlined)),
                     onTap: () => {}),
                 Divider(
@@ -251,25 +306,57 @@ class _Menu_listState extends State<Menu_list> {
                           title: new Text("Extra Dip"),
                           subtitle: Text("You can Choose up to 5 options"),
                           onTap: () => {}),
-                      CustomCheckBox(title:"Mexican Mayo Dip",price: "49",cvalue: item1,),
-                      CustomCheckBox(title:"Mango Jalapeno Dip",price: "49",cvalue: item2,),
-                      CustomCheckBox(title:"Mexican Mayo Dip",price: "49",cvalue: item3,),
-                      CustomCheckBox(title:"Peri Peri Mayo Dip",price: "49",cvalue: item4,),
-                      CustomCheckBox(title:"Brabecue Mayo Dip",price: "49",cvalue: item5,),
-                      CustomCheckBox(title:"Cheesy Mayo Dip",price: "49",cvalue: item6,),
+                      CustomCheckBox(
+                        title: "Mexican Mayo Dip",
+                        price: "49",
+                        cvalue: item1,
+                      ),
+                      CustomCheckBox(
+                        title: "Mango Jalapeno Dip",
+                        price: "49",
+                        cvalue: item2,
+                      ),
+                      CustomCheckBox(
+                        title: "Mexican Mayo Dip",
+                        price: "49",
+                        cvalue: item3,
+                      ),
+                      CustomCheckBox(
+                        title: "Peri Peri Mayo Dip",
+                        price: "49",
+                        cvalue: item4,
+                      ),
+                      CustomCheckBox(
+                        title: "Brabecue Mayo Dip",
+                        price: "49",
+                        cvalue: item5,
+                      ),
+                      CustomCheckBox(
+                        title: "Cheesy Mayo Dip",
+                        price: "49",
+                        cvalue: item6,
+                      ),
                       ListTile(
                           title: new Text("Sprinklers"),
                           subtitle: Text("Please select any on option"),
                           onTap: () => {}),
-                      CustomCheckBox(title:"Peri-peri Sprinkler",price: "49",cvalue: item6,),
+                      CustomCheckBox(
+                        title: "Peri-peri Sprinkler",
+                        price: "49",
+                        cvalue: item6,
+                      ),
                       Container(
                         margin: EdgeInsets.only(top: 10, bottom: 10.0),
                         padding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CustomCounterBtn(width: 30.0,height: 43.0,index: 0,),
+                            CustomCounterBtn(
+                              width: 30.0,
+                              height: 43.0,
+                              index: 0,
+                            ),
                             CustomButton(
                                 width: MediaQuery.of(context).size.width * 0.65,
                                 height: 45,

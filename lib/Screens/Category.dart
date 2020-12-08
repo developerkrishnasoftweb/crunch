@@ -5,8 +5,8 @@ import 'Menu_List.dart';
 import 'setLocation.dart';
 
 class Categorys extends StatefulWidget {
-  List category;
-  Categorys({this.category});
+  List category,productitem;
+  Categorys({this.category,this.productitem});
   @override
   _CategorysState createState() => _CategorysState();
 }
@@ -14,7 +14,7 @@ class Categorys extends StatefulWidget {
 class _CategorysState extends State<Categorys> {
   @override
   Widget build(BuildContext context) {
-    print(widget.category);
+    print(widget.productitem);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -67,7 +67,11 @@ class _CategorysState extends State<Categorys> {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Menu_list()));
+            context, MaterialPageRoute(builder: (context) => Menu_list(
+          CategoryId: widget.category[index]['categoryid'],
+          productitem: widget.productitem,
+          restaurants: [],
+        )));
       },
       child: Container(
         width: size.width * 0.9,

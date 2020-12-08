@@ -37,6 +37,8 @@ List<CarouselItems> carousel1 = [
 
 class _HomeState extends State<Home> {
   List CategorysItem = List();
+  List ProductItem = List();
+  List Restaurants = List();
 
   @override
   void initState() {
@@ -92,7 +94,7 @@ class _HomeState extends State<Home> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      Categorys(category: CategorysItem)));
+                                      Categorys(category: CategorysItem,productitem: ProductItem,)));
                         },
                         // padding: const EdgeInsets.only(right: 15.0),
                         child: Text("see more"),
@@ -109,7 +111,15 @@ class _HomeState extends State<Home> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           return GestureDetector(
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => Menu_list())),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => Menu_list(
+                                          CategoryId: CategorysItem[index]
+                                              ['categoryid'],
+                                          productitem: ProductItem,
+                                      restaurants: [],
+                                        ))),
                             child: Container(
                               margin: EdgeInsets.all(5.0),
                               width: 120,
@@ -118,8 +128,8 @@ class _HomeState extends State<Home> {
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(5.0),
                                   image: DecorationImage(
-                                      image:
-                                          AssetImage("assets/images/cate.png"))),
+                                      image: AssetImage("assets/images/cate.png")
+                                  )),
                             ),
                           );
                         },
@@ -175,6 +185,8 @@ class _HomeState extends State<Home> {
         // print("helooo "+data.Categories.length.toString());
         setState(() {
           CategorysItem = data.Categories;
+          ProductItem = data.Items;
+          Restaurants = data.Restaurant;
         });
       } else {
         print("not working");
