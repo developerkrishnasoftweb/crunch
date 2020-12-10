@@ -99,5 +99,43 @@ class AppServices{
     }
   }
 
+  static Future<SaveDataClass> CustomerSignUp(body) async {
+    String url = Base_URL + 'register';
+    print("Register URL: ${url}");
+    try {
+      final response = await dio.post(url, data: body);
+      if (response.statusCode == 200) {
+        SaveDataClass saveDataClass =
+        new SaveDataClass(message: 'No Data', value: "n");
+        final jsonResponse = json.decode(response.data);
+        print("Customer SignUp Responce: ${jsonResponse}");
+        saveDataClass.message = jsonResponse['message'];
+        saveDataClass.value = jsonResponse['status'].toString();
+        List list = [];
+        if (jsonResponse["status"].toString() == "y") {
+          list = [
+            {
+              "id": jsonResponse['customer']["id"],
+              "name": jsonResponse['customer']["name"],
+              "mobile": jsonResponse['customer']["mobile"],
+              "email": jsonResponse['customer']["email"],
+              "image": jsonResponse['customer']["image"],
+              "gender": jsonResponse['customer']["gender"],
+              "password": jsonResponse['customer']["password"],
+              "status": jsonResponse['customer']["status"],
+            }
+          ];
+        }
+        saveDataClass.data = list;
+        return saveDataClass;
+      } else {
+        throw Exception("Something went Wrong");
+      }
+    } catch (e) {
+      print("Customer Login Error : " + e.toString());
+      throw Exception("Something went wrong");
+    }
+  }
+
 
 }
