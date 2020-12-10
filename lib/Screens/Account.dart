@@ -1,8 +1,11 @@
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:crunch/LoginScreen/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Static/Constant.dart' as cnst;
+import 'Address.dart';
+import 'ChangePassword.dart';
 class Account extends StatefulWidget {
   @override
   _AccountState createState() => _AccountState();
@@ -56,11 +59,17 @@ class _AccountState extends State<Account> {
                                   title: Text("Mange Address"),
                                   leading: Icon(Icons.home),
                                   trailing: Icon(Icons.arrow_forward_rounded),
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => Address()));
+                                  },
                                 ),
                                 ListTile(
                                   title: Text("Change Password"),
                                   leading: Icon(Icons.lock),
                                   trailing: Icon(Icons.arrow_forward_rounded),
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
+                                  },
                                 ),
                                 ListTile(
                                   title: Text("Inquiry"),
@@ -96,7 +105,7 @@ class _AccountState extends State<Account> {
                 onTap: () async {
                   SharedPreferences prefs = await SharedPreferences.getInstance();
                   prefs.clear();
-                  Navigator.pushNamed(context, "/");
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
                 },
                 child: ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal: 25.0),

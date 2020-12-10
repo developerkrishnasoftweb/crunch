@@ -26,7 +26,7 @@ class _AppBottomBarState extends State<AppBottomBar> {
             Navigator.push(context, MaterialPageRoute(builder: (_) => Home()));
             break;
           case 1:
-            Navigator.push(context, MaterialPageRoute(builder: (_) => Menu_list()));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Rating()));
             break;
           case 2:
             Navigator.push(context, MaterialPageRoute(builder: (_) => Rating()));

@@ -34,7 +34,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         actions: [
           GestureDetector(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+              Navigator.pop(context);
             },
             child: Padding(
               padding: const EdgeInsets.only(right:10.0,top: 15.0),
@@ -65,7 +65,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               SizedBox(height: 16.0,),
               CustomButton(
                 title: "Update",btncolor: cnst.appPrimaryMaterialColor,
-                ontap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()))
+                // ontap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()))
               ),
             ],
           ),

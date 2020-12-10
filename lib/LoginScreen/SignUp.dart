@@ -4,6 +4,7 @@ import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Screens/Home.dart';
 import 'package:dio/dio.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../APIS/Constants.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -31,11 +32,15 @@ class _SignUpState extends State<SignUp> {
   StreamSubscription iosSubscription;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String fcm = "";
+  ProgressDialog pr;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false);
+    pr.style(message: "Please wait..");
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async{
           print("onMessage  $message");
@@ -255,7 +260,7 @@ class _SignUpState extends State<SignUp> {
 
   userSignUp() async {
     try{
-
+      pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
@@ -274,6 +279,7 @@ class _SignUpState extends State<SignUp> {
         });
 
         AppServices.CustomerSignUp(d).then((data) async {
+          pr.hide();
           if(data.value == "y"){
             print(data.data);
             SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -289,12 +295,14 @@ class _SignUpState extends State<SignUp> {
                 "id: ${prefs.getString(cnst.Session.id)} gender:${prefs.getString(cnst.Session.gender)}");
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
           }
+        },onError: (e) {
+          pr.hide();
+          _toastMesssage("Something went wrong.");
         });
-
       }
-
     }catch(e){
-
+      pr.hide();
+      _toastMesssage("No Internet Connection.");
     }
   }
 

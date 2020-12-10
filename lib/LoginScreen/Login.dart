@@ -8,6 +8,7 @@ import 'package:crunch/LoginScreen/SignUp.dart';
 import 'package:crunch/Screens/ChangePassword.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../APIS/Constants.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -27,11 +28,15 @@ class _LoginState extends State<Login> {
   StreamSubscription iosSubscription;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String fcm = "";
+  ProgressDialog pr;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false);
+    pr.style(message: "Please wait..");
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async{
           print("onMessage  $message");
@@ -120,7 +125,7 @@ class _LoginState extends State<Login> {
                 SizedBox(height: 16.0,),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
                   },
                   child: Container(
                     width: size.width *0.85,
@@ -179,7 +184,7 @@ class _LoginState extends State<Login> {
   LoginCustomer() async {
 
     try{
-
+      pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
@@ -193,6 +198,7 @@ class _LoginState extends State<Login> {
         });
 
         AppServices.CustomerLogin(d).then((data) async {
+          pr.hide();
           if(data.value == "y"){
             print("VAlue "+data.data[0]['name']);
             SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -212,11 +218,13 @@ class _LoginState extends State<Login> {
             _toastMesssage("Invalid username or password");
           }
         }, onError: (e) {
+          pr.hide();
           print("Something went wrong.");
         });
       }
     }catch(e){
       print(e);
+      pr.hide();
       print("No Internet Connection");
     }
   }
