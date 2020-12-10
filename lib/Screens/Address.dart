@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Add_Address.dart';
 import 'package:dio/dio.dart';
@@ -45,12 +46,47 @@ class _AddressState extends State<Address> {
           height: size.height,
           padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
           child: ListView.builder(
-              itemCount: 2,
+              itemCount: _address.length,
               itemBuilder: (context,index){
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 5.0),
-                  height: size.height * 0.13,
-                  color: Colors.grey,
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0,bottom: 10.0,left: 7.0,right: 7.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: size.width * 0.55,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(_address[index]['address']+", "+_address[index]['city']+", "+
+                                  _address[index]['state']+", "+_address[index]['country']+" - "+_address[index]['pincode'],
+                                  style: TextStyle(fontSize: 16.0),),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                IconButton(
+                                    icon: Icon(Icons.edit),
+                                    onPressed: (){}
+                                ),
+                                IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: (){
+                                      _deleteAddress(_address[index]['id']);
+                                    }
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               }
           )
@@ -121,5 +157,32 @@ class _AddressState extends State<Address> {
         textColor: Colors.white,
         fontSize: 16.0
     );
+  }
+
+  _deleteAddress(String id) async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        FormData d = FormData.fromMap({
+          "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+          "id" : id,
+        });
+        setState(() {
+          isLoading = true;
+        });
+        print("id is "+id);
+        AppServices.deleteAddress(d).then((data) async {
+          if (data.value == "y") {
+            _toastMesssage(data.message);
+          } else {
+            _toastMesssage("Something went wrong.");
+          }
+        }, onError: (e) {
+          _toastMesssage("Something went wrong.");
+        });
+      }
+    } on SocketException catch (_) {
+      _toastMesssage("No Internet Connection.");
+    }
   }
 }
