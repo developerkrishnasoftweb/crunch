@@ -1,10 +1,18 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:crunch/Screens/Home.dart';
+import 'package:dio/dio.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
 import 'package:crunch/LoginScreen/SignUp.dart';
 import 'package:crunch/Screens/ChangePassword.dart';
-import 'package:crunch/Screens/Home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../APIS/Constants.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../APIS/AppServices.dart';
 import '../Static/Constant.dart' as cnst;
 
 class Login extends StatefulWidget {
@@ -16,6 +24,59 @@ class _LoginState extends State<Login> {
 
   TextEditingController Email = TextEditingController();
   TextEditingController Password = TextEditingController();
+  StreamSubscription iosSubscription;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  String fcm = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async{
+          print("onMessage  $message");
+        },
+        onLaunch: (Map<String, dynamic> message) async{
+          print("onLaunch  $message");
+        },
+        onResume: (Map<String, dynamic> message) async{
+          print("onResume  $message");
+        }
+    );
+    _configureNotification();
+  }
+
+  _configureNotification() async {
+    if (Platform.isIOS) {
+      iosSubscription =
+          _firebaseMessaging.onIosSettingsRegistered.listen((data) async {
+            await _getFCMToken();
+          });
+      _firebaseMessaging
+          .requestNotificationPermissions(IosNotificationSettings());
+    } else {
+      await _getFCMToken();
+    }
+  }
+
+  _getFCMToken() {
+    _firebaseMessaging.getToken().then((String token) {
+      setState(() {
+        fcm = token;
+      });
+      print("fcm: ${token}");
+    });
+    getLocal();
+  }
+
+  getLocal() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString(cnst.Session.id);
+
+    if (id != null) {
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +138,9 @@ class _LoginState extends State<Login> {
                 SizedBox(height: 100.0,),
                 CustomButton(
                   title: "LOGIN", btncolor: cnst.appPrimaryMaterialColor,
-                  ontap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()))
+                  ontap: () {
+                    LoginValidation();
+                  }
                 ),
                 SizedBox(height: 50.0,),
                 GestureDetector(
@@ -101,4 +164,73 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+
+
+  LoginValidation() {
+    if (Email.text == "") {
+      _toastMesssage("Please enter your Email");
+    } else if (Password.text == "") {
+      _toastMesssage("please Enter your Password");
+    } else {
+      LoginCustomer();
+    }
+  }
+
+  LoginCustomer() async {
+
+    try{
+
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+
+        print(Email.text + "  "+Password.text+ " "+fcm+ " ");
+
+        FormData d = FormData.fromMap({
+          "api_key" : API_Key,
+          "username" : Email.text,
+          "password" : Password.text,
+          "token" : fcm,
+        });
+
+        AppServices.CustomerLogin(d).then((data) async {
+          if(data.value == "y"){
+            print("VAlue "+data.data[0]['name']);
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setString(cnst.Session.id, data.data[0]["id"]);
+            prefs.setString(cnst.Session.name, data.data[0]["name"]);
+            prefs.setString(cnst.Session.mobile, data.data[0]["mobile"]);
+            prefs.setString(cnst.Session.email, data.data[0]["email"]);
+            prefs.setString(cnst.Session.password, data.data[0]["password"]);
+            prefs.setString(cnst.Session.image, data.data[0]["image"]);
+            prefs.setString(cnst.Session.status, data.data[0]["status"]);
+            prefs.setString(cnst.Session.gender, data.data[0]["gender"]);
+            print(
+                "id: ${prefs.getString(cnst.Session.id)} gender:${prefs.getString(cnst.Session.gender)}");
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+          }
+          else {
+            _toastMesssage("Invalid username or password");
+          }
+        }, onError: (e) {
+          print("Something went wrong.");
+        });
+      }
+    }catch(e){
+      print(e);
+      print("No Internet Connection");
+    }
+  }
+
+  _toastMesssage(String message){
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.white.withOpacity(0.3),
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+  }
+
 }

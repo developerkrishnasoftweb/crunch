@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "885093078007",
+    "project_id": "crunch-dabb5",
+    "storage_bucket": "crunch-dabb5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885093078007:android:be15b45f52f4c79b3514f2",
+        "android_client_info": {
+          "package_name": "com.example.crunch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "885093078007-6g6buaef44c8sa2hof8m2ir3pd4s69vo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5MmYjloBM7F0ylMG4PCIonPFWGtDGhsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "885093078007-6g6buaef44c8sa2hof8m2ir3pd4s69vo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

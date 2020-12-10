@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
+import 'Class.dart';
 import 'ClassList.dart';
 import 'Constants.dart';
 
@@ -35,19 +36,20 @@ class AppServices{
         }
   }
 
-  static Future<DataClass> SellerSignUp(body) async {
+  static Future<SaveDataClass> getSlider(body) async {
     print("body: ${body.toString()}");
-    String url = API_BASE_URL + 'Registration/selleraddAPI';
-    print("Seller Registration URL: " + url);
+    String url = Base_URL+"sliders";
+    print("Slider  URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
       if (response.statusCode == 200) {
-        DataClass saveDataClass =
-        new DataClass(message: 'No Data', data: "1");
+        SaveDataClass saveDataClass =
+        new SaveDataClass(message: 'No Data', value: "n");
         final jsonResponse = json.decode(response.data);
         saveDataClass.message = jsonResponse['message'];
-        saveDataClass.data = jsonResponse['data'].toString();
+        saveDataClass.value = jsonResponse['status'].toString();
+        saveDataClass.data = jsonResponse['banners'];
         print("Seller Registration Responce: ${jsonResponse}");
         return saveDataClass;
       } else {
@@ -55,6 +57,44 @@ class AppServices{
       }
     } catch (e) {
       print("Seller Registration Error : " + e.toString());
+      throw Exception("Something went wrong");
+    }
+  }
+
+  static Future<SaveDataClass> CustomerLogin(body) async {
+    String url = Base_URL + 'login';
+    print("Login URL: ${url}");
+    try {
+      final response = await dio.post(url, data: body);
+      if (response.statusCode == 200) {
+        SaveDataClass saveDataClass =
+        new SaveDataClass(message: 'No Data', value: "n");
+        final jsonResponse = json.decode(response.data);
+        print("Customer Login Responce: ${jsonResponse}");
+        saveDataClass.message = jsonResponse['message'];
+        saveDataClass.value = jsonResponse['status'].toString();
+        List list = [];
+        if (jsonResponse["status"].toString() == "y") {
+          list = [
+            {
+              "id": jsonResponse['customer']["id"],
+              "name": jsonResponse['customer']["name"],
+              "mobile": jsonResponse['customer']["mobile"],
+              "email": jsonResponse['customer']["email"],
+              "image": jsonResponse['customer']["image"],
+              "gender": jsonResponse['customer']["gender"],
+              "password": jsonResponse['customer']["password"],
+              "status": jsonResponse['customer']["status"],
+            }
+          ];
+        }
+        saveDataClass.data = list;
+        return saveDataClass;
+      } else {
+        throw Exception("Something went Wrong");
+      }
+    } catch (e) {
+      print("Customer Login Error : " + e.toString());
       throw Exception("Something went wrong");
     }
   }

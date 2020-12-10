@@ -24,14 +24,11 @@ MaterialColor(0xFF5663ff, appPrimaryColors);
 
 class Session {
   static const String id = "id";
-  static const String firstname = "firstname";
-  static const String lastname = "lastname";
-  static const String shopname = "shopname";
-  static const String dob = "dob";
-  static const String city = "city";
-  static const String phone = "phone";
+  static const String name = "name";
+  static const String mobile = "mobile";
   static const String email = "email";
   static const String password = "password";
-  static const String logo = "logo";
+  static const String image = "image";
   static const String status = "status";
+  static const String gender = "gender";
 }

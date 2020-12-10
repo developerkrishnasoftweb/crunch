@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 import 'package:crunch/APIS/AppServices.dart';
+import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Screens/Menu_List.dart';
@@ -24,11 +26,11 @@ List<String> items = [
   "pizza",
   "ice cream"
 ];
-List<CarouselItems> carousel = [
-  CarouselItems(image: AssetImage("assets/products/img1.jpg")),
-  CarouselItems(image: AssetImage("assets/products/img2.jpg")),
-  CarouselItems(image: AssetImage("assets/products/img3.jpg")),
-];
+// List<CarouselItems> carousel = [
+//   CarouselItems(image: AssetImage("assets/products/img1.jpg"),),
+//   CarouselItems(image: AssetImage("assets/products/img2.jpg")),
+//   CarouselItems(image: AssetImage("assets/products/img3.jpg")),
+// ];
 List<CarouselItems> carousel1 = [
   CarouselItems(image: AssetImage("assets/products/img1.jpg")),
   CarouselItems(image: AssetImage("assets/products/img2.jpg")),
@@ -39,11 +41,15 @@ class _HomeState extends State<Home> {
   List CategorysItem = List();
   List ProductItem = List();
   List Restaurants = List();
+  bool isLoading = true;
+  List _slider = List();
+  List<CarouselItems> carousel;
 
   @override
   void initState() {
     // TODO: implement initState
     _getData();
+    getSliderData();
   }
 
   @override
@@ -61,7 +67,8 @@ class _HomeState extends State<Home> {
         actions: [
           GestureDetector(
             onTap: () {
-              _getData();
+              getSliderData();
+              // _getData();
               // Navigator.push(context, MaterialPageRoute(builder: (context) => SetLocation()));
             },
             child: Padding(
@@ -75,8 +82,8 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      body: CategorysItem.length > 0
-          ? SingleChildScrollView(
+      body:_slider.length > 0
+            ? SingleChildScrollView(
               child: Column(
                 children: [
                   Carousel(
@@ -147,7 +154,7 @@ class _HomeState extends State<Home> {
                 ],
               ),
             )
-          : Center(child: CircularProgressIndicator()),
+            : Center(child: CircularProgressIndicator()),
       bottomNavigationBar: AppBottomBar(
         currentindex: 0,
       ),
@@ -192,5 +199,80 @@ class _HomeState extends State<Home> {
         print("not working");
       }
     });
+  }
+
+  getSliderData() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        FormData d = FormData.fromMap({
+          "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+        });
+        setState(() {
+          isLoading = true;
+        });
+        AppServices.getSlider(d).then((data) async {
+          if (data.value == "y") {
+            print("dl: ${data.data.length}");
+            print("d: ${Image_URL+data.data[0]['image']}");
+            setState(() {
+              isLoading = false;
+            });
+            for (int i = 0; i < data.data.length; i++) {
+              print("work");
+              _slider.add(data.data[i]);
+              print("add_"+_slider.toString());
+            }
+            setState(() {
+              carousel = [
+                CarouselItems(image: NetworkImage(Image_URL+_slider[0]["image"]),title: _slider[0]["title"]),
+              ];
+            });
+
+          } else {
+            setState(() {
+              isLoading = false;
+              _slider.clear();
+            });
+          }
+        }, onError: (e) {
+          setState(() {
+            isLoading = false;
+            _slider.clear();
+          });
+          showMsg("Something went wrong.");
+        });
+      }
+    } on SocketException catch (_) {
+      setState(() {
+        isLoading = false;
+      });
+      showMsg("No Internet Connection.");
+    }
+  }
+
+  showMsg(String msg) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Crunch"),
+          content: new Text(msg),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text(
+                "Close",
+                style: TextStyle(color: cnst.appPrimaryMaterialColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

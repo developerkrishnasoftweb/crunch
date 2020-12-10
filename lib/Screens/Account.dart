@@ -1,6 +1,7 @@
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Static/Constant.dart' as cnst;
 class Account extends StatefulWidget {
   @override
@@ -92,7 +93,9 @@ class _AccountState extends State<Account> {
                   color: cnst.AppColors.whitecolor,
               ),
               child: GestureDetector(
-                onTap: (){
+                onTap: () async {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  prefs.clear();
                   Navigator.pushNamed(context, "/");
                 },
                 child: ListTile(
