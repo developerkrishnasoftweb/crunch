@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crunch/Screens/Address.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -141,6 +142,31 @@ class AppServices{
     print("body: ${body.toString()}");
     String url = Base_URL+"customer_address";
     print("address  URL: " + url);
+    dio.options.contentType = Headers.jsonContentType;
+    try {
+      final response = await dio.post(url, data: body);
+      if (response.statusCode == 200) {
+        SaveDataClass saveDataClass =
+        new SaveDataClass(message: 'No Data', value: "n");
+        final jsonResponse = json.decode(response.data);
+        saveDataClass.message = jsonResponse['message'];
+        saveDataClass.value = jsonResponse['status'].toString();
+        saveDataClass.data = jsonResponse['address'];
+        print("Customer Address Responce: ${jsonResponse}");
+        return saveDataClass;
+      } else {
+        throw Exception("Something went Wrong");
+      }
+    } catch (e) {
+      print("Error : " + e.toString());
+      throw Exception("Something went wrong");
+    }
+  }
+
+  static Future<SaveDataClass> AddAddress (body) async {
+    print("body: ${body.toString()}");
+    String url = Base_URL+"add_address";
+    print("address Add  URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);

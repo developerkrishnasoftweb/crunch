@@ -1,30 +1,33 @@
 import 'dart:io';
+
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
+import 'package:crunch/Common/CustomButton.dart';
+import 'package:crunch/Common/TextField.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Common/TextField.dart';
-import '../Common/CustomButton.dart';
 import '../Static/Constant.dart' as cnst;
-import 'Home.dart';
 import 'Address.dart';
 
-class Add_Address extends StatefulWidget {
+class EditAddress extends StatefulWidget {
+  var _addressdata;
+  EditAddress(this._addressdata);
   @override
-  _Add_AddressState createState() => _Add_AddressState();
+  _EditAddressState createState() => _EditAddressState();
 }
 
-class _Add_AddressState extends State<Add_Address> {
+class _EditAddressState extends State<EditAddress> {
 
-  TextEditingController address = TextEditingController();
-  TextEditingController pincode = TextEditingController();
-  TextEditingController city = TextEditingController();
-  TextEditingController state = TextEditingController();
-  TextEditingController country = TextEditingController();
+  TextEditingController edtaddress = TextEditingController();
+  TextEditingController edtpincode = TextEditingController();
+  TextEditingController edtcity = TextEditingController();
+  TextEditingController edtstate = TextEditingController();
+  TextEditingController edtcountry = TextEditingController();
   ProgressDialog pr;
+  String addressid;
 
   @override
   void initState() {
@@ -33,6 +36,16 @@ class _Add_AddressState extends State<Add_Address> {
     pr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Please wait..");
+    _setData();
+  }
+
+  _setData(){
+    addressid = widget._addressdata['id'];
+    edtaddress.text = widget._addressdata['address'];
+    edtpincode.text = widget._addressdata['pincode'];
+    edtcity.text = widget._addressdata['city'];
+    edtstate.text = widget._addressdata['state'];
+    edtcountry.text = widget._addressdata['country'];
   }
 
   @override
@@ -71,23 +84,23 @@ class _Add_AddressState extends State<Add_Address> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 16.0,),
-              CustomTextField(textcontroller: address,obtext: false,hint: "Address", textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),borderside: 1.0,
+              CustomTextField(textcontroller: edtaddress,obtext: false,hint: "Address", textColor: cnst.appPrimaryMaterialColor,borderside: 1.0,
               ),
               SizedBox(height: 16.0,),
-              CustomTextField(textcontroller: pincode,obtext: false,hint: "Pincode", textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              CustomTextField(textcontroller: edtpincode,obtext: false,hint: "Pincode", textColor: cnst.appPrimaryMaterialColor,
                 borderside: 1.0,),
               SizedBox(height: 16.0,),
-              CustomTextField(textcontroller: city,obtext: false,hint: "City", textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              CustomTextField(textcontroller: edtcity,obtext: false,hint: "City", textColor: cnst.appPrimaryMaterialColor,
                 borderside: 1.0,),
               SizedBox(height: 16.0,),
-              CustomTextField(textcontroller: state,obtext: false,hint: "State", textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              CustomTextField(textcontroller: edtstate,obtext: false,hint: "State", textColor: cnst.appPrimaryMaterialColor,
                 borderside: 1.0,),
               SizedBox(height: 16.0,),
-              CustomTextField(textcontroller: country,obtext: false,hint: "Country", textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              CustomTextField(textcontroller: edtcountry,obtext: false,hint: "Country", textColor: cnst.appPrimaryMaterialColor,
                 borderside: 1.0,),
               SizedBox(height: 16.0,),
               CustomButton(
-                title: "Add Address",btncolor: cnst.appPrimaryMaterialColor,
+                title: "Update Address",btncolor: cnst.appPrimaryMaterialColor,
                 ontap: () {
                   Validation();
                 },
@@ -100,39 +113,40 @@ class _Add_AddressState extends State<Add_Address> {
   }
 
   Validation() {
-    if (address.text == "") {
+    if (edtaddress.text == "") {
       _toastMesssage("Please enter your Address");
-    } else if (pincode.text == "") {
+    } else if (edtpincode.text == "") {
       _toastMesssage("please Enter your Postal Code");
-    } else if (pincode.text.length != 6) {
+    } else if (edtpincode.text.length != 6) {
       _toastMesssage("please Postal Code must be 6 digit");
-    } else if (city.text == "") {
+    } else if (edtcity.text == "") {
       _toastMesssage("please Enter your City");
-    } else if (state.text == "") {
+    } else if (edtstate.text == "") {
       _toastMesssage("please Enter your State");
-    } else if (country.text == "") {
+    } else if (edtcountry.text == "") {
       _toastMesssage("please Enter your Country");
     } else {
-      _addAddress();
+     _updateAddress();
     }
   }
 
-  _addAddress() async {
+  _updateAddress() async {
     try{
       pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String id = prefs.getString(cnst.Session.id);
-        print(id+" "+address.text+ " " +pincode.text + " "+city.text + " "+state.text+" "+country.text);
+        print("address id :"+addressid+" "+id+" "+edtcountry.text+ " " +edtpincode.text + " "+edtcity.text + " "+edtstate.text+" "+edtcountry.text);
         FormData d = FormData.fromMap({
           "api_key" : API_Key,
-          "address": address.text,
-          "pincode" : pincode.text,
-          "city" : city.text,
-          "state" : state.text,
-          "country" : country.text,
+          "address": edtaddress.text,
+          "pincode" : edtpincode.text,
+          "city" : edtcity.text,
+          "state" : edtstate.text,
+          "country" : edtcountry.text,
           "customer_id" : id,
+          "id" : addressid,
         });
 
         AppServices.AddAddress(d).then((data) async {
@@ -169,6 +183,4 @@ class _Add_AddressState extends State<Add_Address> {
         fontSize: 16.0
     );
   }
-
-
 }

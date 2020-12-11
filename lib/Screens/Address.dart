@@ -1,5 +1,7 @@
+import 'package:crunch/Screens/EditAddress.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'Add_Address.dart';
 import 'package:dio/dio.dart';
 import 'dart:io';
@@ -16,14 +18,17 @@ class Address extends StatefulWidget {
 class _AddressState extends State<Address> {
   bool isLoading = true;
   List _address = List();
+  ProgressDialog pr;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    pr = ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false);
+    pr.style(message: "Please wait..");
     getAddtess();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -36,15 +41,16 @@ class _AddressState extends State<Address> {
             },
             child: Icon(Icons.arrow_back_ios_sharp,color: Colors.black,)),
         backgroundColor: Colors.white,
-        elevation: 0.0,
+        elevation: 1.0,
         title: Text("Address",style: TextStyle(color: Colors.black),),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: _address.length > 0
+      ?SingleChildScrollView(
         child: Container(
           width: size.width,
           height: size.height,
-          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+          padding: EdgeInsets.symmetric(horizontal: 17, vertical: 5.0),
           child: ListView.builder(
               itemCount: _address.length,
               itemBuilder: (context,index){
@@ -72,7 +78,14 @@ class _AddressState extends State<Address> {
                               children: [
                                 IconButton(
                                     icon: Icon(Icons.edit),
-                                    onPressed: (){}
+                                    onPressed: (){
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => EditAddress(
+                                                _address[index],
+                                              )));
+                                    }
                                 ),
                                 IconButton(
                                     icon: Icon(Icons.delete),
@@ -91,7 +104,8 @@ class _AddressState extends State<Address> {
               }
           )
         ),
-      ),
+      )
+      : Center(child: CircularProgressIndicator()),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context) => Add_Address()));
@@ -153,7 +167,7 @@ class _AddressState extends State<Address> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.white.withOpacity(0.3),
+        backgroundColor: Colors.black.withOpacity(0.3),
         textColor: Colors.white,
         fontSize: 16.0
     );
@@ -161,6 +175,7 @@ class _AddressState extends State<Address> {
 
   _deleteAddress(String id) async {
     try {
+      pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         FormData d = FormData.fromMap({
@@ -172,16 +187,20 @@ class _AddressState extends State<Address> {
         });
         print("id is "+id);
         AppServices.deleteAddress(d).then((data) async {
+          pr.hide();
           if (data.value == "y") {
             _toastMesssage(data.message);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Address()));
           } else {
             _toastMesssage("Something went wrong.");
           }
         }, onError: (e) {
+          pr.hide();
           _toastMesssage("Something went wrong.");
         });
       }
     } on SocketException catch (_) {
+      pr.hide();
       _toastMesssage("No Internet Connection.");
     }
   }
