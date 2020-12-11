@@ -26,7 +26,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           border: widget.borderside == null ? null : Border.all(color: widget.textColor.withOpacity(0.2), width: 1),
           borderRadius: BorderRadius.circular(10)),
       child: Padding(
-        padding: const EdgeInsets.only(left: 10,top: 7.0),
+        padding: const EdgeInsets.all(8.0),
         child: TextFormField(
           controller: widget.textcontroller,
           obscureText: widget.obtext,

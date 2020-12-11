@@ -195,7 +195,7 @@ class _Menu_listState extends State<Menu_list> {
                         ],
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width / 1.95,
+                        width: MediaQuery.of(context).size.width * 0.45,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -223,7 +223,7 @@ class _Menu_listState extends State<Menu_list> {
                           ],
                         ),
                       ),
-                      addproduct == false
+                      products[index]['itemallowaddon'] != 0
                           ? GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -264,7 +264,7 @@ class _Menu_listState extends State<Menu_list> {
                               addproduct: addproduct,
                               ontap: () {
                                 setState(() {
-                                  addproduct = false;
+                                  // addproduct = false;
                                 });
                               }),
                     ],

@@ -280,7 +280,7 @@ class _SignUpState extends State<SignUp> {
 
         AppServices.CustomerSignUp(d).then((data) async {
           pr.hide();
-          if(data.value == "y"){
+          if(data.value == "y") {
             print(data.data);
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString(cnst.Session.id, data.data[0]["id"]);
@@ -292,8 +292,13 @@ class _SignUpState extends State<SignUp> {
             prefs.setString(cnst.Session.status, data.data[0]["status"]);
             prefs.setString(cnst.Session.gender, data.data[0]["gender"]);
             print(
-                "id: ${prefs.getString(cnst.Session.id)} gender:${prefs.getString(cnst.Session.gender)}");
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+                "id: ${prefs.getString(cnst.Session.id)} gender:${prefs
+                    .getString(cnst.Session.gender)}");
+            Navigator.pushAndRemoveUntil(
+                context, MaterialPageRoute(builder: (context) => Home()), (
+                route) => false);
+          } else {
+            _toastMesssage(data.message);
           }
         },onError: (e) {
           pr.hide();
@@ -312,7 +317,7 @@ class _SignUpState extends State<SignUp> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.white.withOpacity(0.3),
+        backgroundColor: Colors.black.withOpacity(0.3),
         textColor: Colors.white,
         fontSize: 16.0
     );
@@ -327,7 +332,7 @@ class _SignUpState extends State<SignUp> {
           border: Border.all(color: cnst.AppColors.whitecolor.withOpacity(0.2), width: 1),
           borderRadius: BorderRadius.circular(10)),
       child: Padding(
-        padding: const EdgeInsets.only(top: 5.0),
+        padding: const EdgeInsets.all(1.0),
         child: Row(
           children: [
             Container(

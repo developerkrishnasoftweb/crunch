@@ -212,6 +212,29 @@ class AppServices{
     }
   }
 
+  static Future<SaveDataClass> addrate (body) async {
+    print("body: ${body.toString()}");
+    String url = Base_URL+"rate_now";
+    print("address delete  URL: " + url);
+    dio.options.contentType = Headers.jsonContentType;
+    try {
+      final response = await dio.post(url, data: body);
+      if (response.statusCode == 200) {
+        SaveDataClass saveDataClass =
+        new SaveDataClass(message: 'No Data', value: "n");
+        final jsonResponse = json.decode(response.data);
+        saveDataClass.message = jsonResponse['message'];
+        saveDataClass.value = jsonResponse['status'].toString();
+        return saveDataClass;
+      } else {
+        throw Exception("Something went Wrong");
+      }
+    } catch (e) {
+      print("Error : " + e.toString());
+      throw Exception("Something went wrong");
+    }
+  }
+
 
 
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
@@ -43,13 +44,14 @@ class _HomeState extends State<Home> {
   List Restaurants = List();
   bool isLoading = true;
   List _slider = List();
+  final _random = Random();
   List<CarouselItems> carousel;
 
   @override
   void initState() {
     // TODO: implement initState
     _getData();
-    getSliderData();
+    // getSliderData();
   }
 
   @override
@@ -146,9 +148,9 @@ class _HomeState extends State<Home> {
                     height: size.height * 0.385,
                     child: ListView.builder(
                         shrinkWrap: true,
-                        itemCount: items.length,
+                        itemCount: 7,
                         itemBuilder: (context, index) {
-                          return buildProductItem();
+                          return buildProductItem(ProductItem[index]);
                         }),
                   ),
                 ],
@@ -161,20 +163,70 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Container buildProductItem() {
+  Container buildProductItem(product) {
     return Container(
+      padding: EdgeInsets.symmetric(vertical: 10.0),
         child: Row(
-      children: <Widget>[
-        Image.asset(
-          "assets/products/img1.jpg",
-          height: 150,
-          width: 150,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                    borderRadius: BorderRadius.circular(3),
+                    child: product['item_image_url'] != ""
+                        ?  Image.network(
+                          Image_URL+product['item_image_url'],
+                          // "assets/products/img1.jpg",
+                          height: 85,
+                          width: 100,
+                          fit: BoxFit.fill,
+                          )
+                         : Image.asset(
+                            // Image_URL+product['item_image_url'],
+                            "assets/products/img1.jpg",
+                            height: 85,
+                            width: 100,
+                            fit: BoxFit.fill,
+                          )
+                ),
+                Positioned(
+                  right: 2.0,
+                  top: 2.0,
+                  child: Icon(
+                    Icons.check_box_outlined,
+                    size: 15,
+                    color: cnst.AppColors.greencolor,
+                  ),
+                )
+              ],
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.45,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    product['itemname'],
+                    style: TextStyle(
+                        fontSize: 14.0, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text("\u20B9 "+ product['price'],
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ],
         ),
-        Container(
-          child: Text("Burger"),
-        )
-      ],
-    ));
+    );
   }
 
   Future _getData() async {
@@ -199,6 +251,7 @@ class _HomeState extends State<Home> {
         print("not working");
       }
     });
+    getSliderData();
   }
 
   getSliderData() async {
