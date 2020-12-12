@@ -25,6 +25,7 @@ class AppServices{
             dataClass.data = jsonResponse['success'].toString();
             dataClass.Categories = jsonResponse['categories'];
             dataClass.Restaurant = jsonResponse['restaurants'];
+            dataClass.addongroups = jsonResponse['addongroups'];
             dataClass.Items = jsonResponse['items'];
             print("workiing "+dataClass.Restaurant.toString());
             return dataClass;

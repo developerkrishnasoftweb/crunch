@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/CustomCheckBox.dart';
@@ -8,9 +9,9 @@ import '../Static/Constant.dart' as cnst;
 import 'Home.dart';
 
 class Menu_list extends StatefulWidget {
-  List productitem,restaurants;
+  List productitem,restaurants,addongroup;
   String CategoryId;
-  Menu_list({this.productitem, this.CategoryId,this.restaurants});
+  Menu_list({this.productitem, this.CategoryId,this.restaurants,this.addongroup});
 
   @override
   _Menu_listState createState() => _Menu_listState();
@@ -62,6 +63,7 @@ class _Menu_listState extends State<Menu_list> {
         "\$29.0"),
   ];
 
+
   _getItemsData() {
     for (int i = 0; i < widget.productitem.length; i++) {
       if (widget.productitem[i]["item_categoryid"] == widget.CategoryId) {
@@ -77,14 +79,32 @@ class _Menu_listState extends State<Menu_list> {
         });
       }
     }
+    // _getAddonItemsData();
     // if (int.parse(widget.CategoryId) == widget.productitem[])
+  }
+
+ _getAddonItemsData(index) {
+    for (int i = 0; i < widget.addongroup.length; i++) {
+      for (int j = 0 ; j < widget.productitem[index]['addon'].length; j++) {
+        if (_items[0]['addon'][j]['addon_group_id'] ==
+            widget.addongroup[i]['addongroupid']) {
+          setState(() {
+            isLoading = false;
+          });
+          print("check " + widget.addongroup[i]["addongroupitems"].toString());
+          setState(() {
+            // _items.add(widget.addongroup[i]);
+          });
+        }
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.CategoryId +
-        " " +
-        widget.productitem[0]['item_categoryid'].toString());
+    print(widget.addongroup.length);
+    print(widget.productitem[0]['addon'][0]["addon_group_id"]+" " +
+        widget.addongroup[0]['addongroupid'].toString());
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
@@ -223,12 +243,23 @@ class _Menu_listState extends State<Menu_list> {
                           ],
                         ),
                       ),
-                      products[index]['itemallowaddon'] != 0
+                      products[index]['addon'] != ""
                           ? GestureDetector(
                               onTap: () {
-                                setState(() {
-                                  _settingModalBottomSheet(context);
-                                });
+                                // print(products[index]['addon'][0]['addon_group_id']);
+                                // print("add on "+widget.addongroup[0]["addongroupid"]);
+                                // for(int i = 0; i < widget.addongroup.length; i++ )
+                                //   {
+                                //     for (int j = 0 ; j < products[index]['addon'].length; j++){
+                                //       if(products[0]['addon'][j]['addon_group_id'] == widget.addongroup[i]['addongroupid']) {
+                                //         print("check "+widget.addongroup[i]["addongroupitems"].toString());
+                                //       }
+                                //     }
+                                //   }
+                                _getAddonItemsData(index);
+                                // setState(() {
+                                //   _settingModalBottomSheet(context);
+                                // });
                               },
                               child: Container(
                                   width: 78,

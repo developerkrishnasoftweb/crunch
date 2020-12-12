@@ -45,67 +45,69 @@ class _AddressState extends State<Address> {
         title: Text("Address",style: TextStyle(color: Colors.black),),
         centerTitle: true,
       ),
-      body: _address.length > 0
-      ?SingleChildScrollView(
-        child: Container(
-          width: size.width,
-          height: size.height,
-          padding: EdgeInsets.symmetric(horizontal: 17, vertical: 5.0),
-          child: ListView.builder(
-              itemCount: _address.length,
-              itemBuilder: (context,index){
-                return Card(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10.0,bottom: 10.0,left: 7.0,right: 7.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: size.width * 0.55,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(_address[index]['address']+", "+_address[index]['city']+", "+
-                                  _address[index]['state']+", "+_address[index]['country']+" - "+_address[index]['pincode'],
-                                  style: TextStyle(fontSize: 16.0),),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Row(
+      body: isLoading
+      ?_address.length > 0
+        ?SingleChildScrollView(
+          child: Container(
+            width: size.width,
+            height: size.height,
+            padding: EdgeInsets.symmetric(horizontal: 17, vertical: 5.0),
+            child: ListView.builder(
+                itemCount: _address.length,
+                itemBuilder: (context,index){
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0,bottom: 10.0,left: 7.0,right: 7.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: size.width * 0.55,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: (){
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => EditAddress(
-                                                _address[index],
-                                              )));
-                                    }
-                                ),
-                                IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: (){
-                                      _deleteAddress(_address[index]['id']);
-                                    }
-                                ),
+                                Text(_address[index]['address']+", "+_address[index]['city']+", "+
+                                    _address[index]['state']+", "+_address[index]['country']+" - "+_address[index]['pincode'],
+                                    style: TextStyle(fontSize: 16.0),),
                               ],
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: (){
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => EditAddress(
+                                                  _address[index],
+                                                )));
+                                      }
+                                  ),
+                                  IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: (){
+                                        _deleteAddress(_address[index]['id']);
+                                      }
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }
-          )
-        ),
-      )
-      : Center(child: CircularProgressIndicator()),
+                  );
+                }
+            )
+          ),
+        )
+        : Center(child: CircularProgressIndicator())
+      : Center(child: Text("No address Found",style: TextStyle(fontSize: 17.0),),),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context) => Add_Address()));

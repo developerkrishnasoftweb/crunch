@@ -7,7 +7,7 @@ class DataClass {
   List Items;
   List addongroups;
 
-  DataClass({this.message, this.data, this.Restaurant,this.Categories,this.Items,});
+  DataClass({this.message, this.data, this.Restaurant,this.Categories,this.Items,this.addongroups});
 
   factory DataClass.fromJson(Map<String, dynamic> json) {
     return DataClass(
@@ -15,6 +15,7 @@ class DataClass {
         data: json['data'] as String,
         Restaurant: json['Restaurant'] as List,
         Categories: json['Categories'] as List,
+        addongroups: json['addongroups'] as List,
         Items: json['Items'] as List
     );
   }

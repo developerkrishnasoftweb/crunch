@@ -44,6 +44,7 @@ class _HomeState extends State<Home> {
   List Restaurants = List();
   bool isLoading = true;
   List _slider = List();
+  List Addonitem = List();
   final _random = Random();
   List<CarouselItems> carousel;
 
@@ -128,6 +129,7 @@ class _HomeState extends State<Home> {
                                               ['categoryid'],
                                           productitem: ProductItem,
                                       restaurants: [],
+                                      addongroup: Addonitem,
                                         ))),
                             child: Container(
                               margin: EdgeInsets.all(5.0),
@@ -137,7 +139,9 @@ class _HomeState extends State<Home> {
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(5.0),
                                   image: DecorationImage(
-                                      image: AssetImage("assets/images/cate.png")
+                                      image: CategorysItem[index]['category_image_url'] == ""
+                                          ? AssetImage("assets/images/cate.png")
+                                          : NetworkImage(CategorysItem[index]['category_image_url']),
                                   )),
                             ),
                           );
@@ -246,6 +250,8 @@ class _HomeState extends State<Home> {
           CategorysItem = data.Categories;
           ProductItem = data.Items;
           Restaurants = data.Restaurant;
+          Addonitem = data.addongroups;
+
         });
       } else {
         print("not working");

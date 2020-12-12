@@ -134,7 +134,7 @@ class _SignUpState extends State<SignUp> {
               ),
               child: Container(
                 height: size.height,
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -202,7 +202,8 @@ class _SignUpState extends State<SignUp> {
                     SizedBox(height: 13.0,),
                     CustomTextField(hint: "Confirm Password",obtext: true,textcontroller: ConfirmPassword,textColor: cnst.AppColors.whitecolor,
                       texticon: Icon(Icons.lock_outline_rounded,color: cnst.AppColors.whitecolor,size: 25.0),),
-                    SizedBox(height: 50.0,),
+
+                    SizedBox(height: 40.0,),
                     CustomButton(
                       title: "Sign UP",
                       btncolor: cnst.appPrimaryMaterialColor,
@@ -210,7 +211,7 @@ class _SignUpState extends State<SignUp> {
                         userValidation();
                       },
                     ),
-                    SizedBox(height: 30.0,),
+                    SizedBox(height: 20.0,),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
@@ -326,20 +327,18 @@ class _SignUpState extends State<SignUp> {
   Container buildRadioButton(size,){
     return  Container(
       width: size.width *0.85,
-      height: size.height * 0.07,
       decoration: BoxDecoration(
           color: cnst.AppColors.whitecolor.withOpacity(0.3),
           border: Border.all(color: cnst.AppColors.whitecolor.withOpacity(0.2), width: 1),
           borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(1.0),
+      child: Center(
         child: Row(
           children: [
             Container(
               width: size.width * 0.4,
               child: RadioListTile(
                 groupValue: gender,
-                title: Text('Male',style: TextStyle(color: cnst.AppColors.whitecolor,fontSize: 18.0),),
+                title: Text('Male',style: TextStyle(color: cnst.AppColors.whitecolor,fontSize: 16.0),),
                 value: 'Male',
                 onChanged: (val) {
                   setState(() {
@@ -352,7 +351,7 @@ class _SignUpState extends State<SignUp> {
               width: size.width * 0.4,
               child: RadioListTile(
                 groupValue: gender,
-                title: Text('Female',style: TextStyle(color: cnst.AppColors.whitecolor,fontSize: 18.0),),
+                title: Text('Female',style: TextStyle(color: cnst.AppColors.whitecolor,fontSize: 16.0),),
                 value: 'Female',
                 onChanged: (val) {
                   setState(() {
