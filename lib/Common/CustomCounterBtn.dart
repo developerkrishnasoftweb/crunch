@@ -17,26 +17,28 @@ class _CustomCounterBtnState extends State<CustomCounterBtn> {
   List<int> count = [1, 1, 1];
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          buildIconButton(Icons.remove, widget.index, count, widget.height, widget.width),
-          Container(
-            width: widget.width,
-            height: widget.height,
-            decoration: BoxDecoration(
-                border: Border.all(width: 1),
-              color: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+    return Center(
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            buildIconButton(Icons.remove, widget.index, count, widget.height, widget.width),
+            Container(
+              width: widget.width,
+              height: widget.height,
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1),
+                color: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              ),
+              child: Center(
+                child: Text('${count[0]}',
+                    style: Theme.of(context).textTheme.subtitle1),
+              ),
             ),
-            child: Center(
-              child: Text('${count[0]}',
-                  style: Theme.of(context).textTheme.subtitle1),
-            ),
-          ),
-          buildIconButton(Icons.add, widget.index, count,widget.height, widget.width),
-        ],
+            buildIconButton(Icons.add, widget.index, count,widget.height, widget.width),
+          ],
+        ),
       ),
     );
   }

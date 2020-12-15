@@ -16,10 +16,10 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
           title: Stack(
             overflow: Overflow.visible,
               children: [
-                Text(widget.title),
+                Text(widget.title,style: TextStyle(fontSize: 15.0),),
                 Positioned(
                   right: -17.0,
-                    child: Text("\u20B9${widget.price}"))
+                    child: Text("\u20B9${widget.price}",style: TextStyle(fontSize: 15.0),))
               ],
             ),
           value: widget.cvalue,

@@ -33,6 +33,7 @@ class _Menu_listState extends State<Menu_list> {
   }
   bool isLoading = true;
   List _items = [];
+  List _addonitem = [];
   List<int> count = [1, 1, 1];
   bool addproduct = false;
   bool item1 = true,
@@ -79,21 +80,21 @@ class _Menu_listState extends State<Menu_list> {
         });
       }
     }
-    // _getAddonItemsData();
+    //_getAddonItemsData();
     // if (int.parse(widget.CategoryId) == widget.productitem[])
   }
 
  _getAddonItemsData(index) {
     for (int i = 0; i < widget.addongroup.length; i++) {
       for (int j = 0 ; j < widget.productitem[index]['addon'].length; j++) {
-        if (_items[0]['addon'][j]['addon_group_id'] ==
-            widget.addongroup[i]['addongroupid']) {
+        if (_items[0]['addon'][j]['addon_group_id'] == widget.addongroup[i]['addongroupid']) {
           setState(() {
             isLoading = false;
+            _addonitem.clear();
           });
-          print("check " + widget.addongroup[i]["addongroupitems"].toString());
+          // print("check " + widget.addongroup[i].toString());
           setState(() {
-            // _items.add(widget.addongroup[i]);
+            _addonitem.add(widget.addongroup[i]);
           });
         }
       }
@@ -243,7 +244,7 @@ class _Menu_listState extends State<Menu_list> {
                           ],
                         ),
                       ),
-                      products[index]['addon'] != ""
+                      products[index]['addon'] != "" && products[index]['addon'] != null
                           ? GestureDetector(
                               onTap: () {
                                 // print(products[index]['addon'][0]['addon_group_id']);
@@ -257,9 +258,9 @@ class _Menu_listState extends State<Menu_list> {
                                 //     }
                                 //   }
                                 _getAddonItemsData(index);
-                                // setState(() {
-                                //   _settingModalBottomSheet(context);
-                                // });
+                                setState(() {
+                                  _settingModalBottomSheet(context,_addonitem,products[index]['price']);
+                                });
                               },
                               child: Container(
                                   width: 78,
@@ -307,7 +308,8 @@ class _Menu_listState extends State<Menu_list> {
     );
   }
 
-  _settingModalBottomSheet(context) {
+  _settingModalBottomSheet(context,List _addonitems,price) {
+    print("add "+_addonitems.length.toString());
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -331,80 +333,63 @@ class _Menu_listState extends State<Menu_list> {
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  child: Column(
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  child: ListView.builder(
+                      itemCount: _addonitems.length,
+                      itemBuilder: (context, index){
+                        return  Container(
+                          padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                  title: new Text(_addonitems[index]["addongroup_name"]),
+                                  onTap: () => {}),
+                              Container(
+                                child: ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                   itemCount: _addonitems[index]["addongroupitems"].length,
+                                   itemBuilder: (context,ind){
+                                      return CustomCheckBox(
+                                        title: _addonitems[index]["addongroupitems"][ind]["addonitem_name"],
+                                        price: _addonitems[index]["addongroupitems"][ind]["addonitem_price"],
+                                        cvalue: item1,
+                                      );
+                                    },
+                                ),
+
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                  )
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10, bottom: 10.0),
+                  padding:
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ListTile(
-                          title: new Text("Extra Dip"),
-                          subtitle: Text("You can Choose up to 5 options"),
-                          onTap: () => {}),
-                      CustomCheckBox(
-                        title: "Mexican Mayo Dip",
-                        price: "49",
-                        cvalue: item1,
+                      CustomCounterBtn(
+                        width: 35.0,
+                        height: 43.0,
+                        index: 0,
                       ),
-                      CustomCheckBox(
-                        title: "Mango Jalapeno Dip",
-                        price: "49",
-                        cvalue: item2,
-                      ),
-                      CustomCheckBox(
-                        title: "Mexican Mayo Dip",
-                        price: "49",
-                        cvalue: item3,
-                      ),
-                      CustomCheckBox(
-                        title: "Peri Peri Mayo Dip",
-                        price: "49",
-                        cvalue: item4,
-                      ),
-                      CustomCheckBox(
-                        title: "Brabecue Mayo Dip",
-                        price: "49",
-                        cvalue: item5,
-                      ),
-                      CustomCheckBox(
-                        title: "Cheesy Mayo Dip",
-                        price: "49",
-                        cvalue: item6,
-                      ),
-                      ListTile(
-                          title: new Text("Sprinklers"),
-                          subtitle: Text("Please select any on option"),
-                          onTap: () => {}),
-                      CustomCheckBox(
-                        title: "Peri-peri Sprinkler",
-                        price: "49",
-                        cvalue: item6,
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 10, bottom: 10.0),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomCounterBtn(
-                              width: 30.0,
-                              height: 43.0,
-                              index: 0,
-                            ),
-                            CustomButton(
-                                width: MediaQuery.of(context).size.width * 0.65,
-                                height: 45,
-                                title: "ADD \u20B9308",
-                                btncolor: cnst.appPrimaryMaterialColor,
-                                ontap: () {
-                                  setState(() {
-                                    addproduct = true;
-                                    Navigator.pop(context);
-                                  });
-                                }),
-                          ],
-                        ),
-                      )
+                      CustomButton(
+                          width: MediaQuery.of(context).size.width * 0.65,
+                          height: 45,
+                          title: "ADD \u20B9 "+ price,
+                          btncolor: cnst.appPrimaryMaterialColor,
+                          ontap: () {
+                            setState(() {
+                              addproduct = true;
+                              Navigator.pop(context);
+                            });
+                          }),
                     ],
                   ),
-                ),
+                )
               ],
             ),
           );

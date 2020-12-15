@@ -84,5 +84,6 @@ class CarouselItems {
   final String title, category, categoryId;
   final ImageProvider image;
   final GestureTapCallback onTap;
+
   CarouselItems({@required this.image, this.title, this.category, this.onTap, this.categoryId});
 }

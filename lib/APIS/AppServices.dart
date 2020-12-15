@@ -135,7 +135,7 @@ class AppServices{
       }
     } catch (e) {
       print("Customer Login Error : " + e.toString());
-      throw Exception("Something went wrong");
+      throw Exception(e.toString());
     }
   }
 
