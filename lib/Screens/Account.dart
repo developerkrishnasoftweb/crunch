@@ -58,7 +58,17 @@ class _AccountState extends State<Account> {
                         ),
                         child: Column(
                           children: [
-                            buildMenuItem("MyAccount","Address, Change password, Inquiry, Other "),
+                            ListTile(
+                              onTap:  (){
+                                setState(() {
+                                  visiblemood = !visiblemood;
+                                });
+                              },
+                              contentPadding: EdgeInsets.fromLTRB(12.0,5.0,12.0,5.0),
+                              title: Text("MyAccount",style: TextStyle(),),
+                              subtitle: Text("Address, Change password, Inquiry, Other ",style: TextStyle(fontSize: 13.0),),
+                              trailing: visiblemood == true ?Icon(Icons.arrow_upward_rounded):Icon(Icons.arrow_forward_rounded),
+                            ),
                             Visibility(
                               maintainSize: false,
                               maintainAnimation: true,
@@ -159,17 +169,15 @@ class _AccountState extends State<Account> {
 
   ListTile buildMenuItem(String title,subtitle){
     return ListTile(
+      onTap:  (){
+        setState(() {
+          visiblemood = !visiblemood;
+        });
+      },
       contentPadding: EdgeInsets.fromLTRB(12.0,5.0,12.0,5.0),
       title: Text(title,style: TextStyle(),),
       subtitle: Text(subtitle,style: TextStyle(fontSize: 13.0),),
-      trailing: GestureDetector(
-          onTap: (){
-            setState(() {
-              visiblemood = !visiblemood;
-            });
-          },
-          child: visiblemood == true ?Icon(Icons.arrow_upward_rounded):Icon(Icons.arrow_forward_rounded)
-      ),
+      trailing: visiblemood == true ?Icon(Icons.arrow_upward_rounded):Icon(Icons.arrow_forward_rounded),
     );
   }
 

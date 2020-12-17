@@ -45,8 +45,7 @@ class _AddressState extends State<Address> {
         title: Text("Address",style: TextStyle(color: Colors.black),),
         centerTitle: true,
       ),
-      body: isLoading
-      ?_address.length > 0
+      body: _address.length > 0
         ?SingleChildScrollView(
           child: Container(
             width: size.width,
@@ -106,8 +105,7 @@ class _AddressState extends State<Address> {
             )
           ),
         )
-        : Center(child: CircularProgressIndicator())
-      : Center(child: Text("No address Found",style: TextStyle(fontSize: 17.0),),),
+        : Center(child: CircularProgressIndicator()),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context) => Add_Address()));
