@@ -78,13 +78,12 @@ class _Menu_listState extends State<Menu_list> {
         setState(() {
           _items.add(widget.productitem[i]);
         });
-      }else{
+      } else {
         setState(() {
           isLoading = false;
         });
       }
     }
-    //_getAddonItemsData();
     // if (int.parse(widget.CategoryId) == widget.productitem[])
   }
 
@@ -111,9 +110,6 @@ class _Menu_listState extends State<Menu_list> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.addongroup.length);
-    print(widget.productitem[0]['addon'][0]["addon_group_id"]+" " +
-        widget.addongroup[0]['addongroupid'].toString());
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
