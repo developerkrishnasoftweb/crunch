@@ -34,6 +34,10 @@ class _Menu_listState extends State<Menu_list> {
   bool isLoading = true;
   List _items = [];
   List _addonitem = [];
+  Map<String, bool> values = {
+    '20': false,
+    '50': false,
+  };
   List<int> count = [1, 1, 1];
   bool addproduct = false;
   bool item1 = true,
@@ -91,11 +95,15 @@ class _Menu_listState extends State<Menu_list> {
           setState(() {
             isLoading = false;
             _addonitem.clear();
+            values.remove(widget.addongroup[i]["addongroupitems"][0]["addonitem_price"]);
           });
           // print("check " + widget.addongroup[i].toString());
           setState(() {
+            values.addAll({widget.addongroup[i]["addongroupitems"][0]["addonitem_price"] : false});
+            // values[widget.addongroup[i]["addongroupitems"][0]["addonitem_price"]] = false;
             _addonitem.add(widget.addongroup[i]);
           });
+          print("work inf"+ values.toString());
         }
       }
     }
@@ -340,11 +348,13 @@ class _Menu_listState extends State<Menu_list> {
                         return  Container(
                           padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                           child: Column(
+
                             children: [
                               ListTile(
                                   title: new Text(_addonitems[index]["addongroup_name"]),
                                   onTap: () => {}),
                               Container(
+
                                 child: ListView.builder(
                                   physics: NeverScrollableScrollPhysics(),
                                    itemCount: _addonitems[index]["addongroupitems"].length,
@@ -352,11 +362,11 @@ class _Menu_listState extends State<Menu_list> {
                                       return CustomCheckBox(
                                         title: _addonitems[index]["addongroupitems"][ind]["addonitem_name"],
                                         price: _addonitems[index]["addongroupitems"][ind]["addonitem_price"],
-                                        cvalue: item1,
+                                        cvalue: values[_addonitems[index]["addongroupitems"][ind]["addonitem_price"]],
                                       );
                                     },
                                 ),
-
+                                height: MediaQuery.of(context).size.height * 0.3,
                               ),
                             ],
                           ),
@@ -382,6 +392,7 @@ class _Menu_listState extends State<Menu_list> {
                           title: "ADD \u20B9 "+ price,
                           btncolor: cnst.appPrimaryMaterialColor,
                           ontap: () {
+                            print("all done "+values.toString());
                             setState(() {
                               addproduct = true;
                               Navigator.pop(context);

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class CustomCheckBox extends StatefulWidget {
   String title,price;
   bool cvalue;
-  CustomCheckBox({this.title,this.price,this.cvalue});
+  Function onchange;
+  CustomCheckBox({this.title,this.price,this.cvalue,this.onchange});
   @override
   _CustomCheckBoxState createState() => _CustomCheckBoxState();
 }
@@ -23,8 +24,8 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
               ],
             ),
           value: widget.cvalue,
+          // onChanged: widget.onchange,
           onChanged: (val){
-            print(widget.cvalue);
             setState(() {
               return widget.cvalue = val;
             });
