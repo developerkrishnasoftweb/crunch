@@ -104,7 +104,7 @@ class _HomeState extends State<Home> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      Categorys(category: CategorysItem,productitem: ProductItem,)));
+                                      Categorys(category: CategorysItem,productitem: ProductItem,addonitem: Addonitem,)));
                         },
                         // padding: const EdgeInsets.only(right: 15.0),
                         child: Text("see more"),

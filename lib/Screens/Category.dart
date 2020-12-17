@@ -5,8 +5,8 @@ import 'Menu_List.dart';
 import 'setLocation.dart';
 
 class Categorys extends StatefulWidget {
-  List category,productitem;
-  Categorys({this.category,this.productitem});
+  List category,productitem,addonitem;
+  Categorys({this.category,this.productitem,this.addonitem});
   @override
   _CategorysState createState() => _CategorysState();
 }
@@ -71,6 +71,7 @@ class _CategorysState extends State<Categorys> {
           CategoryId: widget.category[index]['categoryid'],
           productitem: widget.productitem,
           restaurants: [],
+          addongroup: widget.addonitem,
         )));
       },
       child: Container(

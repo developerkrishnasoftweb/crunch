@@ -296,7 +296,7 @@ class _Menu_listState extends State<Menu_list> {
                           : CustomCounterBtn(
                               width: 26.0,
                               height: 27.0,
-                              index: 0,
+                              index: index,
                               addproduct: addproduct,
                               ontap: () {
                                 setState(() {
