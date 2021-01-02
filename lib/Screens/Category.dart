@@ -106,7 +106,8 @@ class _CategorysState extends State<Categorys> {
                     stops: [
                       0.0,
                       1.0
-                    ])),
+                    ]
+                )),
           ),
           Align(
             alignment: Alignment(0.0, 0.03),

@@ -1,10 +1,6 @@
 import 'dart:convert';
-
-import 'package:crunch/Screens/Address.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-
 import 'Class.dart';
 import 'ClassList.dart';
 import 'Constants.dart';
@@ -236,6 +232,38 @@ class AppServices{
     }
   }
 
+  static Future<FetchMenu> fetchMenu() async{
+    String url = "http://52.76.48.26:4524/petpoojabilling_api/V1/pendingorders/mapped_restaurant_menus/";
+    var headers = {
+      'Content-Type': 'text/plain',
+      'Cookie': 'CAKEPHP=ikabifbaphe2m3eobl92here51'
+    };
+    try{
+      var request = http.Request('POST',Uri.parse(url));
+      request.body = '''{
+        "access_token": "04fc7877ce7e5f771328b2a1434cb040ad1b2c0f",
+        "app_key": "f14qd3se9a6juzbmoit85c0nrvhykgwp",
+        "app_secret": "0ecb9930ec89b68dbc923d3ecedc43f37901cf61",
+        "restID": "k13cv5ho",
+        "last_updated_on": "",
+        "data_type": "json"
+      }''';
+      request.headers.addAll(headers);
+      http.StreamedResponse response = await request.send();
+      if(response.statusCode == 200){
+        FetchMenu data;
+        var fetchedData = jsonDecode(await response.stream.bytesToString());
+        data = FetchMenu.fromJson(fetchedData);
+        return data;
+      } else {
+        print(response.reasonPhrase);
+      }
+      return null;
+    } catch (e) {
+      FetchMenu data = FetchMenu(message: "Something went wrong");
+      return data;
+    }
+  }
 
 
 }

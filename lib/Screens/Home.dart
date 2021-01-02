@@ -10,6 +10,8 @@ import 'package:crunch/Screens/Menu_List.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:sqflite/sqflite.dart';
 import '../Static/Constant.dart' as cnst;
 import 'Category.dart';
 import 'setLocation.dart';
@@ -55,6 +57,29 @@ class _HomeState extends State<Home> {
     // getSliderData();
   }
 
+  _setData() async {
+    String tablesList;
+    var databasesPath = await getDatabasesPath();
+    var db = await openDatabase(databasesPath + 'myDb.db', version: 1, onCreate: (Database db, int version) async {
+    });
+    // db.execute("drop table if exists restaurant");
+    // db.execute("drop table if exists ordertype");
+    // db.execute("drop table if exists category");
+    db.execute("create table if not exists restaurant (menusharingcode varchar(20), restaurantname varchar(50), address text, contact varchar(20), lat varchar(20), lang varchar(20), landmark varchar(50), city varchar(20), state varchar(30), minimumorderamount varchar(5), minimumdeliverytime varchar(30), deliverycharge varchar(5), packaging_charge varchar(15), packaging_charge_type varchar(20))");
+    db.execute("create table if not exists ordertype (ordertypeid varchar(3), ordertype varchar(15))");
+    db.execute("create table if not exists `category` (categoryid varchar(6), `active` varchar(2), categoryrank varchar(2), parent_category_id varchar(2), categoryname varchar(30), categorytimings varchar(50), category_image_url text)");
+    db.execute("insert into ordertype values('2','Book-Table')");
+    var res = await db.rawQuery("select * from ordertype");
+    print(res.length);
+    AppServices.fetchMenu().then((menuList) {
+      if(menuList.response == "1"){
+
+      } else {
+
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -70,7 +95,8 @@ class _HomeState extends State<Home> {
         actions: [
           GestureDetector(
             onTap: () {
-              getSliderData();
+              _setData();
+              // getSliderData();
               // _getData();
               // Navigator.push(context, MaterialPageRoute(builder: (context) => SetLocation()));
             },
