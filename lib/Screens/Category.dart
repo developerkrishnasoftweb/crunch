@@ -99,14 +99,14 @@ class _CategorysState extends State<Categorys> {
                 gradient: LinearGradient(
                     begin: FractionalOffset.topLeft,
                     end: FractionalOffset.bottomLeft,
-                    colors: [
-                      Colors.pinkAccent.withOpacity(0.4),
-                      Colors.pinkAccent.withOpacity(0.4),
-                    ],
-                    stops: [
-                      0.0,
-                      1.0
-                    ]
+                    // colors: [
+                    //   Colors.pinkAccent.withOpacity(0.4),
+                    //   Colors.pinkAccent.withOpacity(0.4),
+                    // ],
+                    // stops: [
+                    //   0.0,
+                    //   1.0
+                    // ]
                 )),
           ),
           Align(
