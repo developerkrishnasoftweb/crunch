@@ -128,9 +128,15 @@ class _HomeState extends State<Home> {
           db.execute("insert into `$tableAddOnGroups` values ('${menuList.addOnGroups[i]["addongroupid"]}', '${menuList.addOnGroups[i]["addongroup_rank"]}', '${menuList.addOnGroups[i]["active"]}', '${jsonEncode(menuList.addOnGroups[i]["addongroupitems"])}', '${menuList.addOnGroups[i]["addongroup_name"]}')");
         }
         for (int i = 0; i < menuList.attributes.length; i++) {
-          db.execute("insert into `$tableAttributes` values ('${menuList.attributes[i][""]}')");
+          db.execute("insert into `$tableAttributes` values ('${menuList.attributes[i]["attributeid"]}', '${menuList.attributes[i]["attribute"]}', '${menuList.attributes[i]["active"]}')");
         }
-        var result = await db.rawQuery("select * from `$tableAddOnGroups`");
+        for (int i = 0; i < menuList.discounts.length; i++) {
+          db.execute("insert into `$tableDiscounts` values ('${menuList.discounts[i]["discountid"]}', '${menuList.discounts[i]["discountname"]}', '${menuList.discounts[i]["discounttype"]}', '${menuList.discounts[i]["discount"]}', '${menuList.discounts[i]["discountordertype"]}', '${menuList.discounts[i]["discountapplicableon"]}', '${menuList.discounts[i]["discountdays"]}', '${menuList.discounts[i]["active"]}', '${menuList.discounts[i]["discountontotal"]}', '${menuList.discounts[i]["discountstarts"]}', '${menuList.discounts[i]["discountends"]}', '${menuList.discounts[i]["discounttimefrom"]}', '${menuList.discounts[i]["discounttimeto"]}', '${menuList.discounts[i]["discountminamount"]}', '${menuList.discounts[i]["discountmaxamount"]}', '${menuList.discounts[i]["discounthascoupon"]}', '${menuList.discounts[i]["discountcategoryitemids"]}', '${menuList.discounts[i]["discountmaxlimit"]}')");
+        }
+        for (int i = 0; i < menuList.taxes.length; i++) {
+
+        }
+        var result = await db.rawQuery("select * from `$tableDiscounts`");
         print(result.length);
       } else {}
     });
