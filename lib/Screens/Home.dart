@@ -9,6 +9,7 @@ import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Screens/Menu_List.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
@@ -134,10 +135,12 @@ class _HomeState extends State<Home> {
           db.execute("insert into `$tableDiscounts` values ('${menuList.discounts[i]["discountid"]}', '${menuList.discounts[i]["discountname"]}', '${menuList.discounts[i]["discounttype"]}', '${menuList.discounts[i]["discount"]}', '${menuList.discounts[i]["discountordertype"]}', '${menuList.discounts[i]["discountapplicableon"]}', '${menuList.discounts[i]["discountdays"]}', '${menuList.discounts[i]["active"]}', '${menuList.discounts[i]["discountontotal"]}', '${menuList.discounts[i]["discountstarts"]}', '${menuList.discounts[i]["discountends"]}', '${menuList.discounts[i]["discounttimefrom"]}', '${menuList.discounts[i]["discounttimeto"]}', '${menuList.discounts[i]["discountminamount"]}', '${menuList.discounts[i]["discountmaxamount"]}', '${menuList.discounts[i]["discounthascoupon"]}', '${menuList.discounts[i]["discountcategoryitemids"]}', '${menuList.discounts[i]["discountmaxlimit"]}')");
         }
         for (int i = 0; i < menuList.taxes.length; i++) {
-
+          db.execute("insert into `$tableTaxes` values ('${menuList.taxes[i]["taxid"]}', '${menuList.taxes[i]["taxname"]}', '${menuList.taxes[i]["tax"]}', '${menuList.taxes[i]["taxtype"]}', '${menuList.taxes[i]["tax_ordertype"]}', '${menuList.taxes[i]["active"]}', '${menuList.taxes[i]["tax_coreortotal"]}', '${menuList.taxes[i]["tax_taxtype"]}', '${menuList.taxes[i]["rank"]}', '${menuList.taxes[i]["description"]}')");
         }
-        var result = await db.rawQuery("select * from `$tableDiscounts`");
-        print(result.length);
+        var categories = await db.rawQuery("select * from `$tableCategory`");
+        setState(() {
+          CategorysItem = categories;
+        });
       } else {}
     });
   }
@@ -173,35 +176,34 @@ class _HomeState extends State<Home> {
                   ),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: SizedBox(
-                      height: 17.0,
-                      child: FlatButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Categorys(
-                                        category: CategorysItem,
-                                        productitem: ProductItem,
-                                        addonitem: Addonitem,
-                                      )));
-                        },
-                        // padding: const EdgeInsets.only(right: 15.0),
-                        child: Text("see more"),
-                      ),
+                    child: FlatButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Categorys(
+                                  category: CategorysItem,
+                                  productitem: ProductItem,
+                                  addonitem: Addonitem,
+                                )));
+                      },
+                      // padding: const EdgeInsets.only(right: 15.0),
+                      child: Text("see more"),
                     ),
                   ),
-                  Container(
+                  CategorysItem.length > 0 ? Container(
                       width: size.width * 0.95,
-                      height: size.height * 0.14,
-                      child: ListView.builder(
+                      height: 35,
+                      child: ListView.separated(
+                        separatorBuilder: (context, index){
+                          return SizedBox(width: 10,);
+                        },
                         itemCount: 8,
-                        semanticChildCount: 3,
                         addAutomaticKeepAlives: true,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () => Navigator.push(
+                          return FlatButton(
+                            onPressed: () { /*Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => Menu_list(
@@ -210,26 +212,12 @@ class _HomeState extends State<Home> {
                                           productitem: ProductItem,
                                           restaurants: [],
                                           addongroup: Addonitem,
-                                        ))),
-                            child: Container(
-                              margin: EdgeInsets.all(5.0),
-                              width: 120,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  image: DecorationImage(
-                                    image: CategorysItem[index]
-                                                ['category_image_url'] ==
-                                            ""
-                                        ? AssetImage("assets/images/cate.png")
-                                        : NetworkImage(CategorysItem[index]
-                                            ['category_image_url']),
-                                  )),
-                            ),
+                                        ))) */ },
+                            child: Text(CategorysItem[index]["categoryname"]),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40), side: BorderSide(color: Colors.grey)),
                           );
                         },
-                      )),
+                      )) : SizedBox(),
                   Container(
                     width: size.width * 0.95,
                     height: size.height * 0.385,
@@ -324,10 +312,8 @@ class _HomeState extends State<Home> {
     };
     await AppServices.getCategories(d).then((data) {
       if (data.data == "1") {
-        // print(""+data.value[0]['details'].toString());
-        // print("helooo "+data.Categories.length.toString());
         setState(() {
-          CategorysItem = data.Categories;
+          // CategorysItem = data.Categories;
           ProductItem = data.Items;
           Restaurants = data.Restaurant;
           Addonitem = data.addongroups;

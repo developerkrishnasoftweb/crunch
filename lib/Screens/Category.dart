@@ -51,7 +51,7 @@ class _CategorysState extends State<Categorys> {
                   child: ListView.builder(
                       itemCount: widget.category.length,
                       itemBuilder: (context, index) {
-                        return buildList(size, index,widget.category);
+                        return buildList(size, widget.category[index]);
                       }),
                 ),
               ),
@@ -63,16 +63,16 @@ class _CategorysState extends State<Categorys> {
     );
   }
 
-  GestureDetector buildList(size, index,List _categorys) {
+  GestureDetector buildList(size, category) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Menu_list(
-          CategoryId: widget.category[index]['categoryid'],
-          productitem: widget.productitem,
-          restaurants: [],
-          addongroup: widget.addonitem,
-        )));
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => Menu_list(
+        //   CategoryId: widget.category[index]['categoryid'],
+        //   productitem: widget.productitem,
+        //   restaurants: [],
+        //   addongroup: widget.addonitem,
+        // )));
       },
       child: Container(
         width: size.width * 0.9,
@@ -99,21 +99,21 @@ class _CategorysState extends State<Categorys> {
                 gradient: LinearGradient(
                     begin: FractionalOffset.topLeft,
                     end: FractionalOffset.bottomLeft,
-                    // colors: [
-                    //   Colors.pinkAccent.withOpacity(0.4),
-                    //   Colors.pinkAccent.withOpacity(0.4),
-                    // ],
-                    // stops: [
-                    //   0.0,
-                    //   1.0
-                    // ]
+                    colors: [
+                      Colors.pinkAccent.withOpacity(0.4),
+                      Colors.pinkAccent.withOpacity(0.4),
+                    ],
+                    stops: [
+                      0.0,
+                      1.0
+                    ]
                 )),
           ),
           Align(
             alignment: Alignment(0.0, 0.03),
             child: Container(
               child: Text(
-                _categorys[index]["categoryname"],
+                category["categoryname"],
                 style: TextStyle(fontSize: 27.0, color: Colors.white),
               ),
             ),
