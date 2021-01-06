@@ -69,7 +69,6 @@ class _LoginState extends State<Login> {
       setState(() {
         fcm = token;
       });
-      print("fcm: ${token}");
     });
     getLocal();
   }
@@ -189,9 +188,6 @@ class _LoginState extends State<Login> {
       pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
-        print(Email.text + "  "+Password.text+ " "+fcm+ " ");
-
         FormData d = FormData.fromMap({
           "api_key" : API_Key,
           "username" : Email.text,
@@ -202,7 +198,6 @@ class _LoginState extends State<Login> {
         AppServices.CustomerLogin(d).then((data) async {
           pr.hide();
           if(data.value == "y"){
-            print("VAlue "+data.data[0]['name']);
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString(cnst.Session.id, data.data[0]["id"]);
             prefs.setString(cnst.Session.name, data.data[0]["name"]);
@@ -212,9 +207,6 @@ class _LoginState extends State<Login> {
             prefs.setString(cnst.Session.image, data.data[0]["image"]);
             prefs.setString(cnst.Session.status, data.data[0]["status"]);
             prefs.setString(cnst.Session.gender, data.data[0]["gender"]);
-            print(
-                "id: ${prefs.getString(cnst.Session.id)} gender:${prefs.getString(cnst.Session.gender)}");
-            _toastMesssage(data.message);
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
           }
           else {
@@ -222,13 +214,10 @@ class _LoginState extends State<Login> {
           }
         }, onError: (e) {
           pr.hide();
-          print("Something went wrong.");
         });
       }
     }catch(e){
-      print(e);
       pr.hide();
-      print("No Internet Connection");
     }
   }
 

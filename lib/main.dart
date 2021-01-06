@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/LoginScreen/SignUp.dart';
 import 'package:crunch/Screens/Category.dart';
 import 'package:crunch/Screens/ChangePassword.dart';
@@ -14,6 +15,7 @@ import 'Screens/Home.dart';
 import 'Static/Constant.dart' as cnst;
 
 void main() {
+  SQFLiteTables();
   runApp(MyApp());
 }
 

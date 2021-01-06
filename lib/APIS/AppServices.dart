@@ -23,21 +23,21 @@ class AppServices{
             dataClass.Restaurant = jsonResponse['restaurants'];
             dataClass.addongroups = jsonResponse['addongroups'];
             dataClass.Items = jsonResponse['items'];
-            print("workiing "+dataClass.Restaurant.toString());
+            // print("workiing "+dataClass.Restaurant.toString());
             return dataClass;
           } else {
             throw Exception('Failed to load');
           }
         }catch(e){
-          print("Categories Error : " + e.toString());
+          // print("Categories Error : " + e.toString());
           throw Exception("Something went wrong");
         }
   }
 
   static Future<SaveDataClass> getSlider(body) async {
-    print("body: ${body.toString()}");
+    // print("body: ${body.toString()}");
     String url = Base_URL+"sliders";
-    print("Slider  URL: " + url);
+    // print("Slider  URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
@@ -48,27 +48,27 @@ class AppServices{
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'].toString();
         saveDataClass.data = jsonResponse['banners'];
-        print("Seller Registration Responce: ${jsonResponse}");
+        // print("Seller Registration Responce: ${jsonResponse}");
         return saveDataClass;
       } else {
         throw Exception("Something went Wrong");
       }
     } catch (e) {
-      print("Seller Registration Error : " + e.toString());
+      // print("Seller Registration Error : " + e.toString());
       throw Exception("Something went wrong");
     }
   }
 
   static Future<SaveDataClass> CustomerLogin(body) async {
     String url = Base_URL + 'login';
-    print("Login URL: ${url}");
+    // print("Login URL: ${url}");
     try {
       final response = await dio.post(url, data: body);
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
         new SaveDataClass(message: 'No Data', value: "n");
         final jsonResponse = json.decode(response.data);
-        print("Customer Login Responce: ${jsonResponse}");
+        // print("Customer Login Responce: ${jsonResponse}");
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'].toString();
         List list = [];
@@ -92,21 +92,21 @@ class AppServices{
         throw Exception("Something went Wrong");
       }
     } catch (e) {
-      print("Customer Login Error : " + e.toString());
+      // print("Customer Login Error : " + e.toString());
       throw Exception("Something went wrong");
     }
   }
 
   static Future<SaveDataClass> CustomerSignUp(body) async {
     String url = Base_URL + 'register';
-    print("Register URL: ${url}");
+    // print("Register URL: ${url}");
     try {
       final response = await dio.post(url, data: body);
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
         new SaveDataClass(message: 'No Data', value: "n");
         final jsonResponse = json.decode(response.data);
-        print("Customer SignUp Responce: ${jsonResponse}");
+        // print("Customer SignUp Responce: ${jsonResponse}");
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'].toString();
         List list = [];
@@ -130,15 +130,15 @@ class AppServices{
         throw Exception("Something went Wrong");
       }
     } catch (e) {
-      print("Customer Login Error : " + e.toString());
+      // print("Customer Login Error : " + e.toString());
       throw Exception(e.toString());
     }
   }
 
   static Future<SaveDataClass> getAddress(body) async {
-    print("body: ${body.toString()}");
+    // print("body: ${body.toString()}");
     String url = Base_URL+"customer_address";
-    print("address  URL: " + url);
+    // print("address  URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
@@ -149,21 +149,21 @@ class AppServices{
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'].toString();
         saveDataClass.data = jsonResponse['address'];
-        print("Customer Address Responce: ${jsonResponse}");
+        // print("Customer Address Responce: ${jsonResponse}");
         return saveDataClass;
       } else {
         throw Exception("Something went Wrong");
       }
     } catch (e) {
-      print("Error : " + e.toString());
+      // print("Error : " + e.toString());
       throw Exception("Something went wrong");
     }
   }
 
   static Future<SaveDataClass> AddAddress (body) async {
-    print("body: ${body.toString()}");
+    // print("body: ${body.toString()}");
     String url = Base_URL+"add_address";
-    print("address Add  URL: " + url);
+    // print("address Add  URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
@@ -174,21 +174,21 @@ class AppServices{
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'].toString();
         saveDataClass.data = jsonResponse['address'];
-        print("Customer Address Responce: ${jsonResponse}");
+        // print("Customer Address Responce: ${jsonResponse}");
         return saveDataClass;
       } else {
         throw Exception("Something went Wrong");
       }
     } catch (e) {
-      print("Error : " + e.toString());
+      // print("Error : " + e.toString());
       throw Exception("Something went wrong");
     }
   }
 
   static Future<SaveDataClass> deleteAddress (body) async {
-    print("body: ${body.toString()}");
+    // print("body: ${body.toString()}");
     String url = Base_URL+"delete_address";
-    print("address delete  URL: " + url);
+    // print("address delete  URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
@@ -198,21 +198,21 @@ class AppServices{
         final jsonResponse = json.decode(response.data);
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'].toString();
-        print("Customer Address Responce: ${jsonResponse}");
+        // print("Customer Address Responce: ${jsonResponse}");
         return saveDataClass;
       } else {
         throw Exception("Something went Wrong");
       }
     } catch (e) {
-      print("Error : " + e.toString());
+      // print("Error : " + e.toString());
       throw Exception("Something went wrong");
     }
   }
 
   static Future<SaveDataClass> addrate (body) async {
-    print("body: ${body.toString()}");
+    // print("body: ${body.toString()}");
     String url = Base_URL+"rate_now";
-    print("address delete  URL: " + url);
+    // print("address delete  URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
@@ -227,11 +227,14 @@ class AppServices{
         throw Exception("Something went Wrong");
       }
     } catch (e) {
-      print("Error : " + e.toString());
+      // print("Error : " + e.toString());
       throw Exception("Something went wrong");
     }
   }
 
+  /*
+  * Fetch restaurants menu and data
+  * */
   static Future<FetchMenu> fetchMenu() async{
     String url = "http://52.76.48.26:4524/petpoojabilling_api/V1/pendingorders/mapped_restaurant_menus/";
     var headers = {
@@ -256,7 +259,7 @@ class AppServices{
         data = FetchMenu.fromJson(fetchedData);
         return data;
       } else {
-        print(response.reasonPhrase);
+        // print(response.reasonPhrase);
       }
       return null;
     } catch (e) {
@@ -264,6 +267,5 @@ class AppServices{
       return data;
     }
   }
-
 
 }
