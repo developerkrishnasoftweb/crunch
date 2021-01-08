@@ -12,11 +12,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'LoginScreen/Login.dart';
 import 'Screens/Home.dart';
+import 'Screens/new_home.dart';
 import 'Static/Constant.dart' as cnst;
 
 void main() {
-  SQFLiteTables();
   runApp(MyApp());
+  SQFLiteTables();
 }
 
 class MyApp extends StatefulWidget {
@@ -56,7 +57,7 @@ class _MyAppState extends State<MyApp> {
       ),
       initialRoute: "/",
       routes: {
-        "/" : (context) => Login(),
+        "/" : (context) => Home(),
         // "/SignUp" : (context) => SignUp(),
         // "/ForgotPassword" : (context) => Login(),
         // "/Home" : (context) => Home(),

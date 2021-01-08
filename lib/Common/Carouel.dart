@@ -26,13 +26,21 @@ class _CarouselState extends State<Carousel> {
             items: widget.items.map((item) {
               return GestureDetector(
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  alignment: Alignment.bottomCenter,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: item.image,
                       fit: BoxFit.fill,
                     ),
                     borderRadius: widget.borderRadius ?? null,
+                  ),
+                  child: Container(
+                    height: 50,
+                    width: widget.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.8),
+                      borderRadius: widget.borderRadius,
+                    ),
                   ),
                 ),
                 onTap: item.onTap,
@@ -45,7 +53,7 @@ class _CarouselState extends State<Carousel> {
                 viewportFraction: 1,
                 aspectRatio: 16 / 9,
                 // autoPlayCurve: Curves.easeInToLinear,
-                // enlargeCenterPage: true,
+                enlargeCenterPage: true,
                 autoPlayAnimationDuration: Duration(milliseconds: 900),
                 onPageChanged: (index, reason) {
                   setState(() {
@@ -53,27 +61,6 @@ class _CarouselState extends State<Carousel> {
                   });
                 }),
           ),
-          // Container(
-          //   height: 20,
-          //   width: widget.width,
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: widget.items.map((i) {
-          //       int index = widget.items.indexOf(i);
-          //       return AnimatedContainer(
-          //         duration: Duration(milliseconds: 800),
-          //         margin: EdgeInsets.symmetric(horizontal: 2),
-          //         height: 10,
-          //         width: _index == index ? 25 : 10,
-          //         decoration: BoxDecoration(
-          //           border: Border.all(color: cnst.appPrimaryMaterialColor, width: 2),
-          //           color: cnst.AppColors.greencolor,
-          //           borderRadius: BorderRadius.circular(10),
-          //         ),
-          //       );
-          //     }).toList(),
-          //   ),
-          // )
         ],
       ),
     );

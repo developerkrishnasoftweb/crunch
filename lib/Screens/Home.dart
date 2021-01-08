@@ -1,4 +1,4 @@
-import 'dart:convert';
+/*import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
@@ -216,7 +216,7 @@ class _HomeState extends State<Home> {
   }
 
   Future _getData() async {
-    var d = {
+    var data = {
       "access_token": "04fc7877ce7e5f771328b2a1434cb040ad1b2c0f",
       "app_key": "f14qd3se9a6juzbmoit85c0nrvhykgwp",
       "app_secret": "0ecb9930ec89b68dbc923d3ecedc43f37901cf61",
@@ -224,7 +224,7 @@ class _HomeState extends State<Home> {
       "last_updated_on": "",
       "data_type": "json"
     };
-    await AppServices.getCategories(d).then((data) {
+    await AppServices.getCategories(data).then((data) {
       if (data.data == "1") {
         setState(() {
           // CategorysItem = data.Categories;
@@ -310,3 +310,4 @@ class _HomeState extends State<Home> {
     );
   }
 }
+*/

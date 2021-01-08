@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:crunch/Screens/Home.dart';
+import 'package:crunch/Screens/new_home.dart';
 import 'package:dio/dio.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';

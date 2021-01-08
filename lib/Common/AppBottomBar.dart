@@ -2,6 +2,7 @@ import 'package:crunch/Screens/Account.dart';
 import 'package:crunch/Screens/Home.dart';
 import 'package:crunch/Screens/Menu_List.dart';
 import 'package:crunch/Screens/Rating.dart';
+import 'package:crunch/Screens/new_home.dart';
 import 'package:flutter/material.dart';
 import '../Static/Constant.dart' as cnst;
 class AppBottomBar extends StatefulWidget {

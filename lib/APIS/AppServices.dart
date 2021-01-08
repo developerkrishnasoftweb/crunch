@@ -35,9 +35,7 @@ class AppServices{
   }
 
   static Future<SaveDataClass> getSlider(body) async {
-    // print("body: ${body.toString()}");
     String url = Base_URL+"sliders";
-    // print("Slider  URL: " + url);
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
@@ -47,8 +45,7 @@ class AppServices{
         final jsonResponse = json.decode(response.data);
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'].toString();
-        saveDataClass.data = jsonResponse['banners'];
-        // print("Seller Registration Responce: ${jsonResponse}");
+        saveDataClass.data = jsonResponse['data'];
         return saveDataClass;
       } else {
         throw Exception("Something went Wrong");

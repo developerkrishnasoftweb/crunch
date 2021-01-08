@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Screens/Home.dart';
+import 'package:crunch/Screens/new_home.dart';
 import 'package:dio/dio.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';

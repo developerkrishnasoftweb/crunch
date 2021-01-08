@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../Static/Constant.dart' as cnst;
 
 import 'Home.dart';
+import 'new_home.dart';
 
 class SetLocation extends StatefulWidget {
   @override

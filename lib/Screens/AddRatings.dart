@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../Static/Constant.dart' as cnst;
+import 'new_home.dart';
 
 class AddRatings extends StatefulWidget {
   @override
