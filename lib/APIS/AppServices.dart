@@ -34,18 +34,17 @@ class AppServices{
         }
   }
 
-  static Future<SaveDataClass> getSlider(body) async {
+  static Future<SaveDataClass> getSlider() async {
     String url = Base_URL+"sliders";
     dio.options.contentType = Headers.jsonContentType;
     try {
-      final response = await dio.post(url, data: body);
+      final response = await dio.post(url, data: FormData.fromMap({"api_key" : "0imfnc8mVLWwsAawjYr4Rx"}));
       if (response.statusCode == 200) {
-        SaveDataClass saveDataClass =
-        new SaveDataClass(message: 'No Data', value: "n");
+        SaveDataClass saveDataClass = new SaveDataClass();
         final jsonResponse = json.decode(response.data);
-        saveDataClass.message = jsonResponse['message'];
-        saveDataClass.value = jsonResponse['status'].toString();
-        saveDataClass.data = jsonResponse['data'];
+        saveDataClass.message = "Data fetched successfully";
+        saveDataClass.value = jsonResponse["status"];
+        saveDataClass.data = [jsonResponse["data"]];
         return saveDataClass;
       } else {
         throw Exception("Something went Wrong");

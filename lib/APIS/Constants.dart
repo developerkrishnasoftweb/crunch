@@ -28,43 +28,36 @@ class SQFLiteTables {
       tableDiscounts = "discounts",
       tableTaxes = "taxes";
   static Future<bool> createTables({Database db}) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var isTablesCreated = sharedPreferences.getBool("isTablesCreated");
-    if(isTablesCreated != null && isTablesCreated) {
-      await db.execute("drop table if exists $tableRestaurants");
-      await db.execute("drop table if exists $tableOrderType");
-      await db.execute("drop table if exists $tableCategory");
-      await db.execute("drop table if exists $tableItems");
-      await db.execute("drop table if exists $tableVariations");
-      await db.execute("drop table if exists $tableAddOnGroups");
-      await db.execute("drop table if exists $tableAttributes");
-      await db.execute("drop table if exists $tableDiscounts");
-      await db.execute("drop table if exists $tableTaxes");
-      await db.execute(
-          "create table if not exists `$tableRestaurants` (`restaurantid` varchar(10), `menusharingcode` varchar(20), `restaurantname` varchar(50), `address` text, `contact` varchar(20), `lat` varchar(20), `lang` varchar(20), `landmark` varchar(50), `city` varchar(20), `state` varchar(30), `minimumorderamount` varchar(5), `minimumdeliverytime` varchar(30), `deliverycharge` varchar(5), `packaging_charge` varchar(15), `packaging_charge_type` varchar(20))");
-      await db.execute(
-          "create table if not exists `$tableOrderType` (`ordertypeid` varchar(3), `ordertype` varchar(15))");
-      await db.execute(
-          "create table if not exists `$tableCategory` (`categoryid` varchar(6), `active` varchar(3), `categoryrank` varchar(2), `parent_category_id` varchar(2), `categoryname` varchar(30), `categorytimings` varchar(50), `category_image_url` text)");
-      await db.execute(
-          "create table if not exists `$tableItems` (`itemid` varchar(100),`itemallowvariation` varchar(100),`itemrank` varchar(100),`item_categoryid` varchar(100),`item_ordertype` varchar(100),`item_packingcharges` varchar(100),`itemallowaddon` varchar(100),`itemaddonbasedon` varchar(100),`item_favorite` varchar(100),`ignore_taxes` varchar(100),`ignore_discounts` varchar(100),`in_stock` varchar(100),`variation` text, `addon` text, `itemname` varchar(100), `itemdescription` varchar(200), `price` varchar(4), `image` varchar(100), item_tax varchar(50), preparationtime varchar(5))");
-      await db.execute(
-          "create table if not exists `$tableVariations` (`variationid` varchar(100),`name` varchar(100),`groupname` varchar(100),`status` varchar(1))");
-      await db.execute(
-          "create table if not exists `$tableAddOnGroups`(`addongroupid` varchar(100),`addongroup_rank` varchar(100),`active` varchar(1), `addongroupitems` text, `addongroupname` varchar(50))");
-      await db.execute(
-          "create table if not exists `$tableAttributes` (`attributeid` varchar(100),`attribute` varchar(100),`active` varchar(1))");
-      await db.execute(
-          "create table if not exists `$tableDiscounts` (`discountid` varchar(100),`discountname` varchar(100),`discounttype` varchar(100),`discount` varchar(100),`discountordertype` varchar(100),`discountapplicableon` varchar(100),`discountdays` varchar(100),`active` varchar(100),`discountontotal` varchar(100),`discountstarts` varchar(100),`discountends` varchar(100),`discounttimefrom` varchar(100),`discounttimeto` varchar(100),`discountminamount` varchar(100),`discountmaxamount` varchar(100),`discounthascoupon` varchar(100),`discountcategoryitemids` varchar(100),`discountmaxlimit` varchar(100))");
-      await db.execute(
-          "create table if not exists `$tableTaxes` (`taxid` varchar(100),`taxname` varchar(100),`tax` varchar(100),`taxtype` varchar(100),`tax_ordertype` varchar(100),`active` varchar(1),`tax_coreortotal` varchar(100),`tax_taxtype` varchar(100),`rank` varchar(100),`description` varchar(100))");
-      return true;
-    } else {
-
-    }
-
+    await db.execute("drop table if exists $tableRestaurants");
+    await db.execute("drop table if exists $tableOrderType");
+    await db.execute("drop table if exists $tableCategory");
+    await db.execute("drop table if exists $tableItems");
+    await db.execute("drop table if exists $tableVariations");
+    await db.execute("drop table if exists $tableAddOnGroups");
+    await db.execute("drop table if exists $tableAttributes");
+    await db.execute("drop table if exists $tableDiscounts");
+    await db.execute("drop table if exists $tableTaxes");
+    await db.execute(
+        "create table if not exists `$tableRestaurants` (`restaurantid` varchar(10), `menusharingcode` varchar(20), `restaurantname` varchar(50), `address` text, `contact` varchar(20), `lat` varchar(20), `lang` varchar(20), `landmark` varchar(50), `city` varchar(20), `state` varchar(30), `minimumorderamount` varchar(5), `minimumdeliverytime` varchar(30), `deliverycharge` varchar(5), `packaging_charge` varchar(15), `packaging_charge_type` varchar(20))");
+    await db.execute(
+        "create table if not exists `$tableOrderType` (`ordertypeid` varchar(3), `ordertype` varchar(15))");
+    await db.execute(
+        "create table if not exists `$tableCategory` (`categoryid` varchar(6), `active` varchar(3), `categoryrank` varchar(2), `parent_category_id` varchar(2), `categoryname` varchar(30), `categorytimings` varchar(50), `category_image_url` text)");
+    await db.execute(
+        "create table if not exists `$tableItems` (`itemid` varchar(100),`itemallowvariation` varchar(100),`itemrank` varchar(100),`item_categoryid` varchar(100),`item_ordertype` varchar(100),`item_packingcharges` varchar(100),`itemallowaddon` varchar(100),`itemaddonbasedon` varchar(100),`item_favorite` varchar(100),`ignore_taxes` varchar(100),`ignore_discounts` varchar(100),`in_stock` varchar(100),`variation` text, `addon` text, `itemname` varchar(100), `itemdescription` varchar(200), `price` varchar(4), `image` varchar(100), item_tax varchar(50), preparationtime varchar(5))");
+    await db.execute(
+        "create table if not exists `$tableVariations` (`variationid` varchar(100),`name` varchar(100),`groupname` varchar(100),`status` varchar(1))");
+    await db.execute(
+        "create table if not exists `$tableAddOnGroups`(`addongroupid` varchar(100),`addongroup_rank` varchar(100),`active` varchar(1), `addongroupitems` text, `addongroupname` varchar(50))");
+    await db.execute(
+        "create table if not exists `$tableAttributes` (`attributeid` varchar(100),`attribute` varchar(100),`active` varchar(1))");
+    await db.execute(
+        "create table if not exists `$tableDiscounts` (`discountid` varchar(100),`discountname` varchar(100),`discounttype` varchar(100),`discount` varchar(100),`discountordertype` varchar(100),`discountapplicableon` varchar(100),`discountdays` varchar(100),`active` varchar(100),`discountontotal` varchar(100),`discountstarts` varchar(100),`discountends` varchar(100),`discounttimefrom` varchar(100),`discounttimeto` varchar(100),`discountminamount` varchar(100),`discountmaxamount` varchar(100),`discounthascoupon` varchar(100),`discountcategoryitemids` varchar(100),`discountmaxlimit` varchar(100))");
+    await db.execute(
+        "create table if not exists `$tableTaxes` (`taxid` varchar(100),`taxname` varchar(100),`tax` varchar(100),`taxtype` varchar(100),`tax_ordertype` varchar(100),`active` varchar(1),`tax_coreortotal` varchar(100),`tax_taxtype` varchar(100),`rank` varchar(100),`description` varchar(100))");
+    return true;
   }
-  static Future<bool> insertData ({Database db}) async {
+  static void insertData ({Database db}) async {
     await AppServices.fetchMenu().then((menuList) async {
       try {
         if (menuList.response == "1") {
@@ -98,14 +91,11 @@ class SQFLiteTables {
           for (int i = 0; i < menuList.taxes.length; i++) {
             await db.execute("insert into `$tableTaxes` values ('${menuList.taxes[i]["taxid"]}', '${menuList.taxes[i]["taxname"]}', '${menuList.taxes[i]["tax"]}', '${menuList.taxes[i]["taxtype"]}', '${menuList.taxes[i]["tax_ordertype"]}', '${menuList.taxes[i]["active"]}', '${menuList.taxes[i]["tax_coreortotal"]}', '${menuList.taxes[i]["tax_taxtype"]}', '${menuList.taxes[i]["rank"]}', '${menuList.taxes[i]["description"]}')");
           }
-          return true;
         }
       } catch (exception) {
         print(exception);
-        return false;
       }
     });
-    return false;
   }
   static Future<List<Map<String, dynamic>>> getData({Tables table}) async {
     String databasePath = await getDatabasesPath();

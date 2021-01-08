@@ -1,12 +1,14 @@
 import 'package:crunch/Common/AppBottomBar.dart';
+import 'package:crunch/Common/classes.dart';
 import 'package:flutter/material.dart';
 import '../Static/Constant.dart' as cnst;
 import 'Menu_List.dart';
 import 'setLocation.dart';
 
 class Categorys extends StatefulWidget {
-  List category,productitem,addonitem;
-  Categorys({this.category,this.productitem,this.addonitem});
+  List productitem,addonitem;
+  List<Category> categories;
+  Categorys({this.productitem,this.addonitem, this.categories});
   @override
   _CategorysState createState() => _CategorysState();
 }
@@ -14,7 +16,6 @@ class Categorys extends StatefulWidget {
 class _CategorysState extends State<Categorys> {
   @override
   Widget build(BuildContext context) {
-    print(widget.productitem);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -42,16 +43,16 @@ class _CategorysState extends State<Categorys> {
           )
         ],
       ),
-      body: widget.category.length > 0
+     body: widget.categories.length > 0
           ? SingleChildScrollView(
               child: Center(
                 child: Container(
                   width: size.width * 0.9,
                   height: size.height * 0.83,
                   child: ListView.builder(
-                      itemCount: widget.category.length,
+                      itemCount: widget.categories.length,
                       itemBuilder: (context, index) {
-                        return buildList(size, widget.category[index]);
+                        return buildList(size, widget.categories[index].name);
                       }),
                 ),
               ),
@@ -113,7 +114,7 @@ class _CategorysState extends State<Categorys> {
             alignment: Alignment(0.0, 0.03),
             child: Container(
               child: Text(
-                category["categoryname"],
+                category,
                 style: TextStyle(fontSize: 27.0, color: Colors.white),
               ),
             ),
