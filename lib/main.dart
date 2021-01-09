@@ -17,7 +17,7 @@ import 'Static/Constant.dart' as cnst;
 
 void main() {
   runApp(MyApp());
-  SQFLiteTables();
+  // SQFLiteTables();
 }
 
 class MyApp extends StatefulWidget {
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
       ),
       initialRoute: "/",
       routes: {
-        "/" : (context) => Home(),
+        "/" : (context) => Login(),
         // "/SignUp" : (context) => SignUp(),
         // "/ForgotPassword" : (context) => Login(),
         // "/Home" : (context) => Home(),

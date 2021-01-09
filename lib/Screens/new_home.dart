@@ -63,7 +63,7 @@ class _HomeState extends State<Home> {
   createTables() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var isTablesCreated = sharedPreferences.getString("isTablesCreated");
-    if (isTablesCreated != null && isTablesCreated.isNotEmpty) {
+    if (isTablesCreated == null) {
       String databasePath = await getDatabasesPath();
       Database db = await openDatabase(databasePath + 'myDb.db',
           version: 1, onCreate: (Database db, int version) async {});
@@ -71,6 +71,7 @@ class _HomeState extends State<Home> {
         if(value) {
           SQFLiteTables.insertData(db: db);
           setData();
+          sharedPreferences.setString("isTablesCreated", "y");
         }
       });
     } else {
