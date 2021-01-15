@@ -1,15 +1,14 @@
-import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/category_items.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Static/Constant.dart' as cnst;
 import 'setLocation.dart';
 
 class Categorys extends StatefulWidget {
-  List productitem, addonitem;
   List<Category> categories;
-  Categorys({this.productitem, this.addonitem, this.categories});
+  Categorys({@required this.categories});
   @override
   _CategorysState createState() => _CategorysState();
 }
@@ -17,7 +16,6 @@ class Categorys extends StatefulWidget {
 class _CategorysState extends State<Categorys> {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -45,27 +43,21 @@ class _CategorysState extends State<Categorys> {
         ],
       ),
       body: widget.categories.length > 0
-          ? SingleChildScrollView(
-              child: Center(
-                child: Container(
-                  width: size.width * 0.9,
-                  height: size.height * 0.83,
-                  child: ListView.builder(
-                      itemCount: widget.categories.length,
-                      itemBuilder: (context, index) {
-                        return buildList(size, widget.categories[index]);
-                      }),
-                ),
-              ),
-            )
-          : Center(child: CircularProgressIndicator()),
-      bottomNavigationBar: AppBottomBar(
-        currentindex: 2,
-      ),
+          ? ListView.builder(
+              itemCount: widget.categories.length,
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              itemBuilder: (context, index) {
+                return buildList(widget.categories[index]);
+              })
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 
-  GestureDetector buildList(size, Category category) {
+  GestureDetector buildList(Category category) {
+    Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -75,56 +67,44 @@ class _CategorysState extends State<Categorys> {
       },
       child: Container(
         width: size.width * 0.9,
-        height: size.height * 0.1,
-        margin: EdgeInsets.fromLTRB(5.0, 8.0, 5.0, 8.0),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.0)),
-        child: Stack(children: <Widget>[
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15.0),
-              color: Colors.transparent,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(
-                  'assets/images/spalsh.png',
+        height: 70,
+        margin: EdgeInsets.symmetric(vertical: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.0),
+          color: Colors.transparent,
+          image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage(
+                'assets/images/spalsh.png',
+              ),
+              colorFilter: ColorFilter.mode(Colors.black12, BlendMode.overlay)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                child: Text(
+                  category.name,
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15.0),
-                gradient: LinearGradient(
-                    begin: FractionalOffset.topLeft,
-                    end: FractionalOffset.bottomLeft,
-                    colors: [
-                      Colors.pinkAccent.withOpacity(0.4),
-                      Colors.pinkAccent.withOpacity(0.4),
-                    ],
-                    stops: [
-                      0.0,
-                      1.0
-                    ])),
-          ),
-          Align(
-            alignment: Alignment(0.0, 0.03),
-            child: Container(
-              child: Text(
-                category.name,
-                style: TextStyle(fontSize: 27.0, color: Colors.white),
-              ),
-            ),
-          ),
-          Align(
-              alignment: Alignment.centerRight,
-              child: Container(
-                margin: EdgeInsets.only(right: 15.0),
-                height: 40,
-                width: 5,
-                color: Colors.white,
-              ))
-        ]),
+            Container(
+              margin: EdgeInsets.only(right: 15.0),
+              height: 40,
+              width: 5,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
+            )
+          ],
+        ),
       ),
     );
   }

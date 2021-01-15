@@ -13,14 +13,6 @@ class _RatingState extends State<Rating> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            )),
         backgroundColor: Colors.white,
         elevation: 0.0,
         title: Text(

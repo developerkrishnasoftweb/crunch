@@ -4,6 +4,8 @@ import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sqflite/sqflite.dart';
 
 class CategoryItems extends StatefulWidget {
   final String categoryId;
@@ -270,7 +272,7 @@ class _CategoryItemsState extends State<CategoryItems>
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
-                onPressed: _addToCart,
+                onPressed: () => _addToCart(itemData: item),
                 color: Colors.green,
               ),
             ],
@@ -280,12 +282,33 @@ class _CategoryItemsState extends State<CategoryItems>
     );
   }
 
-  _addToCart() async {
+  _addToCart({@required ItemData itemData}) async {
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
+    double combinedTotal = 0;
     for (int i = 0; i < addOnGroups.length; i++) {
       if (addOnGroups[i].selected) {
-        print(addOnGroups[i].addOnName);
+        setState(() {
+          combinedTotal += double.parse(addOnGroups[i].addOnItemPrice);
+        });
       }
     }
+    var id = await db.insert(SQFLiteTables.tableCart, {
+      "item_id": "${itemData.id}",
+      "item_name": "${itemData.name}",
+      "item_price": "${itemData.price}",
+      "combined_price": "$combinedTotal",
+      "qty": "1"
+    });
+    for (int i = 0; i < addOnGroups.length; i++) {
+      if (addOnGroups[i].selected) {
+        db.insert(SQFLiteTables.tableCartAddon,
+            {"cart_id": "$id", "addon_id": addOnGroups[i].addOnItemId});
+      }
+    }
+    Navigator.pop(context);
+    Fluttertoast.showToast(msg: "Added to cart");
   }
 
   Widget incDecButton() {

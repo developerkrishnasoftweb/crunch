@@ -55,3 +55,14 @@ class AddOnGroup {
       this.selected,
       this.attributes});
 }
+
+class CartData {
+  final String cartId, itemId, itemName, itemPrice, combinedPrice, qty;
+  CartData(
+      {this.cartId,
+      this.combinedPrice,
+      this.itemId,
+      this.itemName,
+      this.qty,
+      this.itemPrice});
+}

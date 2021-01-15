@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
+import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/Category.dart';
 import 'package:crunch/Screens/category_items.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,7 +19,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  // List category = [], item = [];
   List<Banners> banners = [];
   List<ItemData> items = [];
   List<Category> categories = [];
@@ -72,16 +73,18 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   createTables() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var isTablesCreated = sharedPreferences.getString("isTablesCreated");
+    print(isTablesCreated);
     if (isTablesCreated == null) {
       String databasePath = await getDatabasesPath();
-      Database db = await openDatabase(databasePath + 'myDb.db',
-          version: 1, onCreate: (Database db, int version) async {});
-      await SQFLiteTables.createTables(db: db).then((value) async {
-        if (value) {
-          SQFLiteTables.insertData(db: db);
-          setData();
-          sharedPreferences.setString("isTablesCreated", "y");
-        }
+      Database db = await openDatabase(databasePath + 'myDb.db', version: 1,
+          onCreate: (Database db, int version) async {
+        await SQFLiteTables.createTables(db: db).then((value) async {
+          if (value) {
+            SQFLiteTables.insertData(db: db);
+            setData();
+            sharedPreferences.setString("isTablesCreated", "y");
+          }
+        });
       });
     } else {
       getBanners();
@@ -138,37 +141,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey[50],
-          elevation: 0,
-          leading: null,
-          title: Center(
-            child: Container(
-              width: size.width * 0.9,
-              height: 45,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(7),
-                  border: Border.all(color: Colors.grey[300]),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey[200],
-                      blurRadius: 5,
-                    )
-                  ]),
-              child: TextFormField(
-                  decoration: InputDecoration(
-                hintText: "Find Items",
-                hintStyle: TextStyle(
-                  color: Colors.grey,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 20, top: 0, bottom: 7),
-              )),
-            ),
+          elevation: 2,
+          automaticallyImplyLeading: false,
+          title: Text(
+            "Home",
+            style: TextStyle(color: Colors.black),
           ),
         ),
         body: !isLoading
-            ? SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+            ? Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 5),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -182,7 +164,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         }).toList(),
                         width: size.width * 0.9,
                         borderRadius: BorderRadius.circular(7),
-                        height: size.height * 0.3,
+                        height: (size.height * 0.25) > 200 ? 200 : size.height,
                       ),
                     ),
                     categories.length > 0
@@ -238,8 +220,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     SizedBox(
                       height: 10,
                     ),
-                    Container(
-                      height: size.height * 0.45,
+                    Expanded(
                       child: ListView.builder(
                           itemCount: items.length > 10 ? 10 : items.length,
                           shrinkWrap: true,
@@ -338,7 +319,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                               (context) {
                                                         return BottomSheet(
                                                             onClosing: () {},
-                                                            elevation: 4,
                                                             animationController:
                                                                 _controller,
                                                             builder:
@@ -388,7 +368,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     valueColor: AlwaysStoppedAnimation(Colors.grey),
                   ),
                 ),
-              ));
+              ),
+        bottomNavigationBar: AppBottomBar(
+          currentindex: 0,
+        ));
   }
 
   _getAddOnById({String addOnId}) async {
@@ -490,6 +473,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             itemCount: addOnGroups.length,
           ),
         ),
+        Divider(
+          height: 1,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
@@ -506,7 +492,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
-                onPressed: _addToCart,
+                onPressed: () => _addToCart(itemData: item),
                 color: Colors.green,
               ),
             ],
@@ -516,12 +502,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
   }
 
-  _addToCart() async {
+  _addToCart({@required ItemData itemData}) async {
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
+    double combinedTotal = 0;
     for (int i = 0; i < addOnGroups.length; i++) {
       if (addOnGroups[i].selected) {
-        print(addOnGroups[i].addOnName);
+        setState(() {
+          combinedTotal += double.parse(addOnGroups[i].addOnItemPrice);
+        });
       }
     }
+    var id = await db.insert(SQFLiteTables.tableCart, {
+      "item_id": "${itemData.id}",
+      "item_name": "${itemData.name}",
+      "item_price": "${itemData.price}",
+      "combined_price": "$combinedTotal",
+      "qty": "1"
+    });
+    for (int i = 0; i < addOnGroups.length; i++) {
+      if (addOnGroups[i].selected) {
+        db.insert(SQFLiteTables.tableCartAddon,
+            {"cart_id": "$id", "addon_id": addOnGroups[i].addOnItemId});
+      }
+    }
+    Navigator.pop(context);
+    Fluttertoast.showToast(msg: "Added to cart");
   }
 
   Widget incDecButton() {

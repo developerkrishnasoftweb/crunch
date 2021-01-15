@@ -1,10 +1,11 @@
 import 'package:crunch/Screens/Account.dart';
-import 'package:crunch/Screens/Home.dart';
-import 'package:crunch/Screens/Menu_List.dart';
 import 'package:crunch/Screens/Rating.dart';
+import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Screens/new_home.dart';
 import 'package:flutter/material.dart';
+
 import '../Static/Constant.dart' as cnst;
+
 class AppBottomBar extends StatefulWidget {
   int currentindex;
   AppBottomBar({this.currentindex});
@@ -21,19 +22,22 @@ class _AppBottomBarState extends State<AppBottomBar> {
       unselectedItemColor: Colors.grey,
       showSelectedLabels: true,
       showUnselectedLabels: true,
-      onTap: (index){
-        switch(index){
+      onTap: (index) {
+        switch (index) {
           case 0:
-            Navigator.push(context, MaterialPageRoute(builder: (_) => Home()));
+            Navigator.pushAndRemoveUntil(context,
+                MaterialPageRoute(builder: (_) => Home()), (route) => false);
             break;
           case 1:
-            Navigator.push(context, MaterialPageRoute(builder: (_) => Rating()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => Rating()));
             break;
           case 2:
-            Navigator.push(context, MaterialPageRoute(builder: (_) => Rating()));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Cart()));
             break;
           case 3:
-            Navigator.push(context, MaterialPageRoute(builder: (_) => Account()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (_) => Account()));
             break;
         }
       },
@@ -47,20 +51,18 @@ class _AppBottomBarState extends State<AppBottomBar> {
           title: buildText("Search"),
         ),
         BottomNavigationBarItem(
-            icon: buildIcon(Icons.shopping_cart),
-            title:buildText("Cart")
-        ),
+            icon: buildIcon(Icons.shopping_cart), title: buildText("Cart")),
         BottomNavigationBarItem(
-            icon: buildIcon(Icons.person),
-            title:buildText("Account")
-        )
+            icon: buildIcon(Icons.person), title: buildText("Account"))
       ],
     );
   }
-  Icon buildIcon(icon){
+
+  Icon buildIcon(icon) {
     return Icon(icon);
   }
-  Text buildText(String name){
+
+  Text buildText(String name) {
     return Text(name);
   }
 }
