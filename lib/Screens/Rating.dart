@@ -1,7 +1,6 @@
 import 'package:crunch/Screens/AddRatings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../Static/Constant.dart' as cnst;
 
 class Rating extends StatefulWidget {
   @override
@@ -15,22 +14,32 @@ class _RatingState extends State<Rating> {
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
-          onTap: (){
-            Navigator.pop(context);
-          },
-            child: Icon(Icons.arrow_back_ios_sharp,color: Colors.black,)),
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+            )),
         backgroundColor: Colors.white,
         elevation: 0.0,
-        title: Text("Review & Ratings",style: TextStyle(color: Colors.black),),
+        title: Text(
+          "Review & Ratings",
+          style: TextStyle(color: Colors.black),
+        ),
         centerTitle: true,
         actions: [
           GestureDetector(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddRatings()));
-            },
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddRatings()));
+              },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Icon(Icons.add,color: Colors.black,),
+                child: Icon(
+                  Icons.add,
+                  color: Colors.black,
+                ),
               ))
         ],
       ),
@@ -40,39 +49,36 @@ class _RatingState extends State<Rating> {
           height: size.height,
           child: ListView.builder(
               itemCount: 2,
-              itemBuilder: (context,index){
+              itemBuilder: (context, index) {
                 return buildRatingView(size);
-              }
-          ),
+              }),
         ),
       ),
     );
   }
 
-  Container buildRatingView(size){
+  Container buildRatingView(size) {
     return Container(
       margin: EdgeInsets.all(5.0),
       width: size.width,
       height: size.height * 0.1,
       child: ListTile(
-        leading: CircleAvatar(
-            radius: 30,
-            child: Image.asset("assets/images/CrunchTM.png")
-        ),
-        title: Text("Cheey Does It"),
-        subtitle: Container(child: Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry.")),
-        trailing: buildRatingShow(size, "2.5")
-      ),
+          leading: CircleAvatar(
+              radius: 30, child: Image.asset("assets/images/CrunchTM.png")),
+          title: Text("Cheey Does It"),
+          subtitle: Container(
+              child: Text(
+                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry.")),
+          trailing: buildRatingShow(size, "2.5")),
     );
   }
 
-  Container buildRatingShow(size,number){
+  Container buildRatingShow(size, number) {
     return Container(
-        width: size.width *0.1,
+        width: size.width * 0.1,
         decoration: BoxDecoration(
             color: Colors.grey.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(5.0)
-        ),
+            borderRadius: BorderRadius.circular(5.0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -84,11 +90,12 @@ class _RatingState extends State<Rating> {
             ),
             Text(
               number,
-              style: TextStyle(color: Colors.grey[600],fontSize: 12.0,fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.bold),
             ),
           ],
-        )
-    );
+        ));
   }
-
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:sqflite/sqflite.dart';
+
 import 'AppServices.dart';
 
 const String API_BASE_URL =
@@ -8,7 +9,6 @@ const String API_BASE_URL =
 const String Base_URL = "http://crunch.kriishnacab.com/api/";
 const String Image_URL = "http://crunch.kriishnacab.com/";
 const String API_Key = "0imfnc8mVLWwsAawjYr4Rx";
-
 
 /*
 * Database Managements
@@ -18,6 +18,7 @@ class SQFLiteTables {
   static String replaceChar(String char) {
     return char.replaceAll(r"'", r"''");
   }
+
   static String tableRestaurants = "restaurants",
       tableOrderType = "ordertype",
       tableCategory = "category",
@@ -26,6 +27,8 @@ class SQFLiteTables {
       tableAddOnGroups = "addongroups",
       tableAttributes = "attributes",
       tableDiscounts = "discounts",
+      tableCart = "cart",
+      tableCartAddon = "cart_addon",
       tableTaxes = "taxes";
   static Future<bool> createTables({Database db}) async {
     await db.execute("drop table if exists $tableRestaurants");
@@ -37,6 +40,8 @@ class SQFLiteTables {
     await db.execute("drop table if exists $tableAttributes");
     await db.execute("drop table if exists $tableDiscounts");
     await db.execute("drop table if exists $tableTaxes");
+    await db.execute("drop table if exists $tableCart");
+    await db.execute("drop table if exists $tableCartAddon");
     await db.execute(
         "create table if not exists `$tableRestaurants` (`restaurantid` varchar(10), `menusharingcode` varchar(20), `restaurantname` varchar(50), `address` text, `contact` varchar(20), `lat` varchar(20), `lang` varchar(20), `landmark` varchar(50), `city` varchar(20), `state` varchar(30), `minimumorderamount` varchar(5), `minimumdeliverytime` varchar(30), `deliverycharge` varchar(5), `packaging_charge` varchar(15), `packaging_charge_type` varchar(20))");
     await db.execute(
@@ -55,9 +60,14 @@ class SQFLiteTables {
         "create table if not exists `$tableDiscounts` (`discountid` varchar(100),`discountname` varchar(100),`discounttype` varchar(100),`discount` varchar(100),`discountordertype` varchar(100),`discountapplicableon` varchar(100),`discountdays` varchar(100),`active` varchar(100),`discountontotal` varchar(100),`discountstarts` varchar(100),`discountends` varchar(100),`discounttimefrom` varchar(100),`discounttimeto` varchar(100),`discountminamount` varchar(100),`discountmaxamount` varchar(100),`discounthascoupon` varchar(100),`discountcategoryitemids` varchar(100),`discountmaxlimit` varchar(100))");
     await db.execute(
         "create table if not exists `$tableTaxes` (`taxid` varchar(100),`taxname` varchar(100),`tax` varchar(100),`taxtype` varchar(100),`tax_ordertype` varchar(100),`active` varchar(1),`tax_coreortotal` varchar(100),`tax_taxtype` varchar(100),`rank` varchar(100),`description` varchar(100))");
+    await db.execute(
+        "create table if not exists `$tableCart` (`id` integer primary key autoincrement, `item_id` varchar(10), `item_price` varchar(10), `combined_price` varchar(10), `qty` varchar(10))");
+    await db.execute(
+        "create table if not exists `$tableCartAddon` (`id` integer primary key autoincrement, `cart_id` varchar(10), `addon_id` varchar(10))");
     return true;
   }
-  static void insertData ({Database db}) async {
+
+  static void insertData({Database db}) async {
     await AppServices.fetchMenu().then((menuList) async {
       try {
         if (menuList.response == "1") {
@@ -74,22 +84,28 @@ class SQFLiteTables {
                 "insert into `$tableCategory` values ('${menuList.categories[i]["categoryid"]}', '${menuList.categories[i]["active"]}', '${menuList.categories[i]["categoryrank"]}', '${menuList.categories[i]["parent_category_id"]}', '${SQFLiteTables.replaceChar(menuList.categories[i]["categoryname"])}', '${menuList.categories[i]["categorytimings"]}', '${menuList.categories[i]["category_image_url"]}')");
           }
           for (int i = 0; i < menuList.items.length; i++) {
-            await db.execute("insert into `$tableItems` values ('${menuList.items[i]["itemid"]}', '${menuList.items[i]["itemallowvariation"]}', '${menuList.items[i]["itemrank"]}', '${menuList.items[i]["item_categoryid"]}', '${menuList.items[i]["item_ordertype"]}', '${menuList.items[i]["item_packingcharges"]}', '${menuList.items[i]["itemallowaddon"]}', '${menuList.items[i]["itemaddonbasedon"]}', '${menuList.items[i]["item_favorite"]}', '${menuList.items[i]["ignore_taxes"]}', '${menuList.items[i]["ignore_discounts"]}', '${menuList.items[i]["in_stock"]}', '${jsonEncode(menuList.items[i]["variation"])}', '${jsonEncode(menuList.items[i]["addon"])}', '${menuList.items[i]["itemname"]}', '${menuList.items[i]["itemdescription"]}', '${menuList.items[i]["price"]}', '${menuList.items[i]["item_image_url"]}', '${menuList.items[i]["item_tax"]}', '${menuList.items[i]["minimumpreparationtime"]}')");
+            await db.execute(
+                "insert into `$tableItems` values ('${menuList.items[i]["itemid"]}', '${menuList.items[i]["itemallowvariation"]}', '${menuList.items[i]["itemrank"]}', '${menuList.items[i]["item_categoryid"]}', '${menuList.items[i]["item_ordertype"]}', '${menuList.items[i]["item_packingcharges"]}', '${menuList.items[i]["itemallowaddon"]}', '${menuList.items[i]["itemaddonbasedon"]}', '${menuList.items[i]["item_favorite"]}', '${menuList.items[i]["ignore_taxes"]}', '${menuList.items[i]["ignore_discounts"]}', '${menuList.items[i]["in_stock"]}', '${jsonEncode(menuList.items[i]["variation"])}', '${jsonEncode(menuList.items[i]["addon"])}', '${menuList.items[i]["itemname"]}', '${menuList.items[i]["itemdescription"]}', '${menuList.items[i]["price"]}', '${menuList.items[i]["item_image_url"]}', '${menuList.items[i]["item_tax"]}', '${menuList.items[i]["minimumpreparationtime"]}')");
           }
           for (int i = 0; i < menuList.variations.length; i++) {
-            await db.execute("insert into `$tableVariations` values ('${menuList.variations[i]["variationid"]}', '${menuList.variations[i]["name"]}', '${menuList.variations[i]["groupname"]}', '${menuList.variations[i]["status"]}')");
+            await db.execute(
+                "insert into `$tableVariations` values ('${menuList.variations[i]["variationid"]}', '${menuList.variations[i]["name"]}', '${menuList.variations[i]["groupname"]}', '${menuList.variations[i]["status"]}')");
           }
           for (int i = 0; i < menuList.addOnGroups.length; i++) {
-            await db.execute("insert into `$tableAddOnGroups` values ('${menuList.addOnGroups[i]["addongroupid"]}', '${menuList.addOnGroups[i]["addongroup_rank"]}', '${menuList.addOnGroups[i]["active"]}', '${jsonEncode(menuList.addOnGroups[i]["addongroupitems"])}', '${menuList.addOnGroups[i]["addongroup_name"]}')");
+            await db.execute(
+                "insert into `$tableAddOnGroups` values ('${menuList.addOnGroups[i]["addongroupid"]}', '${menuList.addOnGroups[i]["addongroup_rank"]}', '${menuList.addOnGroups[i]["active"]}', '${jsonEncode(menuList.addOnGroups[i]["addongroupitems"])}', '${menuList.addOnGroups[i]["addongroup_name"]}')");
           }
           for (int i = 0; i < menuList.attributes.length; i++) {
-            await db.execute("insert into `$tableAttributes` values ('${menuList.attributes[i]["attributeid"]}', '${menuList.attributes[i]["attribute"]}', '${menuList.attributes[i]["active"]}')");
+            await db.execute(
+                "insert into `$tableAttributes` values ('${menuList.attributes[i]["attributeid"]}', '${menuList.attributes[i]["attribute"]}', '${menuList.attributes[i]["active"]}')");
           }
           for (int i = 0; i < menuList.discounts.length; i++) {
-            await db.execute("insert into `$tableDiscounts` values ('${menuList.discounts[i]["discountid"]}', '${menuList.discounts[i]["discountname"]}', '${menuList.discounts[i]["discounttype"]}', '${menuList.discounts[i]["discount"]}', '${menuList.discounts[i]["discountordertype"]}', '${menuList.discounts[i]["discountapplicableon"]}', '${menuList.discounts[i]["discountdays"]}', '${menuList.discounts[i]["active"]}', '${menuList.discounts[i]["discountontotal"]}', '${menuList.discounts[i]["discountstarts"]}', '${menuList.discounts[i]["discountends"]}', '${menuList.discounts[i]["discounttimefrom"]}', '${menuList.discounts[i]["discounttimeto"]}', '${menuList.discounts[i]["discountminamount"]}', '${menuList.discounts[i]["discountmaxamount"]}', '${menuList.discounts[i]["discounthascoupon"]}', '${menuList.discounts[i]["discountcategoryitemids"]}', '${menuList.discounts[i]["discountmaxlimit"]}')");
+            await db.execute(
+                "insert into `$tableDiscounts` values ('${menuList.discounts[i]["discountid"]}', '${menuList.discounts[i]["discountname"]}', '${menuList.discounts[i]["discounttype"]}', '${menuList.discounts[i]["discount"]}', '${menuList.discounts[i]["discountordertype"]}', '${menuList.discounts[i]["discountapplicableon"]}', '${menuList.discounts[i]["discountdays"]}', '${menuList.discounts[i]["active"]}', '${menuList.discounts[i]["discountontotal"]}', '${menuList.discounts[i]["discountstarts"]}', '${menuList.discounts[i]["discountends"]}', '${menuList.discounts[i]["discounttimefrom"]}', '${menuList.discounts[i]["discounttimeto"]}', '${menuList.discounts[i]["discountminamount"]}', '${menuList.discounts[i]["discountmaxamount"]}', '${menuList.discounts[i]["discounthascoupon"]}', '${menuList.discounts[i]["discountcategoryitemids"]}', '${menuList.discounts[i]["discountmaxlimit"]}')");
           }
           for (int i = 0; i < menuList.taxes.length; i++) {
-            await db.execute("insert into `$tableTaxes` values ('${menuList.taxes[i]["taxid"]}', '${menuList.taxes[i]["taxname"]}', '${menuList.taxes[i]["tax"]}', '${menuList.taxes[i]["taxtype"]}', '${menuList.taxes[i]["tax_ordertype"]}', '${menuList.taxes[i]["active"]}', '${menuList.taxes[i]["tax_coreortotal"]}', '${menuList.taxes[i]["tax_taxtype"]}', '${menuList.taxes[i]["rank"]}', '${menuList.taxes[i]["description"]}')");
+            await db.execute(
+                "insert into `$tableTaxes` values ('${menuList.taxes[i]["taxid"]}', '${menuList.taxes[i]["taxname"]}', '${menuList.taxes[i]["tax"]}', '${menuList.taxes[i]["taxtype"]}', '${menuList.taxes[i]["tax_ordertype"]}', '${menuList.taxes[i]["active"]}', '${menuList.taxes[i]["tax_coreortotal"]}', '${menuList.taxes[i]["tax_taxtype"]}', '${menuList.taxes[i]["rank"]}', '${menuList.taxes[i]["description"]}')");
           }
         }
       } catch (exception) {
@@ -97,44 +113,113 @@ class SQFLiteTables {
       }
     });
   }
+
   static Future<List<Map<String, dynamic>>> getData({Tables table}) async {
     String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db', version: 1, onCreate: (Database db, int version) async {});
-    switch(table) {
-      case Tables.RESTAURANTS :
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
+    switch (table) {
+      case Tables.RESTAURANTS:
         return db.rawQuery("select * from `$tableRestaurants`");
         break;
-      case Tables.ADD_ON_GROUPS :
+      case Tables.ADD_ON_GROUPS:
         return db.rawQuery("select * from `$tableAddOnGroups`");
         break;
-      case Tables.ATTRIBUTES :
+      case Tables.ATTRIBUTES:
         return db.rawQuery("select * from `$tableAttributes`");
         break;
-      case Tables.CATEGORY :
+      case Tables.CATEGORY:
         return db.rawQuery("select * from `$tableCategory`");
         break;
-      case Tables.DISCOUNTS :
+      case Tables.DISCOUNTS:
         return db.rawQuery("select * from `$tableDiscounts`");
         break;
-      case Tables.ITEMS :
+      case Tables.ITEMS:
         return db.rawQuery("select * from `$tableItems`");
         break;
-      case Tables.ORDER_TYPE :
+      case Tables.ORDER_TYPE:
         return db.rawQuery("select * from `$tableOrderType`");
         break;
-      case Tables.TAXES :
+      case Tables.TAXES:
         return db.rawQuery("select * from `$tableTaxes`");
         break;
-      case Tables.VARIATIONS :
+      case Tables.VARIATIONS:
         return db.rawQuery("select * from `$tableVariations`");
         break;
-      default :
+      case Tables.CART:
+        return db.rawQuery("select * from `$tableCart`");
+        break;
+      case Tables.CART_ADDON:
+        return db.rawQuery("select * from `$tableCartAddon`");
+        break;
+      default:
         return null;
         break;
     }
   }
+
+  static Future<List<Map<String, dynamic>>> where(
+      {Tables table, String column, String value}) async {
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
+    try {
+      switch (table) {
+        case Tables.RESTAURANTS:
+          return db.rawQuery(
+              "select * from `$tableRestaurants` where $column in ($value)");
+          break;
+        case Tables.ADD_ON_GROUPS:
+          return db.rawQuery(
+              "select * from `$tableAddOnGroups` where $column in ($value)");
+          break;
+        case Tables.ATTRIBUTES:
+          return db.rawQuery(
+              "select * from `$tableAttributes` where $column in ($value)");
+          break;
+        case Tables.CATEGORY:
+          return db.rawQuery(
+              "select * from `$tableCategory` where $column in ($value)");
+          break;
+        case Tables.DISCOUNTS:
+          return db.rawQuery(
+              "select * from `$tableDiscounts` where $column in ($value)");
+          break;
+        case Tables.ITEMS:
+          return db.rawQuery(
+              "select * from `$tableItems` where $column in ($value)");
+          break;
+        case Tables.ORDER_TYPE:
+          return db.rawQuery(
+              "select * from `$tableOrderType` where $column in ($value)");
+          break;
+        case Tables.TAXES:
+          return db.rawQuery(
+              "select * from `$tableTaxes` where $column in ($value)");
+          break;
+        case Tables.VARIATIONS:
+          return db.rawQuery(
+              "select * from `$tableVariations` where $column in ($value)");
+          break;
+        case Tables.CART_ADDON:
+          return db.rawQuery(
+              "select * from `$tableCartAddon` where $column in ($value)");
+          break;
+        case Tables.CART:
+          return db
+              .rawQuery("select * from `$tableCart` where $column in ($value)");
+          break;
+        default:
+          return null;
+          break;
+      }
+    } catch (_) {
+      throw (_);
+    }
+  }
 }
-enum Tables{
+
+enum Tables {
   RESTAURANTS,
   ORDER_TYPE,
   CATEGORY,
@@ -143,5 +228,7 @@ enum Tables{
   ADD_ON_GROUPS,
   ATTRIBUTES,
   DISCOUNTS,
-  TAXES
+  TAXES,
+  CART,
+  CART_ADDON
 }

@@ -1,18 +1,9 @@
 import 'dart:async';
 
-import 'package:crunch/APIS/Constants.dart';
-import 'package:crunch/LoginScreen/SignUp.dart';
-import 'package:crunch/Screens/Category.dart';
-import 'package:crunch/Screens/ChangePassword.dart';
-import 'package:crunch/Screens/Menu_List.dart';
-import 'package:crunch/Screens/Rating.dart';
-import 'package:crunch/Screens/setLocation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'LoginScreen/Login.dart';
-import 'Screens/Home.dart';
-import 'Screens/new_home.dart';
 import 'Static/Constant.dart' as cnst;
 
 void main() {
@@ -26,7 +17,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   StreamSubscription iosSubscription;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
@@ -35,16 +25,13 @@ class _MyAppState extends State<MyApp> {
     // TODO: implement initState
     super.initState();
     _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> message) async{
-          print("onMessage  $message");
-        },
-        onLaunch: (Map<String, dynamic> message) async{
-          print("onLaunch  $message");
-        },
-        onResume: (Map<String, dynamic> message) async{
-          print("onResume  $message");
-        }
-    );
+        onMessage: (Map<String, dynamic> message) async {
+      print("onMessage  $message");
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print("onLaunch  $message");
+    }, onResume: (Map<String, dynamic> message) async {
+      print("onResume  $message");
+    });
   }
 
   @override
@@ -53,11 +40,12 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           accentColor: cnst.appPrimaryMaterialColor,
-          primaryColor: cnst.appPrimaryMaterialColor
-      ),
+          primaryColor: cnst.appPrimaryMaterialColor,
+          appBarTheme:
+              AppBarTheme(iconTheme: IconThemeData(color: Colors.black))),
       initialRoute: "/",
       routes: {
-        "/" : (context) => Login(),
+        "/": (context) => Login(),
         // "/SignUp" : (context) => SignUp(),
         // "/ForgotPassword" : (context) => Login(),
         // "/Home" : (context) => Home(),

@@ -2,14 +2,13 @@ import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
-import 'package:crunch/Screens/Home.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smooth_star_rating/smooth_star_rating.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+
 import '../Static/Constant.dart' as cnst;
 import 'new_home.dart';
 
@@ -37,13 +36,19 @@ class _AddRatingsState extends State<AddRatings> {
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(Icons.arrow_back_ios_sharp,color: Colors.black,)),
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+            )),
         backgroundColor: Colors.white,
         elevation: 0.0,
-        title: Text("Review & Ratings",style: TextStyle(color: Colors.black),),
+        title: Text(
+          "Review & Ratings",
+          style: TextStyle(color: Colors.black),
+        ),
         centerTitle: true,
       ),
       body: Stack(
@@ -53,13 +58,15 @@ class _AddRatingsState extends State<AddRatings> {
             left: 0,
             right: 0,
             child: Container(
-              width: size.width *0.9,
+              width: size.width * 0.9,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 20.0,),
+                    SizedBox(
+                      height: 20.0,
+                    ),
                     Container(
                       width: size.width * 0.8,
                       // height: size.width * 0.16,
@@ -90,9 +97,16 @@ class _AddRatingsState extends State<AddRatings> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10.0,),
-                    Text("Rate your experience",style: TextStyle(fontSize: 17.0 ),),
-                    SizedBox(height: 50.0,),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Text(
+                      "Rate your experience",
+                      style: TextStyle(fontSize: 17.0),
+                    ),
+                    SizedBox(
+                      height: 50.0,
+                    ),
                     Container(
                       width: size.width * 0.8,
                       decoration: BoxDecoration(
@@ -117,8 +131,7 @@ class _AddRatingsState extends State<AddRatings> {
                           },
                           decoration: InputDecoration(
                             hintText: "Write your experience",
-                            floatingLabelBehavior:
-                            FloatingLabelBehavior.never,
+                            floatingLabelBehavior: FloatingLabelBehavior.never,
                             border: InputBorder.none,
                             hintStyle: TextStyle(
                               color: Colors.grey.shade600,
@@ -134,29 +147,34 @@ class _AddRatingsState extends State<AddRatings> {
             ),
           ),
           Positioned(
-            bottom: 0,left: 0,right: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: Container(
                 height: size.height * 0.1,
                 decoration: BoxDecoration(
                     color: Colors.blue,
-                    borderRadius: BorderRadius.only(topLeft:Radius.circular(30.0),topRight: Radius.circular(30.0))
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0))),
+                child: FlatButton(
+                  onPressed: () {
+                    _validation();
+                  },
+                  child: Text("Done",
+                      style:
+                          new TextStyle(fontSize: 20.0, color: Colors.white)),
                 ),
-            child: FlatButton(
-              onPressed: () {
-                _validation();
-              },
-              child: Text("Done",style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-            ),
-          ))
+              ))
         ],
       ),
     );
   }
 
   _validation() {
-    if(rate == null || rate == 0.0){
+    if (rate == null || rate == 0.0) {
       _toastMesssage("Please give your rating");
-    }else if(ratecomment.text == ""){
+    } else if (ratecomment.text == "") {
       _toastMesssage("please enter your comment");
     } else {
       _addrating();
@@ -164,39 +182,42 @@ class _AddRatingsState extends State<AddRatings> {
   }
 
   _addrating() async {
-    try{
+    try {
       pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String id = prefs.getString(cnst.Session.id);
-        print(id+" "+ratecomment.text+ " " +rate.toString() + " ");
+        print(id + " " + ratecomment.text + " " + rate.toString() + " ");
         FormData d = FormData.fromMap({
-          "api_key" : API_Key,
-          "customer_id" : id,
-          "comment" : ratecomment.text,
-          "rate" : rate,
+          "api_key": API_Key,
+          "customer_id": id,
+          "comment": ratecomment.text,
+          "rate": rate,
         });
 
         AppServices.addrate(d).then((data) async {
           pr.hide();
-          if(data.value == "y"){
+          if (data.value == "y") {
             print(data.data);
             _toastMesssage(data.message);
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Home()),
+                (route) => false);
           }
-        },onError: (e) {
+        }, onError: (e) {
           pr.hide();
           _toastMesssage("Something went wrong.");
         });
       }
-    }catch(e){
+    } catch (e) {
       pr.hide();
       _toastMesssage("No Internet Connection.");
     }
   }
 
-  _toastMesssage(String message){
+  _toastMesssage(String message) {
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
@@ -204,9 +225,6 @@ class _AddRatingsState extends State<AddRatings> {
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.black.withOpacity(0.3),
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   }
-
-
 }

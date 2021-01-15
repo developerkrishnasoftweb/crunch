@@ -1,11 +1,13 @@
 import 'dart:convert';
+
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/Category.dart';
-import 'package:flutter/material.dart';
+import 'package:crunch/Screens/category_items.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -14,16 +16,23 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   // List category = [], item = [];
   List<Banners> banners = [];
   List<ItemData> items = [];
   List<Category> categories = [];
+  List<AddOnGroup> addOnGroups = [];
   bool isLoading = false;
+  String addOnGroupName = "";
+  AnimationController _controller;
+  double price;
   @override
   void initState() {
     createTables();
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+    );
   }
 
   setLoading(bool status) {
@@ -47,7 +56,7 @@ class _HomeState extends State<Home> {
                 id: value.data[0]["banners"][i]["id"]));
           });
         }
-        if(value.data[0]["config"]["sync_status"] == "y") {
+        if (value.data[0]["config"]["sync_status"] == "y") {
           SQFLiteTables.insertData(db: db);
           setData();
         } else {
@@ -68,7 +77,7 @@ class _HomeState extends State<Home> {
       Database db = await openDatabase(databasePath + 'myDb.db',
           version: 1, onCreate: (Database db, int version) async {});
       await SQFLiteTables.createTables(db: db).then((value) async {
-        if(value) {
+        if (value) {
           SQFLiteTables.insertData(db: db);
           setData();
           sharedPreferences.setString("isTablesCreated", "y");
@@ -116,6 +125,13 @@ class _HomeState extends State<Home> {
       }
     });
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -123,6 +139,7 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           backgroundColor: Colors.grey[50],
           elevation: 0,
+          leading: null,
           title: Center(
             child: Container(
               width: size.width * 0.9,
@@ -171,7 +188,12 @@ class _HomeState extends State<Home> {
                     categories.length > 0
                         ? Align(
                             child: FlatButton(
-                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Categorys(categories: categories,))),
+                              onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Categorys(
+                                            categories: categories,
+                                          ))),
                               child: Text(
                                 "SEE ALL",
                                 style: TextStyle(
@@ -187,7 +209,13 @@ class _HomeState extends State<Home> {
                             child: ListView.separated(
                                 itemBuilder: (BuildContext context, int index) {
                                   return FlatButton(
-                                    onPressed: () {},
+                                    onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CategoryItems(
+                                                  categoryId:
+                                                      categories[index].id,
+                                                ))),
                                     child: Text(categories[index].name),
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(40),
@@ -211,113 +239,140 @@ class _HomeState extends State<Home> {
                       height: 10,
                     ),
                     Container(
-                      height: size.height * 0.47,
+                      height: size.height * 0.45,
                       child: ListView.builder(
                           itemCount: items.length > 10 ? 10 : items.length,
                           shrinkWrap: true,
                           physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
-                            return InkWell(
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () {},
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(7),
-                                      child: Image(
-                                        height: 100,
-                                        width: 120,
-                                        image: items[index].image !=
-                                                    null &&
-                                            items[index].image !=
-                                                    ""
-                                            ? NetworkImage(items[index].image)
-                                            : AssetImage(
-                                                "assets/images/CrunchTM.png"),
-                                        fit: BoxFit.fill,
-                                      ),
+                            return Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.grey[200], blurRadius: 5)
+                                  ]),
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(7),
+                                    child: Image(
+                                      height: 90,
+                                      width: 100,
+                                      image: items[index].image != null &&
+                                              items[index].image != ""
+                                          ? NetworkImage(items[index].image)
+                                          : AssetImage(
+                                              "assets/images/CrunchTM.png"),
+                                      fit: BoxFit.fill,
                                     ),
-                                    Expanded(
-                                        child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            items[index].name != null &&
-                                                items[index].name !=
-                                                        ""
-                                                ? items[index].name
-                                                : "N/A",
-                                            style: TextStyle(
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            items[index].description !=
-                                                        null &&
-                                                items[index].description !=
-                                                        ""
-                                                ? items[index].description
-                                                : "N/A",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.grey),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                "\u20b9${items[index].price != null && items[index].price != "" ? items[index].price : "N/A"}",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 21),
-                                              ),
-                                              items[index].addedToCart ? incDecButton() : addToCartButton(
-                                                  onPressed: (){
-                                                    if(items[index].addon.length > 0) {
-                                                      Scaffold.of(context).showBottomSheet((context) {
-                                                        return BottomSheet(onClosing: (){}, builder: (BuildContext context){
-                                                          return Container(
-                                                            height: size.height * 0.3,
-                                                            width: size.width,
-                                                            color: Colors.white,
-                                                            alignment: Alignment.center,
-                                                            child: Text("Hello"),
-                                                          );
-                                                        });
+                                  ),
+                                  Expanded(
+                                      child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          items[index].name != null &&
+                                                  items[index].name != ""
+                                              ? items[index].name
+                                              : "N/A",
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          items[index].description != null &&
+                                                  items[index].description != ""
+                                              ? items[index].description
+                                              : "N/A",
+                                          style: TextStyle(
+                                              fontSize: 13, color: Colors.grey),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "\u20b9${items[index].price != null && items[index].price != "" ? items[index].price : "N/A"}",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 21),
+                                            ),
+                                            items[index].addedToCart
+                                                ? incDecButton()
+                                                : addToCartButton(
+                                                    onPressed: () async {
+                                                    if (items[index]
+                                                            .addon
+                                                            .length >
+                                                        0) {
+                                                      setState(() {
+                                                        price = 0;
+                                                        price = double.parse(
+                                                            items[index].price);
+                                                      });
+                                                      await _getAddOnById(
+                                                          addOnId: items[index]
+                                                                  .addon[0][
+                                                              "addon_group_id"]);
+                                                      Scaffold.of(context)
+                                                          .showBottomSheet(
+                                                              (context) {
+                                                        return BottomSheet(
+                                                            onClosing: () {},
+                                                            elevation: 4,
+                                                            animationController:
+                                                                _controller,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return Container(
+                                                                  height:
+                                                                      size.height *
+                                                                          0.4,
+                                                                  width: size
+                                                                      .width,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  child: addOnItems(
+                                                                      item: items[
+                                                                          index]));
+                                                            });
                                                       });
                                                     } else {
                                                       setState(() {
-                                                        items[index].addedToCart = true;
+                                                        items[index]
+                                                            .addedToCart = true;
                                                       });
                                                     }
-                                                  }
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    )),
-                                  ],
-                                ),
+                                                  })
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                                ],
                               ),
                             );
                           }),
@@ -334,6 +389,30 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ));
+  }
+
+  _getAddOnById({String addOnId}) async {
+    setState(() {
+      addOnGroups = [];
+      addOnGroupName = "";
+    });
+    var addOns = await SQFLiteTables.where(
+        table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnId);
+    setState(() {
+      addOnGroupName = addOns[0]["addongroupname"];
+    });
+    var addOnsList = jsonDecode(addOns[0]["addongroupitems"]);
+    for (int i = 0; i < addOnsList.length; i++) {
+      setState(() {
+        addOnGroups.add(AddOnGroup(
+            active: addOnsList[i]["active"],
+            addOnItemId: addOnsList[i]["addonitemid"],
+            addOnItemPrice: addOnsList[i]["addonitem_price"],
+            addOnName: addOnsList[i]["addonitem_name"],
+            attributes: addOnsList[i]["attributes"],
+            selected: false));
+      });
+    }
   }
 
   Widget addToCartButton({@required VoidCallback onPressed}) {
@@ -360,11 +439,89 @@ class _HomeState extends State<Home> {
           child: Text(
             "REMOVE",
             style: TextStyle(
-                color: Colors.green[500], fontWeight: FontWeight.bold, fontSize: 10),
+                color: Colors.green[500],
+                fontWeight: FontWeight.bold,
+                fontSize: 10),
           ),
           onPressed: onPressed,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4), side: BorderSide(color: Colors.green[500])),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+              side: BorderSide(color: Colors.green[500])),
         ));
+  }
+
+  Widget addOnItems({ItemData item}) {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                addOnGroupName ?? "N/A",
+                style: TextStyle(color: Colors.grey, fontSize: 20),
+              )),
+        ),
+        Divider(),
+        Expanded(
+          child: ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return CheckboxListTile(
+                  value: addOnGroups[index].selected,
+                  onChanged: (value) {
+                    if (addOnGroups[index].selected) {
+                      setState(() {
+                        addOnGroups[index].selected = false;
+                        price = price -
+                            double.parse(addOnGroups[index].addOnItemPrice);
+                      });
+                    } else {
+                      setState(() {
+                        addOnGroups[index].selected = true;
+                        price = price +
+                            double.parse(addOnGroups[index].addOnItemPrice);
+                      });
+                    }
+                  },
+                  subtitle: Text("\u20b9" + addOnGroups[index].addOnItemPrice),
+                  title: Text(addOnGroups[index].addOnName));
+            },
+            physics: BouncingScrollPhysics(),
+            itemCount: addOnGroups.length,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            children: [
+              Expanded(
+                  child: Text(
+                "Total payable : \u20b9$price",
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              )),
+              FlatButton(
+                child: Text(
+                  "ADD TO CART",
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                onPressed: _addToCart,
+                color: Colors.green,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  _addToCart() async {
+    for (int i = 0; i < addOnGroups.length; i++) {
+      if (addOnGroups[i].selected) {
+        print(addOnGroups[i].addOnName);
+      }
+    }
   }
 
   Widget incDecButton() {

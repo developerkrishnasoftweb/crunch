@@ -1,11 +1,13 @@
 import 'package:crunch/Common/AppBottomBar.dart';
+import 'package:crunch/LoginScreen/Login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:crunch/LoginScreen/Login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Static/Constant.dart' as cnst;
 import 'Address.dart';
 import 'ChangePassword.dart';
+
 class Account extends StatefulWidget {
   @override
   _AccountState createState() => _AccountState();
@@ -13,8 +15,7 @@ class Account extends StatefulWidget {
 
 class _AccountState extends State<Account> {
   bool visiblemood = false;
-  String name,mobile,email;
-
+  String name, mobile, email;
 
   @override
   void initState() {
@@ -36,38 +37,56 @@ class _AccountState extends State<Account> {
                 width: size.width,
                 decoration: BoxDecoration(
                     color: cnst.AppColors.whitecolor,
-                  border: Border(
-                      top: BorderSide(width: 2.0,color: cnst.AppColors.blackcolor,)
-                  )
-                ),
+                    border: Border(
+                        top: BorderSide(
+                      width: 2.0,
+                      color: cnst.AppColors.blackcolor,
+                    ))),
                 child: Column(
                   children: [
                     ListTile(
-                      title: Text(name,style: TextStyle(fontSize: 20.0),),
-                      subtitle: Text(mobile+"-"+email,style: TextStyle(fontSize: 13.0),),
+                      title: Text(
+                        name,
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                      subtitle: Text(
+                        mobile + "-" + email,
+                        style: TextStyle(fontSize: 13.0),
+                      ),
                       trailing: Text("Edit"),
                       contentPadding: EdgeInsets.symmetric(horizontal: 25.0),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15.0),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 15.0),
                       child: Container(
                         decoration: BoxDecoration(
                             border: Border(
-                                top: BorderSide(width: 2.0,color: cnst.AppColors.blackcolor,)
-                            )
-                        ),
+                                top: BorderSide(
+                          width: 2.0,
+                          color: cnst.AppColors.blackcolor,
+                        ))),
                         child: Column(
                           children: [
                             ListTile(
-                              onTap:  (){
+                              onTap: () {
                                 setState(() {
                                   visiblemood = !visiblemood;
                                 });
                               },
-                              contentPadding: EdgeInsets.fromLTRB(12.0,5.0,12.0,5.0),
-                              title: Text("MyAccount",style: TextStyle(),),
-                              subtitle: Text("Address, Change password, Inquiry, Other ",style: TextStyle(fontSize: 13.0),),
-                              trailing: visiblemood == true ?Icon(Icons.arrow_upward_rounded):Icon(Icons.arrow_forward_rounded),
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(12.0, 5.0, 12.0, 5.0),
+                              title: Text(
+                                "MyAccount",
+                                style: TextStyle(),
+                              ),
+                              subtitle: Text(
+                                "Address, Change password, Inquiry, Other ",
+                                style: TextStyle(fontSize: 13.0),
+                              ),
+                              trailing: visiblemood == true
+                                  ? Icon(Icons.arrow_upward)
+                                  : Icon(Icons.arrow_forward),
                             ),
                             Visibility(
                               maintainSize: false,
@@ -79,59 +98,83 @@ class _AccountState extends State<Account> {
                                   ListTile(
                                     title: Text("Mange Address"),
                                     leading: Icon(Icons.home),
-                                    trailing: Icon(Icons.arrow_forward_rounded),
-                                    onTap: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Address()));
+                                    trailing: Icon(Icons.arrow_forward),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Address()));
                                     },
                                   ),
                                   ListTile(
                                     title: Text("Change Password"),
                                     leading: Icon(Icons.lock),
-                                    trailing: Icon(Icons.arrow_forward_rounded),
-                                    onTap: (){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
+                                    trailing: Icon(Icons.arrow_forward),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ChangePassword()));
                                     },
                                   ),
                                   ListTile(
                                     title: Text("Inquiry"),
                                     leading: Icon(Icons.mail),
-                                    trailing: Icon(Icons.arrow_forward_rounded),
+                                    trailing: Icon(Icons.arrow_forward),
                                   ),
                                   ListTile(
                                     title: Text("Offers"),
-                                    leading: Icon(Icons.local_offer_outlined),
-                                    trailing: Icon(Icons.arrow_forward_rounded),
+                                    leading: Icon(Icons.local_offer),
+                                    trailing: Icon(Icons.arrow_forward),
                                   ),
                                 ],
                               ),
                             ),
-                            Divider(thickness: 2,),
+                            Divider(
+                              thickness: 2,
+                            ),
                             ListTile(
-                              contentPadding: EdgeInsets.fromLTRB(12.0,5.0,12.0,5.0),
-                              title: Text("Help",style: TextStyle(),),
-                              subtitle: Text("FAQ & Links",style: TextStyle(fontSize: 13.0),),
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(12.0, 5.0, 12.0, 5.0),
+                              title: Text(
+                                "Help",
+                                style: TextStyle(),
+                              ),
+                              subtitle: Text(
+                                "FAQ & Links",
+                                style: TextStyle(fontSize: 13.0),
+                              ),
                               trailing: GestureDetector(
-                                  onTap: (){
+                                  onTap: () {
                                     setState(() {
                                       // visiblemood = !visiblemood;
                                     });
                                   },
-                                  child: visiblemood == true ?Icon(Icons.arrow_upward_rounded):Icon(Icons.arrow_forward_rounded)
-                              ),
+                                  child: visiblemood == true
+                                      ? Icon(Icons.arrow_upward)
+                                      : Icon(Icons.arrow_forward)),
                             ),
-                            Divider(thickness: 2,),
+                            Divider(
+                              thickness: 2,
+                            ),
                             ListTile(
-                              contentPadding: EdgeInsets.fromLTRB(12.0,5.0,12.0,5.0),
-                              title: Text("MyOrder",style: TextStyle(),),
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(12.0, 5.0, 12.0, 5.0),
+                              title: Text(
+                                "MyOrder",
+                                style: TextStyle(),
+                              ),
                               // subtitle: Text("FAQ & Links",style: TextStyle(fontSize: 13.0),),
                               trailing: GestureDetector(
-                                  onTap: (){
+                                  onTap: () {
                                     setState(() {
                                       // visiblemood = !visiblemood;
                                     });
                                   },
-                                  child: visiblemood == true ?Icon(Icons.arrow_upward_rounded):Icon(Icons.arrow_forward_rounded)
-                              ),
+                                  child: visiblemood == true
+                                      ? Icon(Icons.arrow_upward)
+                                      : Icon(Icons.arrow_forward)),
                             ),
                           ],
                         ),
@@ -144,13 +187,15 @@ class _AccountState extends State<Account> {
                 margin: EdgeInsets.only(top: 25.0),
                 width: size.width,
                 decoration: BoxDecoration(
-                    color: cnst.AppColors.whitecolor,
+                  color: cnst.AppColors.whitecolor,
                 ),
                 child: GestureDetector(
                   onTap: () async {
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
                     prefs.clear();
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Login()));
                   },
                   child: ListTile(
                     contentPadding: EdgeInsets.symmetric(horizontal: 25.0),
@@ -163,21 +208,31 @@ class _AccountState extends State<Account> {
           ),
         ),
       ),
-      bottomNavigationBar: AppBottomBar(currentindex: 3,),
+      bottomNavigationBar: AppBottomBar(
+        currentindex: 3,
+      ),
     );
   }
 
-  ListTile buildMenuItem(String title,subtitle){
+  ListTile buildMenuItem(String title, subtitle) {
     return ListTile(
-      onTap:  (){
+      onTap: () {
         setState(() {
           visiblemood = !visiblemood;
         });
       },
-      contentPadding: EdgeInsets.fromLTRB(12.0,5.0,12.0,5.0),
-      title: Text(title,style: TextStyle(),),
-      subtitle: Text(subtitle,style: TextStyle(fontSize: 13.0),),
-      trailing: visiblemood == true ?Icon(Icons.arrow_upward_rounded):Icon(Icons.arrow_forward_rounded),
+      contentPadding: EdgeInsets.fromLTRB(12.0, 5.0, 12.0, 5.0),
+      title: Text(
+        title,
+        style: TextStyle(),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(fontSize: 13.0),
+      ),
+      trailing: visiblemood == true
+          ? Icon(Icons.arrow_upward)
+          : Icon(Icons.arrow_forward),
     );
   }
 
@@ -190,4 +245,3 @@ class _AccountState extends State<Account> {
     });
   }
 }
-

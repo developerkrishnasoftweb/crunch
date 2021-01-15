@@ -1,14 +1,15 @@
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/classes.dart';
+import 'package:crunch/Screens/category_items.dart';
 import 'package:flutter/material.dart';
+
 import '../Static/Constant.dart' as cnst;
-import 'Menu_List.dart';
 import 'setLocation.dart';
 
 class Categorys extends StatefulWidget {
-  List productitem,addonitem;
+  List productitem, addonitem;
   List<Category> categories;
-  Categorys({this.productitem,this.addonitem, this.categories});
+  Categorys({this.productitem, this.addonitem, this.categories});
   @override
   _CategorysState createState() => _CategorysState();
 }
@@ -43,7 +44,7 @@ class _CategorysState extends State<Categorys> {
           )
         ],
       ),
-     body: widget.categories.length > 0
+      body: widget.categories.length > 0
           ? SingleChildScrollView(
               child: Center(
                 child: Container(
@@ -52,7 +53,7 @@ class _CategorysState extends State<Categorys> {
                   child: ListView.builder(
                       itemCount: widget.categories.length,
                       itemBuilder: (context, index) {
-                        return buildList(size, widget.categories[index].name);
+                        return buildList(size, widget.categories[index]);
                       }),
                 ),
               ),
@@ -64,16 +65,13 @@ class _CategorysState extends State<Categorys> {
     );
   }
 
-  GestureDetector buildList(size, category) {
+  GestureDetector buildList(size, Category category) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //     context, MaterialPageRoute(builder: (context) => Menu_list(
-        //   CategoryId: widget.category[index]['categoryid'],
-        //   productitem: widget.productitem,
-        //   restaurants: [],
-        //   addongroup: widget.addonitem,
-        // )));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CategoryItems(categoryId: category.id)));
       },
       child: Container(
         width: size.width * 0.9,
@@ -107,14 +105,13 @@ class _CategorysState extends State<Categorys> {
                     stops: [
                       0.0,
                       1.0
-                    ]
-                )),
+                    ])),
           ),
           Align(
             alignment: Alignment(0.0, 0.03),
             child: Container(
               child: Text(
-                category,
+                category.name,
                 style: TextStyle(fontSize: 27.0, color: Colors.white),
               ),
             ),

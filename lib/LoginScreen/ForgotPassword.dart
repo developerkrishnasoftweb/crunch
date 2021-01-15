@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../Static/Constant.dart' as cnst;
 
 class ForgotPassword extends StatefulWidget {
   @override
@@ -12,13 +11,19 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(Icons.arrow_back_ios_sharp,color: Colors.black,)),
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+            )),
         backgroundColor: Colors.white,
         elevation: 0.0,
-        title: Text("Review & Ratings",style: TextStyle(color: Colors.black),),
+        title: Text(
+          "Review & Ratings",
+          style: TextStyle(color: Colors.black),
+        ),
         centerTitle: true,
       ),
     );

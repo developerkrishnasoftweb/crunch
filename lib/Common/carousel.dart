@@ -1,7 +1,7 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class Carousel extends StatefulWidget {
   final List<CarouselItems> items;
@@ -41,8 +41,13 @@ class _CarouselState extends State<Carousel> {
                     fit: BoxFit.fill,
                     width: widget.width,
                     height: widget.height,
-                    errorBuilder: (BuildContext context, Object object, StackTrace trace){
-                      return Icon(Icons.error_rounded, color: Colors.white, size: 30,);
+                    errorBuilder: (BuildContext context, Object object,
+                        StackTrace trace) {
+                      return Icon(
+                        Icons.error,
+                        color: Colors.white,
+                        size: 30,
+                      );
                     },
                     loadingBuilder: (BuildContext context, Widget child,
                         ImageChunkEvent event) {
@@ -56,8 +61,8 @@ class _CarouselState extends State<Carousel> {
                                 height: 30,
                                 width: 30,
                                 child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(
-                                      Colors.grey),
+                                  valueColor:
+                                      AlwaysStoppedAnimation(Colors.grey),
                                 ),
                               ),
                             );

@@ -1,17 +1,16 @@
-import 'dart:convert';
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/CustomCheckBox.dart';
 import 'package:crunch/Common/CustomCounterBtn.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import '../Static/Constant.dart' as cnst;
-import 'Home.dart';
 
 class Menu_list extends StatefulWidget {
-  List productitem,restaurants,addongroup;
+  List productitem, restaurants, addongroup;
   String CategoryId;
-  Menu_list({this.productitem, this.CategoryId,this.restaurants,this.addongroup});
+  Menu_list(
+      {this.productitem, this.CategoryId, this.restaurants, this.addongroup});
 
   @override
   _Menu_listState createState() => _Menu_listState();
@@ -31,6 +30,7 @@ class _Menu_listState extends State<Menu_list> {
     // TODO: implement initState
     _getItemsData();
   }
+
   bool isLoading = true;
   List _items = [];
   List _addonitem = [];
@@ -68,7 +68,6 @@ class _Menu_listState extends State<Menu_list> {
         "\$29.0"),
   ];
 
-
   _getItemsData() {
     for (int i = 0; i < widget.productitem.length; i++) {
       if (widget.productitem[i]["item_categoryid"] == widget.CategoryId) {
@@ -87,22 +86,27 @@ class _Menu_listState extends State<Menu_list> {
     // if (int.parse(widget.CategoryId) == widget.productitem[])
   }
 
- _getAddonItemsData(index) {
+  _getAddonItemsData(index) {
     for (int i = 0; i < widget.addongroup.length; i++) {
-      for (int j = 0 ; j < widget.productitem[index]['addon'].length; j++) {
-        if (_items[0]['addon'][j]['addon_group_id'] == widget.addongroup[i]['addongroupid']) {
+      for (int j = 0; j < widget.productitem[index]['addon'].length; j++) {
+        if (_items[0]['addon'][j]['addon_group_id'] ==
+            widget.addongroup[i]['addongroupid']) {
           setState(() {
             isLoading = false;
             _addonitem.clear();
-            values.remove(widget.addongroup[i]["addongroupitems"][0]["addonitem_price"]);
+            values.remove(
+                widget.addongroup[i]["addongroupitems"][0]["addonitem_price"]);
           });
           // print("check " + widget.addongroup[i].toString());
           setState(() {
-            values.addAll({widget.addongroup[i]["addongroupitems"][0]["addonitem_price"] : false});
+            values.addAll({
+              widget.addongroup[i]["addongroupitems"][0]["addonitem_price"]:
+                  false
+            });
             // values[widget.addongroup[i]["addongroupitems"][0]["addonitem_price"]] = false;
             _addonitem.add(widget.addongroup[i]);
           });
-          print("work inf"+ values.toString());
+          print("work inf" + values.toString());
         }
       }
     }
@@ -117,7 +121,7 @@ class _Menu_listState extends State<Menu_list> {
               Navigator.pop(context);
             },
             child: Icon(
-              Icons.arrow_back_ios_sharp,
+              Icons.arrow_back_ios,
               color: Colors.black,
             )),
         backgroundColor: Colors.white,
@@ -133,26 +137,25 @@ class _Menu_listState extends State<Menu_list> {
           ),
         ),
       ),
-      body:
-          isLoading
+      body: isLoading
           ? Center(child: CircularProgressIndicator())
           : _items.length > 0
-            ? SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
-                child: Column(
-                  children: [
-                    buildCompleteVerticalList(context, _items, "Items"),
-                    // buildCompleteVerticalList(context, products, "SouthIndian"),
-                  ],
+              ? SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+                    child: Column(
+                      children: [
+                        buildCompleteVerticalList(context, _items, "Items"),
+                        // buildCompleteVerticalList(context, products, "SouthIndian"),
+                      ],
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Text("No Items Available",
+                      style: TextStyle(fontSize: 20, color: Colors.black38)),
                 ),
-              ),
-            )
-          :Center(
-            child: Text("No Items Available",
-                style: TextStyle(fontSize: 20, color: Colors.black38)),
-          ),
       bottomNavigationBar: AppBottomBar(
         currentindex: 1,
       ),
@@ -212,7 +215,7 @@ class _Menu_listState extends State<Menu_list> {
                             right: 2.0,
                             top: 2.0,
                             child: Icon(
-                              Icons.check_box_outlined,
+                              Icons.check_box,
                               size: 15,
                               color: cnst.AppColors.greencolor,
                             ),
@@ -234,13 +237,13 @@ class _Menu_listState extends State<Menu_list> {
                               height: 3,
                             ),
                             Text(
-                                products[index]['itemdescription'],
+                              products[index]['itemdescription'],
                               style: TextStyle(fontSize: 13.0),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            Text("\u20B9 "+ products[index]['price'],
+                            Text("\u20B9 " + products[index]['price'],
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                     fontSize: 14.0,
@@ -248,7 +251,8 @@ class _Menu_listState extends State<Menu_list> {
                           ],
                         ),
                       ),
-                      products[index]['addon'] != "" && products[index]['addon'] != null
+                      products[index]['addon'] != "" &&
+                              products[index]['addon'] != null
                           ? GestureDetector(
                               onTap: () {
                                 // print(products[index]['addon'][0]['addon_group_id']);
@@ -263,7 +267,8 @@ class _Menu_listState extends State<Menu_list> {
                                 //   }
                                 _getAddonItemsData(index);
                                 setState(() {
-                                  _settingModalBottomSheet(context,_addonitem,products[index]['price']);
+                                  _settingModalBottomSheet(context, _addonitem,
+                                      products[index]['price']);
                                 });
                               },
                               child: Container(
@@ -312,8 +317,8 @@ class _Menu_listState extends State<Menu_list> {
     );
   }
 
-  _settingModalBottomSheet(context,List _addonitems,price) {
-    print("add "+_addonitems.length.toString());
+  _settingModalBottomSheet(context, List _addonitems, price) {
+    print("add " + _addonitems.length.toString());
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -330,50 +335,56 @@ class _Menu_listState extends State<Menu_list> {
                         onTap: () {
                           Navigator.pop(context);
                         },
-                        child: Icon(Icons.cancel_outlined)),
+                        child: Icon(Icons.cancel)),
                     onTap: () => {}),
                 Divider(
                   thickness: 1,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  child: ListView.builder(
-                      itemCount: _addonitems.length,
-                      itemBuilder: (context, index){
-                        return  Container(
-                          padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                          child: Column(
-
-                            children: [
-                              ListTile(
-                                  title: new Text(_addonitems[index]["addongroup_name"]),
-                                  onTap: () => {}),
-                              Container(
-
-                                child: ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                   itemCount: _addonitems[index]["addongroupitems"].length,
-                                   itemBuilder: (context,ind){
+                    padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: ListView.builder(
+                        itemCount: _addonitems.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 0),
+                            child: Column(
+                              children: [
+                                ListTile(
+                                    title: new Text(
+                                        _addonitems[index]["addongroup_name"]),
+                                    onTap: () => {}),
+                                Container(
+                                  child: ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount: _addonitems[index]
+                                            ["addongroupitems"]
+                                        .length,
+                                    itemBuilder: (context, ind) {
                                       return CustomCheckBox(
-                                        title: _addonitems[index]["addongroupitems"][ind]["addonitem_name"],
-                                        price: _addonitems[index]["addongroupitems"][ind]["addonitem_price"],
-                                        cvalue: values[_addonitems[index]["addongroupitems"][ind]["addonitem_price"]],
+                                        title: _addonitems[index]
+                                                ["addongroupitems"][ind]
+                                            ["addonitem_name"],
+                                        price: _addonitems[index]
+                                                ["addongroupitems"][ind]
+                                            ["addonitem_price"],
+                                        cvalue: values[_addonitems[index]
+                                                ["addongroupitems"][ind]
+                                            ["addonitem_price"]],
                                       );
                                     },
+                                  ),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.3,
                                 ),
-                                height: MediaQuery.of(context).size.height * 0.3,
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                  )
-                ),
+                              ],
+                            ),
+                          );
+                        })),
                 Container(
                   margin: EdgeInsets.only(top: 10, bottom: 10.0),
-                  padding:
-                  EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -385,10 +396,10 @@ class _Menu_listState extends State<Menu_list> {
                       CustomButton(
                           width: MediaQuery.of(context).size.width * 0.65,
                           height: 45,
-                          title: "ADD \u20B9 "+ price,
+                          title: "ADD \u20B9 " + price,
                           btncolor: cnst.appPrimaryMaterialColor,
                           ontap: () {
-                            print("all done "+values.toString());
+                            print("all done " + values.toString());
                             setState(() {
                               addproduct = true;
                               Navigator.pop(context);

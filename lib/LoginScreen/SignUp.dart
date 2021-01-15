@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Common/CustomButton.dart';
-import 'package:crunch/Screens/Home.dart';
 import 'package:crunch/Screens/new_home.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../APIS/Constants.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../Common/TextField.dart';
-import 'package:flutter/material.dart';
 import '../Static/Constant.dart' as cnst;
 import 'Login.dart';
 
@@ -22,7 +23,6 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-
   File _profileImage;
   var _image;
   TextEditingController Name = TextEditingController();
@@ -43,16 +43,13 @@ class _SignUpState extends State<SignUp> {
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Please wait..");
     _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> message) async{
-          print("onMessage  $message");
-        },
-        onLaunch: (Map<String, dynamic> message) async{
-          print("onLaunch  $message");
-        },
-        onResume: (Map<String, dynamic> message) async{
-          print("onResume  $message");
-        }
-    );
+        onMessage: (Map<String, dynamic> message) async {
+      print("onMessage  $message");
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print("onLaunch  $message");
+    }, onResume: (Map<String, dynamic> message) async {
+      print("onResume  $message");
+    });
     _configureNotification();
   }
 
@@ -60,8 +57,8 @@ class _SignUpState extends State<SignUp> {
     if (Platform.isIOS) {
       iosSubscription =
           _firebaseMessaging.onIosSettingsRegistered.listen((data) async {
-            await _getFCMToken();
-          });
+        await _getFCMToken();
+      });
       _firebaseMessaging
           .requestNotificationPermissions(IosNotificationSettings());
     } else {
@@ -130,7 +127,8 @@ class _SignUpState extends State<SignUp> {
                 image: DecorationImage(
                   image: AssetImage("assets/images/spalsh.png"),
                   fit: BoxFit.fill,
-                  colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.softLight),
+                  colorFilter: new ColorFilter.mode(
+                      Colors.black.withOpacity(0.7), BlendMode.softLight),
                 ),
               ),
               child: Container(
@@ -147,16 +145,23 @@ class _SignUpState extends State<SignUp> {
                       child: Stack(
                         children: [
                           Container(
-                            height: 170,
-                            width: 170,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: cnst.AppColors.whitecolor.withOpacity(0.3),
-                            ),
-                            child: _profileImage == null
-                                    ?Icon(Icons.person_outline_rounded,size: 50.0,color: cnst.AppColors.whitecolor,)
-                                    :CircleAvatar(backgroundImage: FileImage(_profileImage),radius: 150.0,)
-                          ),
+                              height: 170,
+                              width: 170,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color:
+                                    cnst.AppColors.whitecolor.withOpacity(0.3),
+                              ),
+                              child: _profileImage == null
+                                  ? Icon(
+                                      Icons.person_outline,
+                                      size: 50.0,
+                                      color: cnst.AppColors.whitecolor,
+                                    )
+                                  : CircleAvatar(
+                                      backgroundImage: FileImage(_profileImage),
+                                      radius: 150.0,
+                                    )),
                           Positioned(
                             bottom: -10,
                             right: -13,
@@ -169,42 +174,88 @@ class _SignUpState extends State<SignUp> {
                                 decoration: BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: cnst.appPrimaryMaterialColor)),
+                                    border: Border.all(
+                                        color: cnst.appPrimaryMaterialColor)),
                                 child: Container(
-                                  margin: EdgeInsets.all(3.0),
-                                  width: 15,
-                                  height: 15,
-                                  decoration: BoxDecoration(
-                                    color: cnst.appPrimaryMaterialColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(Icons.arrow_upward,color: cnst.AppColors.whitecolor,)
-                                ),
+                                    margin: EdgeInsets.all(3.0),
+                                    width: 15,
+                                    height: 15,
+                                    decoration: BoxDecoration(
+                                      color: cnst.appPrimaryMaterialColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.arrow_upward,
+                                      color: cnst.AppColors.whitecolor,
+                                    )),
                               ),
                             ),
                           )
                         ],
                       ),
                     ),
-                    SizedBox(height: 25.0,),
-                    CustomTextField(hint: "Name",obtext: false,textcontroller: Name,textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.person_outline_rounded,color: cnst.AppColors.whitecolor,size: 25.0),),
-                    SizedBox(height: 13.0,),
-                    CustomTextField(hint: "Email",obtext: false,textcontroller: Email,textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.mail_outline_rounded,color: cnst.AppColors.whitecolor,size: 25.0),),
-                    SizedBox(height: 13.0,),
+                    SizedBox(
+                      height: 25.0,
+                    ),
+                    CustomTextField(
+                      hint: "Name",
+                      obtext: false,
+                      textcontroller: Name,
+                      textColor: cnst.AppColors.whitecolor,
+                      texticon: Icon(Icons.person_outline,
+                          color: cnst.AppColors.whitecolor, size: 25.0),
+                    ),
+                    SizedBox(
+                      height: 13.0,
+                    ),
+                    CustomTextField(
+                      hint: "Email",
+                      obtext: false,
+                      textcontroller: Email,
+                      textColor: cnst.AppColors.whitecolor,
+                      texticon: Icon(Icons.mail_outline,
+                          color: cnst.AppColors.whitecolor, size: 25.0),
+                    ),
+                    SizedBox(
+                      height: 13.0,
+                    ),
                     buildRadioButton(size),
-                    SizedBox(height: 13.0,),
-                    CustomTextField(hint: "Mobile",obtext: false,textcontroller: Mobile,textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.phone,color: cnst.AppColors.whitecolor,size: 25.0),),
-                    SizedBox(height: 13.0,),
-                    CustomTextField(hint: "Password",obtext: true,textcontroller: Password,textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.lock_outline_rounded,color: cnst.AppColors.whitecolor,size: 25.0),),
-                    SizedBox(height: 13.0,),
-                    CustomTextField(hint: "Confirm Password",obtext: true,textcontroller: ConfirmPassword,textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.lock_outline_rounded,color: cnst.AppColors.whitecolor,size: 25.0),),
-
-                    SizedBox(height: 40.0,),
+                    SizedBox(
+                      height: 13.0,
+                    ),
+                    CustomTextField(
+                      hint: "Mobile",
+                      obtext: false,
+                      textcontroller: Mobile,
+                      textColor: cnst.AppColors.whitecolor,
+                      texticon: Icon(Icons.phone,
+                          color: cnst.AppColors.whitecolor, size: 25.0),
+                    ),
+                    SizedBox(
+                      height: 13.0,
+                    ),
+                    CustomTextField(
+                      hint: "Password",
+                      obtext: true,
+                      textcontroller: Password,
+                      textColor: cnst.AppColors.whitecolor,
+                      texticon: Icon(Icons.lock_outline,
+                          color: cnst.AppColors.whitecolor, size: 25.0),
+                    ),
+                    SizedBox(
+                      height: 13.0,
+                    ),
+                    CustomTextField(
+                      hint: "Confirm Password",
+                      obtext: true,
+                      textcontroller: ConfirmPassword,
+                      textColor: cnst.AppColors.whitecolor,
+                      texticon: Icon(Icons.lock_outline,
+                          color: cnst.AppColors.whitecolor, size: 25.0),
+                    ),
+                    SizedBox(
+                      height: 40.0,
+                    ),
                     CustomButton(
                       title: "Sign UP",
                       btncolor: cnst.appPrimaryMaterialColor,
@@ -212,10 +263,13 @@ class _SignUpState extends State<SignUp> {
                         userValidation();
                       },
                     ),
-                    SizedBox(height: 20.0,),
+                    SizedBox(
+                      height: 20.0,
+                    ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Login()));
                       },
                       child: Align(
                         alignment: Alignment.bottomCenter,
@@ -223,14 +277,14 @@ class _SignUpState extends State<SignUp> {
                           "Already have an account? Login",
                           style: TextStyle(
                             color: cnst.AppColors.whitecolor,
-                            fontSize: 15,),
+                            fontSize: 15,
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              )
-          ),
+              )),
         ),
       ),
     );
@@ -261,28 +315,39 @@ class _SignUpState extends State<SignUp> {
   }
 
   userSignUp() async {
-    try{
+    try {
       pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
         String filename = _image.path.split("/").last;
         String filePath = _image.path;
-        print(Name.text+ " " +Email.text + " "+Mobile.text + " "+Password.text+" "+gender+ " "+fcm+ " "+filename);
+        print(Name.text +
+            " " +
+            Email.text +
+            " " +
+            Mobile.text +
+            " " +
+            Password.text +
+            " " +
+            gender +
+            " " +
+            fcm +
+            " " +
+            filename);
         FormData d = FormData.fromMap({
-          "api_key" : API_Key,
+          "api_key": API_Key,
           "name": Name.text,
-          "email" : Email.text,
-          "mobile" : Mobile.text,
-          "password" : Password.text,
-          "gender" : gender,
-          "token" : fcm,
+          "email": Email.text,
+          "mobile": Mobile.text,
+          "password": Password.text,
+          "gender": gender,
+          "token": fcm,
           "image": await MultipartFile.fromFile(filePath, filename: filename),
         });
 
         AppServices.CustomerSignUp(d).then((data) async {
           pr.hide();
-          if(data.value == "y") {
+          if (data.value == "y") {
             print(data.data);
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString(cnst.Session.id, data.data[0]["id"]);
@@ -294,26 +359,26 @@ class _SignUpState extends State<SignUp> {
             prefs.setString(cnst.Session.status, data.data[0]["status"]);
             prefs.setString(cnst.Session.gender, data.data[0]["gender"]);
             print(
-                "id: ${prefs.getString(cnst.Session.id)} gender:${prefs
-                    .getString(cnst.Session.gender)}");
+                "id: ${prefs.getString(cnst.Session.id)} gender:${prefs.getString(cnst.Session.gender)}");
             Navigator.pushAndRemoveUntil(
-                context, MaterialPageRoute(builder: (context) => Home()), (
-                route) => false);
+                context,
+                MaterialPageRoute(builder: (context) => Home()),
+                (route) => false);
           } else {
             _toastMesssage(data.message);
           }
-        },onError: (e) {
+        }, onError: (e) {
           pr.hide();
           _toastMesssage("Something went wrong.");
         });
       }
-    }catch(e){
+    } catch (e) {
       pr.hide();
       _toastMesssage("No Internet Connection.");
     }
   }
 
-  _toastMesssage(String message){
+  _toastMesssage(String message) {
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
@@ -321,50 +386,58 @@ class _SignUpState extends State<SignUp> {
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.black.withOpacity(0.3),
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   }
 
-  Container buildRadioButton(size,){
-    return  Container(
-      width: size.width *0.85,
+  Container buildRadioButton(
+    size,
+  ) {
+    return Container(
+      width: size.width * 0.85,
       decoration: BoxDecoration(
           color: cnst.AppColors.whitecolor.withOpacity(0.3),
-          border: Border.all(color: cnst.AppColors.whitecolor.withOpacity(0.2), width: 1),
+          border: Border.all(
+              color: cnst.AppColors.whitecolor.withOpacity(0.2), width: 1),
           borderRadius: BorderRadius.circular(10)),
       child: Center(
-        child: Row(
-          children: [
-            Container(
-              width: size.width * 0.4,
-              child: RadioListTile(
-                groupValue: gender,
-                title: Text('Male',style: TextStyle(color: cnst.AppColors.whitecolor,fontSize: 16.0),),
-                value: 'Male',
-                onChanged: (val) {
-                  setState(() {
-                    gender = val;
-                  });
-                },
+          child: Row(
+        children: [
+          Container(
+            width: size.width * 0.4,
+            child: RadioListTile(
+              groupValue: gender,
+              title: Text(
+                'Male',
+                style:
+                    TextStyle(color: cnst.AppColors.whitecolor, fontSize: 16.0),
               ),
+              value: 'Male',
+              onChanged: (val) {
+                setState(() {
+                  gender = val;
+                });
+              },
             ),
-            Container(
-              width: size.width * 0.4,
-              child: RadioListTile(
-                groupValue: gender,
-                title: Text('Female',style: TextStyle(color: cnst.AppColors.whitecolor,fontSize: 16.0),),
-                value: 'Female',
-                onChanged: (val) {
-                  setState(() {
-                    gender = val;
-                  });
-                },
+          ),
+          Container(
+            width: size.width * 0.4,
+            child: RadioListTile(
+              groupValue: gender,
+              title: Text(
+                'Female',
+                style:
+                    TextStyle(color: cnst.AppColors.whitecolor, fontSize: 16.0),
               ),
-            )
-          ],
-        )
-      ),
+              value: 'Female',
+              onChanged: (val) {
+                setState(() {
+                  gender = val;
+                });
+              },
+            ),
+          )
+        ],
+      )),
     );
   }
-
 }

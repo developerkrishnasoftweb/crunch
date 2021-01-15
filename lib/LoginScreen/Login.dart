@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:crunch/Screens/Home.dart';
-import 'package:crunch/Screens/new_home.dart';
-import 'package:dio/dio.dart';
+
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
 import 'package:crunch/LoginScreen/SignUp.dart';
-import 'package:crunch/Screens/ChangePassword.dart';
+import 'package:crunch/Screens/new_home.dart';
+import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../APIS/Constants.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import '../APIS/AppServices.dart';
+import '../APIS/Constants.dart';
 import '../Static/Constant.dart' as cnst;
 
 class Login extends StatefulWidget {
@@ -23,7 +23,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   TextEditingController Email = TextEditingController();
   TextEditingController Password = TextEditingController();
   StreamSubscription iosSubscription;
@@ -39,16 +38,13 @@ class _LoginState extends State<Login> {
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Please wait..");
     _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> message) async{
-          print("onMessage  $message");
-        },
-        onLaunch: (Map<String, dynamic> message) async{
-          print("onLaunch  $message");
-        },
-        onResume: (Map<String, dynamic> message) async{
-          print("onResume  $message");
-        }
-    );
+        onMessage: (Map<String, dynamic> message) async {
+      print("onMessage  $message");
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print("onLaunch  $message");
+    }, onResume: (Map<String, dynamic> message) async {
+      print("onResume  $message");
+    });
     _configureNotification();
   }
 
@@ -56,8 +52,8 @@ class _LoginState extends State<Login> {
     if (Platform.isIOS) {
       iosSubscription =
           _firebaseMessaging.onIosSettingsRegistered.listen((data) async {
-            await _getFCMToken();
-          });
+        await _getFCMToken();
+      });
       _firebaseMessaging
           .requestNotificationPermissions(IosNotificationSettings());
     } else {
@@ -79,7 +75,8 @@ class _LoginState extends State<Login> {
     String id = prefs.getString(cnst.Session.id);
 
     if (id != null) {
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+      Navigator.pushAndRemoveUntil(context,
+          MaterialPageRoute(builder: (context) => Home()), (route) => false);
     }
   }
 
@@ -90,88 +87,118 @@ class _LoginState extends State<Login> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Container(
-            width: size.width,
-            height: size.height,
-            decoration: BoxDecoration(
-              image: DecorationImage(
+              width: size.width,
+              height: size.height,
+              decoration: BoxDecoration(
+                image: DecorationImage(
                   image: AssetImage("assets/images/spalsh.png"),
                   fit: BoxFit.fill,
-                colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.softLight),
+                  colorFilter: new ColorFilter.mode(
+                      Colors.black.withOpacity(0.7), BlendMode.softLight),
+                ),
               ),
-            ),
-            child: Container(
-              height: size.height,
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 85.0, 0, 0),
-                    width: size.width *0.6,
-                    height: size.height * 0.13,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("assets/images/White_CrunchTM.png"),
-                          fit: BoxFit.fill
+              child: Container(
+                height: size.height,
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0, 85.0, 0, 0),
+                      width: size.width * 0.6,
+                      height: size.height * 0.13,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image:
+                                AssetImage("assets/images/White_CrunchTM.png"),
+                            fit: BoxFit.fill),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 120.0,),
-                  CustomTextField(hint: "Email",textcontroller: Email,obtext: false,textColor: cnst.AppColors.whitecolor,
-                          texticon: Icon(Icons.mail_outline_rounded,size: 25.0,color: cnst.AppColors.whitecolor,),),
-                  SizedBox(height: 16.0,),
-                  CustomTextField(hint: "Password",textcontroller: Password,obtext: true,textColor: cnst.AppColors.whitecolor,
-                    texticon: Icon(Icons.lock_open_rounded,size: 25.0,color: cnst.AppColors.whitecolor,),),
-                  SizedBox(height: 16.0,),
-                  GestureDetector(
-                    onTap: () {
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
-                    },
-                    child: Container(
-                      width: size.width *0.85,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "Forgot Password?",
-                          style: TextStyle(
-                            color: cnst.AppColors.whitecolor,
-                            fontSize: 15,),
+                    SizedBox(
+                      height: 120.0,
+                    ),
+                    CustomTextField(
+                      hint: "Email",
+                      textcontroller: Email,
+                      obtext: false,
+                      textColor: cnst.AppColors.whitecolor,
+                      texticon: Icon(
+                        Icons.mail_outline,
+                        size: 25.0,
+                        color: cnst.AppColors.whitecolor,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    CustomTextField(
+                      hint: "Password",
+                      textcontroller: Password,
+                      obtext: true,
+                      textColor: cnst.AppColors.whitecolor,
+                      texticon: Icon(
+                        Icons.lock_open,
+                        size: 25.0,
+                        color: cnst.AppColors.whitecolor,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
+                      },
+                      child: Container(
+                        width: size.width * 0.85,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            "Forgot Password?",
+                            style: TextStyle(
+                              color: cnst.AppColors.whitecolor,
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 80.0,),
-                  CustomButton(
-                    title: "LOGIN", btncolor: cnst.appPrimaryMaterialColor,
-                    ontap: () {
-                      LoginValidation();
-                    }
-                  ),
-                  SizedBox(height: 30.0,),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
-                    },
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Text(
-                        "Create New Account",
-                        style: TextStyle(
-                          color: cnst.AppColors.whitecolor,
-                          fontSize: 15,),
+                    SizedBox(
+                      height: 80.0,
+                    ),
+                    CustomButton(
+                        title: "LOGIN",
+                        btncolor: cnst.appPrimaryMaterialColor,
+                        ontap: () {
+                          LoginValidation();
+                        }),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => SignUp()));
+                      },
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Text(
+                          "Create New Account",
+                          style: TextStyle(
+                            color: cnst.AppColors.whitecolor,
+                            fontSize: 15,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ),
+                  ],
+                ),
+              )),
         ),
       ),
     );
   }
-
 
   LoginValidation() {
     if (Email.text == "") {
@@ -184,21 +211,20 @@ class _LoginState extends State<Login> {
   }
 
   LoginCustomer() async {
-
-    try{
+    try {
       pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         FormData d = FormData.fromMap({
-          "api_key" : API_Key,
-          "username" : Email.text,
-          "password" : Password.text,
-          "token" : fcm,
+          "api_key": API_Key,
+          "username": Email.text,
+          "password": Password.text,
+          "token": fcm,
         });
 
         AppServices.CustomerLogin(d).then((data) async {
           pr.hide();
-          if(data.value == "y"){
+          if (data.value == "y") {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.setString(cnst.Session.id, data.data[0]["id"]);
             prefs.setString(cnst.Session.name, data.data[0]["name"]);
@@ -208,21 +234,23 @@ class _LoginState extends State<Login> {
             prefs.setString(cnst.Session.image, data.data[0]["image"]);
             prefs.setString(cnst.Session.status, data.data[0]["status"]);
             prefs.setString(cnst.Session.gender, data.data[0]["gender"]);
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
-          }
-          else {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Home()),
+                (route) => false);
+          } else {
             _toastMesssage("Invalid username or password");
           }
         }, onError: (e) {
           pr.hide();
         });
       }
-    }catch(e){
+    } catch (e) {
       pr.hide();
     }
   }
 
-  _toastMesssage(String message){
+  _toastMesssage(String message) {
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
@@ -230,8 +258,6 @@ class _LoginState extends State<Login> {
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.white.withOpacity(0.3),
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   }
-
 }

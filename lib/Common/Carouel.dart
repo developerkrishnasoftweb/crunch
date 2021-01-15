@@ -1,7 +1,7 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 class Carousel extends StatefulWidget {
   final List<CarouselItems> items;
@@ -10,10 +10,10 @@ class Carousel extends StatefulWidget {
   final bool autoplay;
   Carousel(
       {@required this.items,
-        @required this.width,
-        this.height,
-        this.borderRadius,
-        this.autoplay})
+      @required this.width,
+      this.height,
+      this.borderRadius,
+      this.autoplay})
       : assert(items != null && width != null);
   @override
   _CarouselState createState() => _CarouselState();
@@ -41,26 +41,31 @@ class _CarouselState extends State<Carousel> {
                     fit: BoxFit.fill,
                     width: widget.width,
                     height: widget.height,
-                    errorBuilder: (BuildContext context, Object object, StackTrace trace){
-                      return Icon(Icons.error_rounded, color: Colors.red, size: 30,);
+                    errorBuilder: (BuildContext context, Object object,
+                        StackTrace trace) {
+                      return Icon(
+                        Icons.error,
+                        color: Colors.red,
+                        size: 30,
+                      );
                     },
                     loadingBuilder: (BuildContext context, Widget child,
                         ImageChunkEvent event) {
                       return event == null
                           ? child
                           : Container(
-                        height: widget.height,
-                        width: widget.width,
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          height: 30,
-                          width: 30,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(
-                                Colors.grey),
-                          ),
-                        ),
-                      );
+                              height: widget.height,
+                              width: widget.width,
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: CircularProgressIndicator(
+                                  valueColor:
+                                      AlwaysStoppedAnimation(Colors.grey),
+                                ),
+                              ),
+                            );
                     },
                   ),
                   borderRadius: BorderRadius.circular(10),
@@ -115,8 +120,8 @@ class CarouselItems {
   final GestureTapCallback onTap;
   CarouselItems(
       {@required this.image,
-        this.title,
-        this.category,
-        this.onTap,
-        this.categoryId});
+      this.title,
+      this.category,
+      this.onTap,
+      this.categoryId});
 }
