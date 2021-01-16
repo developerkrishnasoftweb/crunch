@@ -67,7 +67,7 @@ class SQFLiteTables {
     return true;
   }
 
-  static void insertData({Database db}) async {
+  static Future<void> insertData({Database db}) async {
     await AppServices.fetchMenu().then((menuList) async {
       try {
         if (menuList.response == "1") {

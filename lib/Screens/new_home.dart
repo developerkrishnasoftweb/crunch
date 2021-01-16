@@ -72,28 +72,30 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   createTables() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var isTablesCreated = sharedPreferences.getString("isTablesCreated");
+    var isTablesCreated = sharedPreferences.getBool("isTablesCreated") ?? false;
     print(isTablesCreated);
-    if (isTablesCreated == null) {
+    if (isTablesCreated) {
+      getBanners();
+    } else {
       String databasePath = await getDatabasesPath();
       Database db = await openDatabase(databasePath + 'myDb.db', version: 1,
-          onCreate: (Database db, int version) async {
-        await SQFLiteTables.createTables(db: db).then((value) async {
-          if (value) {
-            SQFLiteTables.insertData(db: db);
-            setData();
-            sharedPreferences.setString("isTablesCreated", "y");
-          }
-        });
+          onCreate: (Database db, int version) async {});
+      await SQFLiteTables.createTables(db: db).then((value) async {
+        if (value) {
+          setLoading(true);
+          await SQFLiteTables.insertData(db: db);
+          setData();
+          setLoading(false);
+        }
       });
-    } else {
-      getBanners();
+      sharedPreferences.setBool("isTablesCreated", true);
     }
   }
 
   setData() async {
     setState(() {
       items = [];
+      categories = [];
     });
     await SQFLiteTables.getData(table: Tables.CATEGORY).then((value) {
       for (int i = 0; i < value.length; i++) {
@@ -164,7 +166,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         }).toList(),
                         width: size.width * 0.9,
                         borderRadius: BorderRadius.circular(7),
-                        height: (size.height * 0.25) > 200 ? 200 : size.height,
+                        height: (size.height * 0.25) > 200 ? 200 : size.height * 0.25,
                       ),
                     ),
                     categories.length > 0
