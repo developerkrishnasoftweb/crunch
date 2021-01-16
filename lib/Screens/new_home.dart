@@ -73,7 +73,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   createTables() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var isTablesCreated = sharedPreferences.getBool("isTablesCreated") ?? false;
-    print(isTablesCreated);
     if (isTablesCreated) {
       getBanners();
     } else {
