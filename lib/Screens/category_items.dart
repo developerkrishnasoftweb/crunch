@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../APIS/Constants.dart';
+import '../Common/classes.dart';
+
 class CategoryItems extends StatefulWidget {
   final String categoryId;
   CategoryItems({@required this.categoryId});
@@ -131,7 +134,7 @@ class _CategoryItemsState extends State<CategoryItems>
                                   fontWeight: FontWeight.bold, fontSize: 21),
                             ),
                             items[index].addedToCart
-                                ? incDecButton()
+                                ? incDecButton(item: items[index])
                                 : addToCartButton(onPressed: () async {
                                     if (items[index].addon.length > 0) {
                                       setState(() {
@@ -162,6 +165,9 @@ class _CategoryItemsState extends State<CategoryItems>
                                       setState(() {
                                         items[index].addedToCart = true;
                                       });
+                                      _addToCart(itemData: items[index]);
+                                      Fluttertoast.showToast(
+                                          msg: "Added to cart");
                                     }
                                   })
                           ],
@@ -303,16 +309,23 @@ class _CategoryItemsState extends State<CategoryItems>
     });
     for (int i = 0; i < addOnGroups.length; i++) {
       if (addOnGroups[i].selected) {
-        db.insert(SQFLiteTables.tableCartAddon,
+        await db.insert(SQFLiteTables.tableCartAddon,
             {"cart_id": "$id", "addon_id": addOnGroups[i].addOnItemId});
       }
     }
-    Navigator.pop(context);
+    if (itemData.addon.length > 0) Navigator.pop(context);
     Fluttertoast.showToast(msg: "Added to cart");
   }
 
-  Widget incDecButton() {
-    int qty = 1;
+  _updateCart({ItemData itemData}) async {
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
+    await db.rawQuery(
+        "update ${SQFLiteTables.tableCart} set qty = ${itemData.quantity} where item_id = ${itemData.id}");
+  }
+
+  Widget incDecButton({@required ItemData item}) {
     return Container(
         decoration: BoxDecoration(
             border: Border.all(color: Colors.green[400]),
@@ -324,8 +337,9 @@ class _CategoryItemsState extends State<CategoryItems>
             GestureDetector(
               onTap: () {
                 setState(() {
-                  qty = qty++;
+                  item.quantity = item.quantity + 1;
                 });
+                _updateCart(itemData: item);
               },
               child: Icon(
                 Icons.add,
@@ -336,15 +350,16 @@ class _CategoryItemsState extends State<CategoryItems>
               child: Container(
                 alignment: Alignment.center,
                 color: Colors.green[400],
-                child: Text("$qty"),
+                child: Text("${item.quantity}"),
               ),
             ),
             GestureDetector(
               onTap: () {
-                if (qty != 1) {
+                if (item.quantity != 1) {
                   setState(() {
-                    qty--;
+                    item.quantity = item.quantity - 1;
                   });
+                  _updateCart(itemData: item);
                 }
               },
               child: Icon(
