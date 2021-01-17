@@ -77,13 +77,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       getBanners();
     } else {
       String databasePath = await getDatabasesPath();
-      Database db = await openDatabase(databasePath + 'myDb.db', version: 1,
-          onCreate: (Database db, int version) async {});
+      Database db = await openDatabase(databasePath + 'myDb.db',
+          version: 1, onCreate: (Database db, int version) async {});
       await SQFLiteTables.createTables(db: db).then((value) async {
         if (value) {
           setLoading(true);
           await SQFLiteTables.insertData(db: db);
           setData();
+          getBanners();
           setLoading(false);
         }
       });
@@ -165,7 +166,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         }).toList(),
                         width: size.width * 0.9,
                         borderRadius: BorderRadius.circular(7),
-                        height: (size.height * 0.25) > 200 ? 200 : size.height * 0.25,
+                        height: (size.height * 0.25) > 200
+                            ? 200
+                            : size.height * 0.25,
                       ),
                     ),
                     categories.length > 0
