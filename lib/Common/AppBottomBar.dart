@@ -1,7 +1,7 @@
 import 'package:crunch/Screens/Account.dart';
-import 'package:crunch/Screens/Rating.dart';
 import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Screens/new_home.dart';
+import 'package:crunch/Screens/search_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../Static/Constant.dart' as cnst;
@@ -30,7 +30,7 @@ class _AppBottomBarState extends State<AppBottomBar> {
             break;
           case 1:
             Navigator.push(
-                context, MaterialPageRoute(builder: (_) => Rating()));
+                context, MaterialPageRoute(builder: (_) => Search()));
             break;
           case 2:
             Navigator.push(context, MaterialPageRoute(builder: (_) => Cart()));
