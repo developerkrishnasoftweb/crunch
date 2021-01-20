@@ -7,6 +7,7 @@ import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/Category.dart';
 import 'package:crunch/Screens/category_items.dart';
+import 'package:crunch/Static/Constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -142,12 +143,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.grey[50],
+          backgroundColor: appPrimaryMaterialColor,
           elevation: 2,
           automaticallyImplyLeading: false,
           title: Text(
             "Home",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
         ),
         body: !isLoading

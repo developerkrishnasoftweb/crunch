@@ -50,12 +50,10 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       appBar: AppBar(
         title: Center(
           child: Container(
-            height: 50,
+            height: 45,
             decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(7),
-                border: Border.all(color: Colors.grey[300]),
-                boxShadow: [BoxShadow(color: Colors.grey[300], blurRadius: 5)]),
+                borderRadius: BorderRadius.circular(4)),
             child: TextField(
               decoration: InputDecoration(
                   hintText: "Search",
@@ -66,7 +64,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
             ),
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: appPrimaryMaterialColor,
       ),
       body: isLoading
           ? Center(

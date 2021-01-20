@@ -139,7 +139,6 @@ class _AddressState extends State<Address> {
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String id = prefs.getString(cnst.Session.id);
-        print("cust is " + id);
         FormData d = FormData.fromMap({
           "api_key": "0imfnc8mVLWwsAawjYr4Rx",
           "customer_id": id,
@@ -149,14 +148,11 @@ class _AddressState extends State<Address> {
         });
         AppServices.getAddress(d).then((data) async {
           if (data.value == "y") {
-            print("dl: ${data.data.length}");
             setState(() {
               isLoading = false;
             });
             for (int i = 0; i < data.data.length; i++) {
-              print("work");
               _address.add(data.data[i]);
-              print("add_" + _address.toString());
             }
           } else {
             setState(() {

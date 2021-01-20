@@ -8,7 +8,6 @@ import 'Static/Constant.dart' as cnst;
 
 void main() {
   runApp(MyApp());
-  // SQFLiteTables();
 }
 
 class MyApp extends StatefulWidget {
@@ -42,7 +41,7 @@ class _MyAppState extends State<MyApp> {
           accentColor: cnst.appPrimaryMaterialColor,
           primaryColor: cnst.appPrimaryMaterialColor,
           appBarTheme:
-              AppBarTheme(iconTheme: IconThemeData(color: Colors.black))),
+              AppBarTheme(iconTheme: IconThemeData(color: Colors.white))),
       initialRoute: "/",
       routes: {
         "/": (context) => Login(),
