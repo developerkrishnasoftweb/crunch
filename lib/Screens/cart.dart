@@ -125,7 +125,7 @@ class _CartState extends State<Cart> {
   }
 
   _checkOut() async {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => Checkout()));
+    Navigator.push(context, MaterialPageRoute(builder: (_) => Checkout(cartItems: cartItems, grandTotal: grandTotal,)));
     /* String addOnIds = "";
     cartItems.forEach((element) async {
       var addonData = await SQFLiteTables.where(

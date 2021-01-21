@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
+import 'package:crunch/APIS/Constants.dart';
+import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +11,15 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:sqflite/sqflite.dart';
+
+import 'Add_Address.dart';
+import 'new_home.dart';
 
 class Checkout extends StatefulWidget {
+  final List<CartData> cartItems;
+  final double grandTotal;
+  Checkout({this.cartItems, this.grandTotal});
   @override
   _CheckoutState createState() => _CheckoutState();
 }
@@ -22,10 +31,12 @@ class _CheckoutState extends State<Checkout> {
   Addresses address;
   // static const platform = const MethodChannel("razorpay_flutter");
   Razorpay _razorpay;
+  String mobile = "", email = "";
 
   @override
   void initState() {
     super.initState();
+    getUserData();
     getAddresses();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
@@ -42,11 +53,12 @@ class _CheckoutState extends State<Checkout> {
   void openCheckout() async {
     var options = {
       'key': 'rzp_test_tCWge1Ntpmfg1d',
-      'amount': 2000,
-      'name': 'Krishna Softweb',
-      'description': 'Fine T-Shirt',
-      'image' : 'https://firebasestorage.googleapis.com/v0/b/mytestApp.appspot.com/o/images%2FpZm8daajsIS4LvqBYTiWiuLIgmE2?alt=media&token=3kuli4cd-dc45-7845-b87d-5c4acc7da3c2',
-      'prefill': {'contact': '8758431417', 'email': 'gaurav@razorpay.com'},
+      'amount': widget.grandTotal,
+      'name': 'Crunch',
+      'description': 'Fresh Foods',
+      'image':
+          'https://firebasestorage.googleapis.com/v0/b/mytestApp.appspot.com/o/images%2FpZm8daajsIS4LvqBYTiWiuLIgmE2?alt=media&token=3kuli4cd-dc45-7845-b87d-5c4acc7da3c2',
+      'prefill': {'contact': mobile, 'email': email},
       'external': {
         'wallets': ['paytm']
       }
@@ -58,9 +70,13 @@ class _CheckoutState extends State<Checkout> {
     }
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    Fluttertoast.showToast(
-        msg: "SUCCESS: " + response.paymentId);
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
+    await db.rawQuery("delete from ${SQFLiteTables.tableCart}");
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+    Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId);
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -69,10 +85,15 @@ class _CheckoutState extends State<Checkout> {
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    Fluttertoast.showToast(
-        msg: "EXTERNAL_WALLET: " + response.walletName);
+    Fluttertoast.showToast(msg: "EXTERNAL_WALLET: " + response.walletName);
   }
-
+  void getUserData () async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      mobile = sharedPreferences.getString(cnst.Session.mobile);
+      email = sharedPreferences.getString(cnst.Session.email);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -114,11 +135,25 @@ class _CheckoutState extends State<Checkout> {
               });
             },
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
+          ListTile(
+            title: Text(
               "Select Address",
               style: TextStyle(fontSize: 18),
+            ),
+            trailing: IconButton(
+              icon: Icon(Icons.add),
+              splashRadius: 25,
+              color: cnst.appPrimaryMaterialColor,
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Add_Address(
+                              isFromCheckout: true,
+                            ))).then((value) {
+                              getAddresses();
+                });
+              },
             ),
           ),
           Expanded(
@@ -127,7 +162,8 @@ class _CheckoutState extends State<Checkout> {
                       itemCount: _address.length,
                       itemBuilder: (context, index) {
                         return RadioListTile<Addresses>(
-                            title: Text(_address[index].address + ", " +
+                            title: Text(_address[index].address +
+                                ", " +
                                 _address[index].city +
                                 ", " +
                                 _address[index].state +
@@ -150,14 +186,19 @@ class _CheckoutState extends State<Checkout> {
                     )),
         ],
       ),
-      floatingActionButton: address != null ? Container(
-          width: size.width * 0.9,
-          height: 50,
-          child: FlatButton(
-            child: Text("Make Payment", style: TextStyle(color: Colors.white),),
-            onPressed: _makePayment,
-            color: cnst.appPrimaryMaterialColor,
-          )) : null,
+      floatingActionButton: address != null
+          ? Container(
+              width: size.width * 0.9,
+              height: 50,
+              child: FlatButton(
+                child: Text(
+                  "Make Payment",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: _makePayment,
+                color: cnst.appPrimaryMaterialColor,
+              ))
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
@@ -174,6 +215,7 @@ class _CheckoutState extends State<Checkout> {
         });
         setState(() {
           isLoading = true;
+          _address = [];
         });
         AppServices.getAddress(d).then((data) async {
           if (data.value == "y") {
@@ -215,8 +257,9 @@ class _CheckoutState extends State<Checkout> {
       Fluttertoast.showToast(msg: "No Internet Connection.");
     }
   }
-  _makePayment () async {
-    if(_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
+
+  _makePayment() async {
+    if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
     }
   }

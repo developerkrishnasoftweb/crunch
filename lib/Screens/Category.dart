@@ -18,28 +18,18 @@ class _CategorysState extends State<Categorys> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: cnst.appPrimaryMaterialColor,
         elevation: 0.0,
         centerTitle: true,
         title: Text(
           "Category",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
         actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SetLocation()));
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Icon(
-                Icons.location_on,
-                size: 23,
-                color: cnst.AppColors.blackcolor,
-              ),
-            ),
-          )
+          IconButton(icon: Icon(Icons.location_on_outlined), onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SetLocation()));
+          })
         ],
       ),
       body: widget.categories.length > 0

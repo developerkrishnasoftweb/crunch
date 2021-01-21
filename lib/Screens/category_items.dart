@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/classes.dart';
+import 'package:crunch/Static/Constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -65,9 +66,9 @@ class _CategoryItemsState extends State<CategoryItems>
       appBar: AppBar(
         title: Text(
           "Items",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: appPrimaryMaterialColor,
       ),
       body: ListView.builder(
           itemCount: items.length > 10 ? 10 : items.length,

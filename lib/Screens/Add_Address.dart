@@ -14,6 +14,8 @@ import '../Static/Constant.dart' as cnst;
 import 'Address.dart';
 
 class Add_Address extends StatefulWidget {
+  final bool isFromCheckout;
+  Add_Address({this.isFromCheckout : false});
   @override
   _Add_AddressState createState() => _Add_AddressState();
 }
@@ -137,6 +139,7 @@ class _Add_AddressState extends State<Add_Address> {
                 title: "Add Address",
                 btncolor: cnst.appPrimaryMaterialColor,
                 ontap: () {
+                  FocusScope.of(context).unfocus();
                   Validation();
                 },
               ),
@@ -192,7 +195,6 @@ class _Add_AddressState extends State<Add_Address> {
           "country": country.text,
           "customer_id": id,
         });
-
         AppServices.AddAddress(d).then((data) async {
           pr.hide();
           if (data.value == "y") {
@@ -201,10 +203,14 @@ class _Add_AddressState extends State<Add_Address> {
             prefs.setString("addId", data.data[0]["id"]);
             print("id: ${prefs.getString(cnst.Session.id)} ");
             _toastMesssage(data.message);
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => Address()),
-                (route) => false);
+            if(widget.isFromCheckout) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Address()),
+                      (route) => false);
+            }
           }
         }, onError: (e) {
           pr.hide();
