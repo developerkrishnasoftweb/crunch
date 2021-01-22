@@ -125,8 +125,8 @@ class _CartState extends State<Cart> {
   }
 
   _checkOut() async {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => Checkout(cartItems: cartItems, grandTotal: grandTotal,)));
-    /* String addOnIds = "";
+    // Navigator.push(context, MaterialPageRoute(builder: (_) => Checkout(cartItems: cartItems, grandTotal: grandTotal,)));
+    String addOnIds = "";
     cartItems.forEach((element) async {
       var addonData = await SQFLiteTables.where(
           table: Tables.CART_ADDON, column: "cart_id", value: element.cartId);
@@ -146,7 +146,7 @@ class _CartState extends State<Cart> {
           value: "6127, 9081");
       print(addOns);
       print(addOnIds);
-    }); */
+    });
   }
 
   Widget buildTitledRow({String title, String val}) {

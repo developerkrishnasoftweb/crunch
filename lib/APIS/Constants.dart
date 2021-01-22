@@ -29,6 +29,7 @@ class SQFLiteTables {
       tableDiscounts = "discounts",
       tableCart = "cart",
       tableCartAddon = "cart_addon",
+      tableAddons = "addons",
       tableTaxes = "taxes";
   static Future<bool> createTables({Database db}) async {
     await db.execute("drop table if exists $tableRestaurants");
@@ -64,6 +65,8 @@ class SQFLiteTables {
         "create table if not exists `$tableCart` (`id` integer primary key autoincrement, `item_id` varchar(10), `item_name` varchar(10), `item_price` varchar(10), `combined_price` varchar(10), `qty` varchar(10))");
     await db.execute(
         "create table if not exists `$tableCartAddon` (`id` integer primary key autoincrement, `cart_id` varchar(10), `addon_id` varchar(10))");
+    await db.execute(
+        "create table if not exists `$tableAddons` (`id` integer primary key autoincrement, `addon_group_id` varchar(20), `addon_item_id` varchar(20), `addon_item_name` varchar(30), `price` varchar(10), `active` varchar(5), `attributes` varchar(5))");
     return true;
   }
 
@@ -94,6 +97,12 @@ class SQFLiteTables {
           for (int i = 0; i < menuList.addOnGroups.length; i++) {
             await db.execute(
                 "insert into `$tableAddOnGroups` values ('${menuList.addOnGroups[i]["addongroupid"]}', '${menuList.addOnGroups[i]["addongroup_rank"]}', '${menuList.addOnGroups[i]["active"]}', '${jsonEncode(menuList.addOnGroups[i]["addongroupitems"])}', '${menuList.addOnGroups[i]["addongroup_name"]}')");
+            for (int j = 0;
+                j < menuList.addOnGroups[i]["addongroupitems"].length;
+                j++) {
+              await db.execute(
+                  "insert into `$tableAddons`('addon_group_id', 'addon_item_id', 'addon_item_name', 'price', 'active', 'attributes') values ('${menuList.addOnGroups[i]["addongroupid"]}', '${menuList.addOnGroups[i]["addongroupitems"][j]["addonitemid"]}', '${menuList.addOnGroups[i]["addongroupitems"][j]["addonitem_name"]}', '${menuList.addOnGroups[i]["addongroupitems"][j]["addonitem_price"]}', '${menuList.addOnGroups[i]["addongroupitems"][j]["active"]}', '${menuList.addOnGroups[i]["addongroupitems"][j]["attributes"]}')");
+            }
           }
           for (int i = 0; i < menuList.attributes.length; i++) {
             await db.execute(

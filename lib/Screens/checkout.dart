@@ -261,6 +261,8 @@ class _CheckoutState extends State<Checkout> {
   _makePayment() async {
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
+    } else {
+      print(widget.cartItems[0]);
     }
   }
 }
