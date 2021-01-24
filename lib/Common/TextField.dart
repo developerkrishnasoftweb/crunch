@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../Static/Constant.dart' as cnst;
 
 class CustomTextField extends StatefulWidget {
@@ -9,7 +10,13 @@ class CustomTextField extends StatefulWidget {
   Icon texticon;
   Color textColor;
 
-  CustomTextField({this.textcontroller,this.texticon,this.obtext,this.hint,this.textColor,this.borderside});
+  CustomTextField(
+      {this.textcontroller,
+      this.texticon,
+      this.obtext,
+      this.hint,
+      this.textColor,
+      this.borderside});
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
 }
@@ -19,11 +26,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      width: size.width *0.85,
-      height: size.height * 0.07,
+      width: size.width * 0.85,
+      height: 60,
       decoration: BoxDecoration(
           color: cnst.AppColors.whitecolor.withOpacity(0.3),
-          border: widget.borderside == null ? null : Border.all(color: widget.textColor.withOpacity(0.2), width: 1),
+          border: widget.borderside == null
+              ? null
+              : Border.all(color: widget.textColor.withOpacity(0.2), width: 1),
           borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -43,8 +52,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           decoration: InputDecoration(
             hintText: widget.hint,
             prefixIcon: widget.texticon,
-            floatingLabelBehavior:
-            FloatingLabelBehavior.never,
+            floatingLabelBehavior: FloatingLabelBehavior.never,
             border: InputBorder.none,
             hintStyle: TextStyle(
               color: widget.textColor,

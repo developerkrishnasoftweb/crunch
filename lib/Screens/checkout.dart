@@ -145,12 +145,9 @@ class _CheckoutState extends State<Checkout> {
               splashRadius: 25,
               color: cnst.appPrimaryMaterialColor,
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Add_Address(
-                              isFromCheckout: true,
-                            ))).then((value) {
+                Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Add_Address()))
+                    .then((value) {
                   getAddresses();
                 });
               },

@@ -50,6 +50,7 @@ class _EditAddressState extends State<EditAddress> {
     address2.text = widget._addressdata.address2;
     contactPerson.text = widget._addressdata.contactPerson;
     contactNumber.text = widget._addressdata.contactNumber;
+    landmark.text = widget._addressdata.landmark;
   }
 
   @override
@@ -140,15 +141,15 @@ class _EditAddressState extends State<EditAddress> {
               SizedBox(
                 height: 16.0,
               ),
-              SizedBox(
-                height: 16.0,
-              ),
               CustomTextField(
                 textcontroller: landmark,
                 obtext: false,
                 hint: "Landmark",
                 textColor: cnst.appPrimaryMaterialColor,
                 borderside: 1.0,
+              ),
+              SizedBox(
+                height: 16.0,
               ),
               CustomTextField(
                 textcontroller: edtpincode,

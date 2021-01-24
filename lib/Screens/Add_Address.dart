@@ -11,11 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../Common/CustomButton.dart';
 import '../Common/TextField.dart';
 import '../Static/Constant.dart' as cnst;
-import 'Address.dart';
 
 class Add_Address extends StatefulWidget {
-  final bool isFromCheckout;
-  Add_Address({this.isFromCheckout: false});
   @override
   _Add_AddressState createState() => _Add_AddressState();
 }
@@ -212,14 +209,7 @@ class _Add_AddressState extends State<Add_Address> {
             prefs.setString("addId", data.data[0]["id"]);
             print("id: ${prefs.getString(cnst.Session.id)} ");
             _toastMesssage(data.message);
-            if (widget.isFromCheckout) {
-              Navigator.pop(context);
-            } else {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => Address()),
-                  (route) => false);
-            }
+            Navigator.pop(context);
           }
         }, onError: (e) {
           pr.hide();

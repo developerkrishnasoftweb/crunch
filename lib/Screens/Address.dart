@@ -144,8 +144,11 @@ class _AddressState extends State<Address> {
           : Center(child: CircularProgressIndicator()),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Add_Address()));
+          Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Add_Address()))
+              .then((value) {
+            getAddresses();
+          });
         },
         child: Icon(Icons.add),
       ),
@@ -237,8 +240,7 @@ class _AddressState extends State<Address> {
           pr.hide();
           if (data.value == "y") {
             _toastMesssage(data.message);
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Address()));
+            getAddresses();
           } else {
             _toastMesssage("Something went wrong.");
           }
