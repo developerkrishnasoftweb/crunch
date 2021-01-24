@@ -3,8 +3,7 @@ import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'checkout.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Cart extends StatefulWidget {
   @override
@@ -82,6 +81,18 @@ class _CartState extends State<Cart> {
                           val: cartItems[index].combinedPrice),
                       Divider(),
                       buildTitledRow(title: "Total", val: total.toString()),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: FlatButton(
+                          onPressed: () => _removeFromCart(
+                              cartId: cartItems[index].cartId,
+                              items: cartItems[index]),
+                          child: Text(
+                            "REMOVE",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      )
                     ],
                   );
                 },
@@ -126,12 +137,13 @@ class _CartState extends State<Cart> {
   }
 
   _checkOut() async {
-    Navigator.push(
+    /* Navigator.push(
         context,
         MaterialPageRoute(
             builder: (_) => Checkout(
                   grandTotal: grandTotal,
-                )));
+                ))); */
+    print(await SQFLiteTables.getData(table: Tables.ADDONS));
     /* String addOnIds = "";
     cartItems.forEach((element) async {
       var addonData = await SQFLiteTables.where(
@@ -153,6 +165,19 @@ class _CartState extends State<Cart> {
       print(addOns);
       print(addOnIds);
     }); */
+  }
+
+  _removeFromCart({String cartId, CartData items}) async {
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
+    var status = await db
+        .delete(SQFLiteTables.tableCart, where: 'id = ?', whereArgs: [cartId]);
+    if (status == 1) {
+      setState(() {
+        cartItems.remove(items);
+      });
+    }
   }
 
   Widget buildTitledRow({String title, String val}) {

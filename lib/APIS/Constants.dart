@@ -161,6 +161,9 @@ class SQFLiteTables {
       case Tables.CART_ADDON:
         return db.rawQuery("select * from `$tableCartAddon`");
         break;
+      case Tables.ADDONS:
+        return db.rawQuery("select * from `$tableAddons`");
+        break;
       default:
         return null;
         break;
@@ -218,6 +221,10 @@ class SQFLiteTables {
           return db
               .rawQuery("select * from `$tableCart` where $column in ($value)");
           break;
+        case Tables.ADDONS:
+          return db.rawQuery(
+              "select * from `$tableAddons` where $column in ($value)");
+          break;
         default:
           return null;
           break;
@@ -239,5 +246,6 @@ enum Tables {
   DISCOUNTS,
   TAXES,
   CART,
-  CART_ADDON
+  CART_ADDON,
+  ADDONS
 }
