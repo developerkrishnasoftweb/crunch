@@ -2,24 +2,21 @@ import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
-import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'Add_Address.dart';
 import 'new_home.dart';
 
 class Checkout extends StatefulWidget {
-  final List<CartData> cartItems;
   final double grandTotal;
-  Checkout({this.cartItems, this.grandTotal});
+  Checkout({this.grandTotal});
   @override
   _CheckoutState createState() => _CheckoutState();
 }
@@ -75,7 +72,8 @@ class _CheckoutState extends State<Checkout> {
     Database db = await openDatabase(databasePath + 'myDb.db',
         version: 1, onCreate: (Database db, int version) async {});
     await db.rawQuery("delete from ${SQFLiteTables.tableCart}");
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+    Navigator.pushAndRemoveUntil(context,
+        MaterialPageRoute(builder: (context) => Home()), (route) => false);
     Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId);
   }
 
@@ -87,13 +85,15 @@ class _CheckoutState extends State<Checkout> {
   void _handleExternalWallet(ExternalWalletResponse response) {
     Fluttertoast.showToast(msg: "EXTERNAL_WALLET: " + response.walletName);
   }
-  void getUserData () async {
+
+  void getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       mobile = sharedPreferences.getString(cnst.Session.mobile);
       email = sharedPreferences.getString(cnst.Session.email);
     });
   }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -151,7 +151,7 @@ class _CheckoutState extends State<Checkout> {
                         builder: (context) => Add_Address(
                               isFromCheckout: true,
                             ))).then((value) {
-                              getAddresses();
+                  getAddresses();
                 });
               },
             ),
@@ -261,9 +261,7 @@ class _CheckoutState extends State<Checkout> {
   _makePayment() async {
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
-    } else {
-      print(widget.cartItems[0]);
-    }
+    } else {}
   }
 }
 

@@ -319,7 +319,40 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                           addOnId: items[index]
                                                                   .addon[0][
                                                               "addon_group_id"]);
-                                                      Scaffold.of(context)
+                                                      showModalBottomSheet(
+                                                          context: context,
+                                                          builder: (_) {
+                                                            return StatefulBuilder(
+                                                                builder: (BuildContext
+                                                                        context,
+                                                                    StateSetter
+                                                                        state) {
+                                                              return BottomSheet(
+                                                                  onClosing:
+                                                                      () {},
+                                                                  animationController:
+                                                                      _controller,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return Container(
+                                                                        height: size.height *
+                                                                            0.4,
+                                                                        width: size
+                                                                            .width,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        alignment:
+                                                                            Alignment
+                                                                                .center,
+                                                                        child: addOnItems(
+                                                                            item:
+                                                                                items[index],
+                                                                            state: state));
+                                                                  });
+                                                            });
+                                                          });
+                                                      /* Scaffold.of(context)
                                                           .showBottomSheet(
                                                               (context) {
                                                         return BottomSheet(
@@ -344,7 +377,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                                       item: items[
                                                                           index]));
                                                             });
-                                                      });
+                                                      }); */
                                                     } else {
                                                       setState(() {
                                                         items[index]
@@ -438,7 +471,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ));
   }
 
-  Widget addOnItems({ItemData item}) {
+  Widget addOnItems({ItemData item, StateSetter state}) {
     return Column(
       children: [
         Padding(
@@ -458,13 +491,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   value: addOnGroups[index].selected,
                   onChanged: (value) {
                     if (addOnGroups[index].selected) {
-                      setState(() {
+                      state(() {
                         addOnGroups[index].selected = false;
                         price = price -
                             double.parse(addOnGroups[index].addOnItemPrice);
                       });
                     } else {
-                      setState(() {
+                      state(() {
                         addOnGroups[index].selected = true;
                         price = price +
                             double.parse(addOnGroups[index].addOnItemPrice);

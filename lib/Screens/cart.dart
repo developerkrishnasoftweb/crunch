@@ -1,6 +1,5 @@
 import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/classes.dart';
-import 'package:crunch/Screens/checkout.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
