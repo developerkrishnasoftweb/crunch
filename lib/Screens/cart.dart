@@ -4,6 +4,8 @@ import 'package:crunch/Static/Constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'checkout.dart';
+
 class Cart extends StatefulWidget {
   @override
   _CartState createState() => _CartState();
@@ -124,8 +126,13 @@ class _CartState extends State<Cart> {
   }
 
   _checkOut() async {
-    // Navigator.push(context, MaterialPageRoute(builder: (_) => Checkout(cartItems: cartItems, grandTotal: grandTotal,)));
-    String addOnIds = "";
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => Checkout(
+                  grandTotal: grandTotal,
+                )));
+    /* String addOnIds = "";
     cartItems.forEach((element) async {
       var addonData = await SQFLiteTables.where(
           table: Tables.CART_ADDON, column: "cart_id", value: element.cartId);
@@ -145,7 +152,7 @@ class _CartState extends State<Cart> {
           value: "6127, 9081");
       print(addOns);
       print(addOnIds);
-    });
+    }); */
   }
 
   Widget buildTitledRow({String title, String val}) {

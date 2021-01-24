@@ -50,7 +50,7 @@ class _CheckoutState extends State<Checkout> {
   void openCheckout() async {
     var options = {
       'key': 'rzp_test_tCWge1Ntpmfg1d',
-      'amount': widget.grandTotal,
+      'amount': widget.grandTotal * 100,
       'name': 'Crunch',
       'description': 'Fresh Foods',
       'image':
