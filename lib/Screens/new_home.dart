@@ -316,9 +316,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                             items[index].price);
                                                       });
                                                       await _getAddOnById(
-                                                          addOnId: items[index]
-                                                                  .addon[0][
-                                                              "addon_group_id"],
                                                           itemData:
                                                               items[index]);
                                                       showModalBottomSheet(
@@ -388,7 +385,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ));
   }
 
-  _getAddOnById({String addOnId, ItemData itemData}) async {
+  _getAddOnById({ItemData itemData}) async {
     setState(() {
       addOnGroups = [];
       addOnsIds = "";
