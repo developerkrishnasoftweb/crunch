@@ -15,17 +15,19 @@ import 'Address.dart';
 
 class Add_Address extends StatefulWidget {
   final bool isFromCheckout;
-  Add_Address({this.isFromCheckout : false});
+  Add_Address({this.isFromCheckout: false});
   @override
   _Add_AddressState createState() => _Add_AddressState();
 }
 
 class _Add_AddressState extends State<Add_Address> {
-  TextEditingController address = TextEditingController();
+  TextEditingController address1 = TextEditingController();
+  TextEditingController address2 = TextEditingController();
   TextEditingController pincode = TextEditingController();
   TextEditingController city = TextEditingController();
-  TextEditingController state = TextEditingController();
-  TextEditingController country = TextEditingController();
+  TextEditingController contactPerson = TextEditingController();
+  TextEditingController contactNumber = TextEditingController();
+  TextEditingController landmark = TextEditingController();
   ProgressDialog pr;
 
   @override
@@ -86,9 +88,49 @@ class _Add_AddressState extends State<Add_Address> {
                 height: 16.0,
               ),
               CustomTextField(
-                textcontroller: address,
+                textcontroller: contactPerson,
                 obtext: false,
-                hint: "Address",
+                hint: "Name *",
+                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+                borderside: 1.0,
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              CustomTextField(
+                textcontroller: contactNumber,
+                obtext: false,
+                hint: "Number *",
+                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+                borderside: 1.0,
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              CustomTextField(
+                textcontroller: address1,
+                obtext: false,
+                hint: "Address 1 *",
+                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+                borderside: 1.0,
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              CustomTextField(
+                textcontroller: address2,
+                obtext: false,
+                hint: "Address 2 *",
+                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+                borderside: 1.0,
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              CustomTextField(
+                textcontroller: landmark,
+                obtext: false,
+                hint: "Landmark *",
                 textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
                 borderside: 1.0,
               ),
@@ -98,7 +140,7 @@ class _Add_AddressState extends State<Add_Address> {
               CustomTextField(
                 textcontroller: pincode,
                 obtext: false,
-                hint: "Pincode",
+                hint: "Pincode *",
                 textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
                 borderside: 1.0,
               ),
@@ -108,27 +150,7 @@ class _Add_AddressState extends State<Add_Address> {
               CustomTextField(
                 textcontroller: city,
                 obtext: false,
-                hint: "City",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: state,
-                obtext: false,
-                hint: "State",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: country,
-                obtext: false,
-                hint: "Country",
+                hint: "City *",
                 textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
                 borderside: 1.0,
               ),
@@ -151,20 +173,16 @@ class _Add_AddressState extends State<Add_Address> {
   }
 
   Validation() {
-    if (address.text == "") {
-      _toastMesssage("Please enter your Address");
-    } else if (pincode.text == "") {
-      _toastMesssage("please Enter your Postal Code");
-    } else if (pincode.text.length != 6) {
-      _toastMesssage("please Postal Code must be 6 digit");
-    } else if (city.text == "") {
-      _toastMesssage("please Enter your City");
-    } else if (state.text == "") {
-      _toastMesssage("please Enter your State");
-    } else if (country.text == "") {
-      _toastMesssage("please Enter your Country");
-    } else {
+    if (address1.text.isNotEmpty &&
+        address2.text.isNotEmpty &&
+        landmark.text.isNotEmpty &&
+        contactPerson.text.isNotEmpty &&
+        contactNumber.text.isNotEmpty &&
+        pincode.text.isNotEmpty &&
+        city.text.isNotEmpty) {
       _addAddress();
+    } else {
+      Fluttertoast.showToast(msg: "All fields are require");
     }
   }
 
@@ -175,24 +193,15 @@ class _Add_AddressState extends State<Add_Address> {
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String id = prefs.getString(cnst.Session.id);
-        print(id +
-            " " +
-            address.text +
-            " " +
-            pincode.text +
-            " " +
-            city.text +
-            " " +
-            state.text +
-            " " +
-            country.text);
         FormData d = FormData.fromMap({
           "api_key": API_Key,
-          "address": address.text,
+          "address1": address1.text,
+          "address2": address2.text,
           "pincode": pincode.text,
           "city": city.text,
-          "state": state.text,
-          "country": country.text,
+          "contact_person": contactPerson.text,
+          "contact_number": contactNumber.text,
+          "landmark": landmark.text,
           "customer_id": id,
         });
         AppServices.AddAddress(d).then((data) async {
@@ -203,13 +212,13 @@ class _Add_AddressState extends State<Add_Address> {
             prefs.setString("addId", data.data[0]["id"]);
             print("id: ${prefs.getString(cnst.Session.id)} ");
             _toastMesssage(data.message);
-            if(widget.isFromCheckout) {
+            if (widget.isFromCheckout) {
               Navigator.pop(context);
             } else {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => Address()),
-                      (route) => false);
+                  (route) => false);
             }
           }
         }, onError: (e) {

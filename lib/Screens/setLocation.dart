@@ -1,8 +1,7 @@
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:flutter/material.dart';
-import '../Static/Constant.dart' as cnst;
 
-import 'Home.dart';
+import '../Static/Constant.dart' as cnst;
 import 'new_home.dart';
 
 class SetLocation extends StatefulWidget {
@@ -23,7 +22,8 @@ class _SetLocationState extends State<SetLocation> {
               image: DecorationImage(
                 image: AssetImage("assets/images/spalsh.png"),
                 fit: BoxFit.fill,
-                colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.softLight),
+                colorFilter: new ColorFilter.mode(
+                    Colors.black.withOpacity(0.7), BlendMode.softLight),
               ),
             ),
             child: Container(
@@ -32,52 +32,62 @@ class _SetLocationState extends State<SetLocation> {
               child: Stack(
                 children: [
                   Positioned(
-                    top: 50,right: 0,
-                    child:MaterialButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        elevation: 5.0,
-                        height: size.height * 0.05,
-                        minWidth: size.width * 0.15,
-                        color: cnst.AppColors.whitecolor.withOpacity(0.3),
-                        child: new Text("Skip",
-                            style: new TextStyle(fontSize: 16.0, color: Colors.white)),
-                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Home()))
-                    )
-                  ),
+                      top: 50,
+                      right: 0,
+                      child: MaterialButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          elevation: 5.0,
+                          height: size.height * 0.05,
+                          minWidth: size.width * 0.15,
+                          color: cnst.AppColors.whitecolor.withOpacity(0.3),
+                          child: new Text("Skip",
+                              style: new TextStyle(
+                                  fontSize: 16.0, color: Colors.white)),
+                          onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Home())))),
                   Align(
-                    alignment: Alignment(-0.5,-0.001),
+                    alignment: Alignment(-0.5, -0.001),
                     child: Container(
-                        width: size.width *0.7,
+                        width: size.width * 0.7,
                         child: RichText(
-                          text: TextSpan(style: TextStyle(fontSize: 45.0),
+                          text: TextSpan(
+                            style: TextStyle(fontSize: 45.0),
                             text: 'Hi John',
                             children: <TextSpan>[
-                                TextSpan(text: '\nWelcome to'),
-                              TextSpan(text: '\nCrunch',style: TextStyle(color: Colors.red)),
+                              TextSpan(text: '\nWelcome to'),
+                              TextSpan(
+                                  text: '\nCrunch',
+                                  style: TextStyle(color: Colors.red)),
                             ],
                           ),
-                        )
-                    ),
+                        )),
                   ),
                   Align(
-                    alignment: Alignment(0.0,0.5),
-                      child: Container(
-                        width: size.width *0.78,
-                          child: Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                          style: TextStyle(color: Colors.white,fontSize: 20.0),)),
+                    alignment: Alignment(0.0, 0.5),
+                    child: Container(
+                        width: size.width * 0.78,
+                        child: Text(
+                          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                          style: TextStyle(color: Colors.white, fontSize: 20.0),
+                        )),
                   ),
                   Positioned(
-                    left: 0,bottom: 25,right: 0,
+                    left: 0,
+                    bottom: 25,
+                    right: 0,
                     child: CustomButton(
-                        title: "TurnOnGPS",btncolor: cnst.appPrimaryMaterialColor,
-                        ontap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()))
-                    ),
+                        title: "TurnOnGPS",
+                        btncolor: cnst.appPrimaryMaterialColor,
+                        ontap: () => Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Home()))),
                   ),
                 ],
               ),
-            )
-        ),
+            )),
       ),
     );
   }

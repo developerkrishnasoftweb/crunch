@@ -5,14 +5,15 @@ import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Common/classes.dart';
-import 'package:crunch/Screens/Category.dart';
-import 'package:crunch/Screens/category_items.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'Category.dart';
+import 'category_items.dart';
 
 class Home extends StatefulWidget {
   @override

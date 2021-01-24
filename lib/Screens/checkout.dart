@@ -160,19 +160,43 @@ class _CheckoutState extends State<Checkout> {
               child: _address.length > 0
                   ? ListView.builder(
                       itemCount: _address.length,
+                      padding: EdgeInsets.only(bottom: 70),
+                      physics: BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         return RadioListTile<Addresses>(
-                            title: Text(_address[index].address +
-                                ", " +
-                                _address[index].city +
-                                ", " +
-                                _address[index].state +
-                                ", " +
-                                _address[index].state +
-                                ", " +
-                                _address[index].country +
-                                " - " +
-                                _address[index].pinCode),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _address[index].contactPerson,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  _address[index].address1 +
+                                      ", " +
+                                      _address[index].address2 +
+                                      "\n" +
+                                      _address[index].landmark +
+                                      "\n" +
+                                      _address[index].city +
+                                      " - " +
+                                      _address[index].pinCode,
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  _address[index].contactNumber,
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey),
+                                ),
+                              ],
+                            ),
                             value: _address[index],
                             groupValue: address,
                             onChanged: (value) {
@@ -225,13 +249,15 @@ class _CheckoutState extends State<Checkout> {
             for (int i = 0; i < data.data.length; i++) {
               setState(() {
                 _address.add(Addresses(
-                    address: data.data[i]["address"],
+                    address1: data.data[i]["address1"],
+                    address2: data.data[i]["address2"],
                     city: data.data[i]["city"],
-                    country: data.data[i]["country"],
                     customerId: data.data[i]["customer_id"],
                     id: data.data[i]["id"],
-                    pinCode: data.data[i]["pincode"],
-                    state: data.data[i]["state"]));
+                    contactPerson: data.data[i]["contact_person"],
+                    contactNumber: data.data[i]["contact_number"],
+                    landmark: data.data[i]["landmark"],
+                    pinCode: data.data[i]["pincode"]));
               });
             }
             setState(() {
@@ -268,13 +294,23 @@ class _CheckoutState extends State<Checkout> {
 enum PAYMENTMETHOD { CASHONDELIVERY, RAZORPAY }
 
 class Addresses {
-  final String id, customerId, address, pinCode, city, state, country;
+  final String id,
+      customerId,
+      address1,
+      address2,
+      contactPerson,
+      contactNumber,
+      landmark,
+      pinCode,
+      city;
   Addresses(
       {this.customerId,
-      this.address,
       this.city,
-      this.country,
       this.id,
-      this.pinCode,
-      this.state});
+      this.address1,
+      this.address2,
+      this.contactNumber,
+      this.contactPerson,
+      this.landmark,
+      this.pinCode});
 }

@@ -4,6 +4,7 @@ import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
+import 'package:crunch/Screens/checkout.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,7 +15,7 @@ import '../Static/Constant.dart' as cnst;
 import 'Address.dart';
 
 class EditAddress extends StatefulWidget {
-  var _addressdata;
+  final Addresses _addressdata;
   EditAddress(this._addressdata);
   @override
   _EditAddressState createState() => _EditAddressState();
@@ -24,8 +25,10 @@ class _EditAddressState extends State<EditAddress> {
   TextEditingController edtaddress = TextEditingController();
   TextEditingController edtpincode = TextEditingController();
   TextEditingController edtcity = TextEditingController();
-  TextEditingController edtstate = TextEditingController();
-  TextEditingController edtcountry = TextEditingController();
+  TextEditingController contactPerson = TextEditingController();
+  TextEditingController contactNumber = TextEditingController();
+  TextEditingController landmark = TextEditingController();
+  TextEditingController address2 = TextEditingController();
   ProgressDialog pr;
   String addressid;
 
@@ -40,12 +43,13 @@ class _EditAddressState extends State<EditAddress> {
   }
 
   _setData() {
-    addressid = widget._addressdata['id'];
-    edtaddress.text = widget._addressdata['address'];
-    edtpincode.text = widget._addressdata['pincode'];
-    edtcity.text = widget._addressdata['city'];
-    edtstate.text = widget._addressdata['state'];
-    edtcountry.text = widget._addressdata['country'];
+    addressid = widget._addressdata.id;
+    edtaddress.text = widget._addressdata.address1;
+    edtpincode.text = widget._addressdata.pinCode;
+    edtcity.text = widget._addressdata.city;
+    address2.text = widget._addressdata.address2;
+    contactPerson.text = widget._addressdata.contactPerson;
+    contactNumber.text = widget._addressdata.contactNumber;
   }
 
   @override
@@ -97,14 +101,54 @@ class _EditAddressState extends State<EditAddress> {
                 height: 16.0,
               ),
               CustomTextField(
-                textcontroller: edtaddress,
+                textcontroller: contactPerson,
                 obtext: false,
-                hint: "Address",
+                hint: "Name",
                 textColor: cnst.appPrimaryMaterialColor,
                 borderside: 1.0,
               ),
               SizedBox(
                 height: 16.0,
+              ),
+              CustomTextField(
+                textcontroller: contactNumber,
+                obtext: false,
+                hint: "Number",
+                textColor: cnst.appPrimaryMaterialColor,
+                borderside: 1.0,
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              CustomTextField(
+                textcontroller: edtaddress,
+                obtext: false,
+                hint: "Address1",
+                textColor: cnst.appPrimaryMaterialColor,
+                borderside: 1.0,
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              CustomTextField(
+                textcontroller: address2,
+                obtext: false,
+                hint: "Address2",
+                textColor: cnst.appPrimaryMaterialColor,
+                borderside: 1.0,
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              CustomTextField(
+                textcontroller: landmark,
+                obtext: false,
+                hint: "Landmark",
+                textColor: cnst.appPrimaryMaterialColor,
+                borderside: 1.0,
               ),
               CustomTextField(
                 textcontroller: edtpincode,
@@ -126,26 +170,6 @@ class _EditAddressState extends State<EditAddress> {
               SizedBox(
                 height: 16.0,
               ),
-              CustomTextField(
-                textcontroller: edtstate,
-                obtext: false,
-                hint: "State",
-                textColor: cnst.appPrimaryMaterialColor,
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: edtcountry,
-                obtext: false,
-                hint: "Country",
-                textColor: cnst.appPrimaryMaterialColor,
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
               CustomButton(
                 title: "Update Address",
                 btncolor: cnst.appPrimaryMaterialColor,
@@ -161,20 +185,15 @@ class _EditAddressState extends State<EditAddress> {
   }
 
   Validation() {
-    if (edtaddress.text == "") {
-      _toastMesssage("Please enter your Address");
-    } else if (edtpincode.text == "") {
-      _toastMesssage("please Enter your Postal Code");
-    } else if (edtpincode.text.length != 6) {
-      _toastMesssage("please Postal Code must be 6 digit");
-    } else if (edtcity.text == "") {
-      _toastMesssage("please Enter your City");
-    } else if (edtstate.text == "") {
-      _toastMesssage("please Enter your State");
-    } else if (edtcountry.text == "") {
-      _toastMesssage("please Enter your Country");
-    } else {
+    if (edtaddress.text.isNotEmpty &&
+        address2.text.isNotEmpty &&
+        edtpincode.text.isNotEmpty &&
+        contactNumber.text.isNotEmpty &&
+        contactPerson.text.isNotEmpty &&
+        landmark.text.isNotEmpty) {
       _updateAddress();
+    } else {
+      Fluttertoast.showToast(msg: "All fields are required");
     }
   }
 
@@ -185,27 +204,15 @@ class _EditAddressState extends State<EditAddress> {
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String id = prefs.getString(cnst.Session.id);
-        print("address id :" +
-            addressid +
-            " " +
-            id +
-            " " +
-            edtcountry.text +
-            " " +
-            edtpincode.text +
-            " " +
-            edtcity.text +
-            " " +
-            edtstate.text +
-            " " +
-            edtcountry.text);
         FormData d = FormData.fromMap({
           "api_key": API_Key,
-          "address": edtaddress.text,
+          "address1": edtaddress.text,
+          "address2": address2.text,
           "pincode": edtpincode.text,
           "city": edtcity.text,
-          "state": edtstate.text,
-          "country": edtcountry.text,
+          "contact_person": contactPerson.text,
+          "contact_number": contactNumber.text,
+          "landmark": landmark.text,
           "customer_id": id,
           "id": addressid,
         });

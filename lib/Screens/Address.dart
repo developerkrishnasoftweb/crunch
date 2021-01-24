@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:crunch/Screens/EditAddress.dart';
+import 'package:crunch/Screens/checkout.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,9 @@ class Address extends StatefulWidget {
 
 class _AddressState extends State<Address> {
   bool isLoading = true;
-  List _address = List();
+  List<Addresses> _address = List();
   ProgressDialog pr;
+  Addresses address;
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _AddressState extends State<Address> {
     pr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Please wait..");
-    getAddtess();
+    getAddresses();
   }
 
   @override
@@ -77,16 +79,33 @@ class _AddressState extends State<Address> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        _address[index]['address'] +
+                                        _address[index].contactPerson,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        _address[index].address1 +
                                             ", " +
-                                            _address[index]['city'] +
-                                            ", " +
-                                            _address[index]['state'] +
-                                            ", " +
-                                            _address[index]['country'] +
+                                            _address[index].address2 +
+                                            "\n" +
+                                            _address[index].landmark +
+                                            "\n" +
+                                            _address[index].city +
                                             " - " +
-                                            _address[index]['pincode'],
-                                        style: TextStyle(fontSize: 16.0),
+                                            _address[index].pinCode,
+                                        style: TextStyle(
+                                            fontSize: 14, color: Colors.grey),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        _address[index].contactNumber,
+                                        style: TextStyle(
+                                            fontSize: 14, color: Colors.grey),
                                       ),
                                     ],
                                   ),
@@ -110,7 +129,7 @@ class _AddressState extends State<Address> {
                                             icon: Icon(Icons.delete),
                                             onPressed: () {
                                               _deleteAddress(
-                                                  _address[index]['id']);
+                                                  _address[index].id);
                                             }),
                                       ],
                                     ),
@@ -133,7 +152,7 @@ class _AddressState extends State<Address> {
     );
   }
 
-  getAddtess() async {
+  getAddresses() async {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -145,6 +164,7 @@ class _AddressState extends State<Address> {
         });
         setState(() {
           isLoading = true;
+          _address = [];
         });
         AppServices.getAddress(d).then((data) async {
           if (data.value == "y") {
@@ -152,8 +172,22 @@ class _AddressState extends State<Address> {
               isLoading = false;
             });
             for (int i = 0; i < data.data.length; i++) {
-              _address.add(data.data[i]);
+              setState(() {
+                _address.add(Addresses(
+                    address1: data.data[i]["address1"],
+                    address2: data.data[i]["address2"],
+                    city: data.data[i]["city"],
+                    customerId: data.data[i]["customer_id"],
+                    id: data.data[i]["id"],
+                    contactPerson: data.data[i]["contact_person"],
+                    contactNumber: data.data[i]["contact_number"],
+                    landmark: data.data[i]["landmark"],
+                    pinCode: data.data[i]["pincode"]));
+              });
             }
+            setState(() {
+              address = _address[0];
+            });
           } else {
             setState(() {
               isLoading = false;
@@ -164,14 +198,14 @@ class _AddressState extends State<Address> {
           setState(() {
             isLoading = false;
           });
-          _toastMesssage("Something went wrong.");
+          Fluttertoast.showToast(msg: "Something went wrong.");
         });
       }
     } on SocketException catch (_) {
       setState(() {
         isLoading = false;
       });
-      _toastMesssage("No Internet Connection.");
+      Fluttertoast.showToast(msg: "No Internet Connection.");
     }
   }
 

@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'checkout.dart';
+
 class Cart extends StatefulWidget {
   @override
   _CartState createState() => _CartState();
@@ -137,12 +139,12 @@ class _CartState extends State<Cart> {
   }
 
   _checkOut() async {
-    /* Navigator.push(
+    Navigator.push(
         context,
         MaterialPageRoute(
             builder: (_) => Checkout(
                   grandTotal: grandTotal,
-                ))); */
+                )));
     print(await SQFLiteTables.getData(table: Tables.ADDONS));
     /* String addOnIds = "";
     cartItems.forEach((element) async {
