@@ -25,7 +25,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   List<Category> categories = [];
   List<AddOnGroup> addOnGroups = [];
   bool isLoading = false;
-  String addOnGroupName = "";
+  String addOnsIds = "";
   AnimationController _controller;
   double price;
   @override
@@ -318,7 +318,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                       await _getAddOnById(
                                                           addOnId: items[index]
                                                                   .addon[0][
-                                                              "addon_group_id"]);
+                                                              "addon_group_id"],
+                                                          itemData:
+                                                              items[index]);
                                                       showModalBottomSheet(
                                                           context: context,
                                                           builder: (_) {
@@ -352,32 +354,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                                   });
                                                             });
                                                           });
-                                                      /* Scaffold.of(context)
-                                                          .showBottomSheet(
-                                                              (context) {
-                                                        return BottomSheet(
-                                                            onClosing: () {},
-                                                            animationController:
-                                                                _controller,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return Container(
-                                                                  height:
-                                                                      size.height *
-                                                                          0.4,
-                                                                  width: size
-                                                                      .width,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center,
-                                                                  child: addOnItems(
-                                                                      item: items[
-                                                                          index]));
-                                                            });
-                                                      }); */
                                                     } else {
                                                       setState(() {
                                                         items[index]
@@ -412,27 +388,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ));
   }
 
-  _getAddOnById({String addOnId}) async {
+  _getAddOnById({String addOnId, ItemData itemData}) async {
     setState(() {
       addOnGroups = [];
-      addOnGroupName = "";
+      addOnsIds = "";
     });
-    var addOns = await SQFLiteTables.where(
-        table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnId);
-    setState(() {
-      addOnGroupName = addOns[0]["addongroupname"];
-    });
-    var addOnsList = jsonDecode(addOns[0]["addongroupitems"]);
-    for (int i = 0; i < addOnsList.length; i++) {
+    for (int i = 0; i < itemData.addon.length; i++) {
       setState(() {
-        addOnGroups.add(AddOnGroup(
-            active: addOnsList[i]["active"],
-            addOnItemId: addOnsList[i]["addonitemid"],
-            addOnItemPrice: addOnsList[i]["addonitem_price"],
-            addOnName: addOnsList[i]["addonitem_name"],
-            attributes: addOnsList[i]["attributes"],
-            selected: false));
+        (i == (itemData.addon.length - 1))
+            ? addOnsIds += itemData.addon[i]["addon_group_id"] + ""
+            : addOnsIds += itemData.addon[i]["addon_group_id"] + ", ";
       });
+    }
+    var addOns = await SQFLiteTables.where(
+        table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnsIds);
+    for (int i = 0; i < addOns.length; i++) {
+      var addOnsList = jsonDecode(addOns[i]["addongroupitems"]);
+      for (int j = 0; j < addOnsList.length; j++) {
+        setState(() {
+          addOnGroups.add(AddOnGroup(
+              active: addOnsList[j]["active"],
+              addOnItemId: addOnsList[j]["addonitemid"],
+              addOnItemPrice: addOnsList[j]["addonitem_price"],
+              addOnName: addOnsList[j]["addonitem_name"],
+              attributes: addOnsList[j]["attributes"],
+              selected: false));
+        });
+      }
     }
   }
 
@@ -479,7 +461,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                addOnGroupName ?? "N/A",
+                "ADD ONS",
                 style: TextStyle(color: Colors.grey, fontSize: 20),
               )),
         ),
