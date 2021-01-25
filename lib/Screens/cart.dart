@@ -5,8 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'checkout.dart';
-
 class Cart extends StatefulWidget {
   @override
   _CartState createState() => _CartState();
@@ -54,6 +52,8 @@ class _CartState extends State<Cart> {
         ),
         body: cartItems.length > 0
             ? ListView.builder(
+                padding: EdgeInsets.only(bottom: 80),
+                physics: BouncingScrollPhysics(),
                 itemBuilder: (BuildContext context, int index) {
                   double total = (double.parse(cartItems[index].itemPrice) *
                           double.parse(cartItems[index].qty)) +
@@ -72,6 +72,7 @@ class _CartState extends State<Cart> {
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                     ),
+                    initiallyExpanded: true,
                     childrenPadding:
                         EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     children: [
@@ -139,14 +140,13 @@ class _CartState extends State<Cart> {
   }
 
   _checkOut() async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => Checkout(
-                  grandTotal: grandTotal,
-                )));
-    print(await SQFLiteTables.getData(table: Tables.ADDONS));
-    /* String addOnIds = "";
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (_) => Checkout(
+    //               grandTotal: grandTotal,
+    //             )));
+    String addOnIds = "";
     cartItems.forEach((element) async {
       var addonData = await SQFLiteTables.where(
           table: Tables.CART_ADDON, column: "cart_id", value: element.cartId);
@@ -160,13 +160,9 @@ class _CartState extends State<Cart> {
               : addOnIds += addonData[i]["addon_id"] + ", ";
         });
       }
-      var addOns = await SQFLiteTables.where(
-          table: Tables.ADD_ON_GROUPS,
-          column: "addongroupid",
-          value: "6127, 9081");
-      print(addOns);
-      print(addOnIds);
-    }); */
+      print(await SQFLiteTables.where(
+          table: Tables.ADDONS, column: "addon_item_id", value: addOnIds));
+    });
   }
 
   _removeFromCart({String cartId, CartData items}) async {
@@ -177,6 +173,9 @@ class _CartState extends State<Cart> {
         .delete(SQFLiteTables.tableCart, where: 'id = ?', whereArgs: [cartId]);
     if (status == 1) {
       setState(() {
+        grandTotal = grandTotal -
+            (double.parse(items.combinedPrice) +
+                (double.parse(items.itemPrice) * double.parse(items.qty)));
         cartItems.remove(items);
       });
     }
