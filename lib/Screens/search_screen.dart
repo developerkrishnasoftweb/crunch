@@ -242,7 +242,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         ));
   }
 
-  Widget addOnItems({ItemData item, StateSetter state, List<AddOnGroup> addOnGroup}) {
+  Widget addOnItems(
+      {ItemData item, StateSetter state, List<AddOnGroup> addOnGroup}) {
     return Column(
       children: [
         Padding(
