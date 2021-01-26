@@ -171,7 +171,9 @@ class _CartState extends State<Cart> {
         ];
       });
     });
-    print(items[0]["items[]"]);
+    for (int i = 0; i < items.length; i++) {
+      print(items[i]["items[]"]);
+    }
   }
 
   _removeFromCart({String cartId, CartData items}) async {
