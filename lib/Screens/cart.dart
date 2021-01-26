@@ -13,7 +13,7 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> {
   List<CartData> cartItems = [];
   double grandTotal = 0;
-  List orderItems = [];
+  List items = [];
   @override
   void initState() {
     getCartData();
@@ -148,21 +148,30 @@ class _CartState extends State<Cart> {
     //             )));
     String addOnIds = "";
     cartItems.forEach((element) async {
-      var addonData = await SQFLiteTables.where(
+      var cartData = await SQFLiteTables.where(
           table: Tables.CART_ADDON, column: "cart_id", value: element.cartId);
       setState(() {
         addOnIds = "";
       });
-      for (int i = 0; i < addonData.length; i++) {
+      for (int i = 0; i < cartData.length; i++) {
         setState(() {
-          (i == (addonData.length - 1))
-              ? addOnIds += addonData[i]["addon_id"] + ""
-              : addOnIds += addonData[i]["addon_id"] + ", ";
+          (i == (cartData.length - 1))
+              ? addOnIds += cartData[i]["addon_id"] + ""
+              : addOnIds += cartData[i]["addon_id"] + ", ";
         });
       }
-      print(await SQFLiteTables.where(
-          table: Tables.ADDONS, column: "addon_item_id", value: addOnIds));
+      var addOns = await SQFLiteTables.where(
+          table: Tables.ADDONS, column: "addon_item_id", value: addOnIds);
+      setState(() {
+        items += [
+          {
+            "items[]":
+                "${element.itemId}^${element.itemName}^${element.itemPrice}^${element.qty}^$addOns"
+          }
+        ];
+      });
     });
+    print(items[0]["items[]"]);
   }
 
   _removeFromCart({String cartId, CartData items}) async {
