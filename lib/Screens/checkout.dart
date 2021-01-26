@@ -71,13 +71,17 @@ class _CheckoutState extends State<Checkout> {
     }
   }
 
-  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+  clearCart() async {
     String databasePath = await getDatabasesPath();
     Database db = await openDatabase(databasePath + 'myDb.db',
         version: 1, onCreate: (Database db, int version) async {});
     await db.rawQuery("delete from ${SQFLiteTables.tableCart}");
     Navigator.pushAndRemoveUntil(context,
         MaterialPageRoute(builder: (context) => Home()), (route) => false);
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    clearCart();
     Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId);
   }
 
@@ -297,6 +301,9 @@ class _CheckoutState extends State<Checkout> {
       double taxTotal = widget.grandTotal * (sgst + cgst) / 100;
       double total = taxTotal + widget.grandTotal;
       String addOnIds = "";
+      setState(() {
+        items = [];
+      });
       await widget.cartItems.forEach((element) async {
         var cartData = await SQFLiteTables.where(
             table: Tables.CART_ADDON, column: "cart_id", value: element.cartId);
@@ -335,7 +342,9 @@ class _CheckoutState extends State<Checkout> {
         "payment_type": "COD",
         "items": items
       });
+      //print(formData.fields);
       AppServices.saveOrder(formData).then((value) {
+        //print(formData.fields);
         print(value.value);
       });
     }

@@ -53,55 +53,57 @@ class _CartState extends State<Cart> {
           elevation: 1,
         ),
         body: cartItems.length > 0
-            ? ListView.builder(
-                padding: EdgeInsets.only(bottom: 80),
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  double total = (double.parse(cartItems[index].itemPrice) *
-                          double.parse(cartItems[index].qty)) +
-                      double.parse(cartItems[index].combinedPrice);
-                  return ExpansionTile(
-                    title: Text(
-                      "${cartItems[index].itemName}",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        "Grand total : $total",
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 80),
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    double total = (double.parse(cartItems[index].itemPrice) *
+                            double.parse(cartItems[index].qty)) +
+                        double.parse(cartItems[index].combinedPrice);
+                    return ExpansionTile(
+                      title: Text(
+                        "${cartItems[index].itemName}",
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    initiallyExpanded: true,
-                    childrenPadding:
-                        EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    children: [
-                      buildTitledRow(
-                          title: "Price", val: cartItems[index].itemPrice),
-                      buildTitledRow(title: "Qty", val: cartItems[index].qty),
-                      buildTitledRow(
-                          title: "Add on price",
-                          val: cartItems[index].combinedPrice),
-                      Divider(),
-                      buildTitledRow(title: "Total", val: total.toString()),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: FlatButton(
-                          onPressed: () => _removeFromCart(
-                              cartId: cartItems[index].cartId,
-                              items: cartItems[index]),
-                          child: Text(
-                            "REMOVE",
-                            style: TextStyle(color: Colors.red),
-                          ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          "Grand total : $total",
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
                         ),
-                      )
-                    ],
-                  );
-                },
-                itemCount: cartItems.length,
+                      ),
+                      initiallyExpanded: true,
+                      childrenPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      children: [
+                        buildTitledRow(
+                            title: "Price", val: cartItems[index].itemPrice),
+                        buildTitledRow(title: "Qty", val: cartItems[index].qty),
+                        buildTitledRow(
+                            title: "Add on price",
+                            val: cartItems[index].combinedPrice),
+                        Divider(),
+                        buildTitledRow(title: "Total", val: total.toString()),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: FlatButton(
+                            onPressed: () => _removeFromCart(
+                                cartId: cartItems[index].cartId,
+                                items: cartItems[index]),
+                            child: Text(
+                              "REMOVE",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                  itemCount: cartItems.length,
+                ),
               )
             : Center(
                 child: Text("Your cart is empty."),
@@ -111,9 +113,11 @@ class _CartState extends State<Cart> {
                 height: 50,
                 width: size.width * 0.9,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  color: appPrimaryColors[100],
-                ),
+                    borderRadius: BorderRadius.circular(6),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(blurRadius: 5, color: Colors.grey[300])
+                    ]),
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   children: [
