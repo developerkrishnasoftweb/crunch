@@ -276,15 +276,13 @@ class AppServices {
     String url = Base_URL + 'save_order';
     try {
       final response = await dio.post(url, data: body);
-      print(response);
-      return SaveDataClass();
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
             new SaveDataClass(message: 'No Data', value: "n");
         final jsonResponse = json.decode(response.data);
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'].toString();
-        saveDataClass.data = jsonResponse['customer'];
+        saveDataClass.data = [jsonResponse['data']];
         return saveDataClass;
       } else {
         throw Exception("Something went Wrong");

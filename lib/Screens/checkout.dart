@@ -33,6 +33,7 @@ class _CheckoutState extends State<Checkout> {
   // static const platform = const MethodChannel("razorpay_flutter");
   Razorpay _razorpay;
   String mobile = "", email = "";
+  double sgst = 0, cgst = 0, taxTotal = 0, total = 0;
 
   @override
   void initState() {
@@ -81,8 +82,31 @@ class _CheckoutState extends State<Checkout> {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    clearCart();
-    Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String customerId = prefs.getString(cnst.Session.id);
+    var config = jsonDecode(prefs.getString("config"));
+    FormData formData = FormData.fromMap({
+      "address_id": address.id,
+      "customer_id": customerId,
+      "delivery_charges": config["delivery_charge"],
+      "packing_charges": config["packing_charge"],
+      "discount_total": "0",
+      "description": "",
+      "tax_total": taxTotal,
+      "total": total,
+      "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+      "payment_type": "PPD",
+      "payment_id": response.paymentId,
+      "items": items
+    });
+    AppServices.saveOrder(formData).then((value) {
+      if (value.value == "true") {
+        clearCart();
+        Fluttertoast.showToast(msg: value.message);
+      } else {
+        Fluttertoast.showToast(msg: value.message);
+      }
+    });
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -290,48 +314,47 @@ class _CheckoutState extends State<Checkout> {
   }
 
   makePayment() async {
+    setState(() {
+      items = [];
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String customerId = prefs.getString(cnst.Session.id);
+    var config = jsonDecode(prefs.getString("config"));
+    double sgst = double.parse(config["sgst"]);
+    double cgst = double.parse(config["cgst"]);
+    taxTotal = widget.grandTotal * (sgst + cgst) / 100;
+    total = taxTotal + widget.grandTotal;
+    String addOnIds = "";
+    for (int i = 0; i < widget.cartItems.length; i++) {
+      var cartData = await SQFLiteTables.where(
+          table: Tables.CART_ADDON,
+          column: "cart_id",
+          value: widget.cartItems[i].cartId);
+      setState(() {
+        addOnIds = "";
+      });
+      for (int i = 0; i < cartData.length; i++) {
+        setState(() {
+          (i == (cartData.length - 1))
+              ? addOnIds += cartData[i]["addon_id"] + ""
+              : addOnIds += cartData[i]["addon_id"] + ", ";
+        });
+      }
+      var addOns = await SQFLiteTables.where(
+          table: Tables.ADDONS, column: "addon_item_id", value: addOnIds);
+      setState(() {
+        items += [
+          {
+            "item":
+                "${widget.cartItems[i].itemId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].itemPrice}^${widget.cartItems[i].qty}^desc^",
+            "addon": addOns ?? []
+          }
+        ];
+      });
+    }
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String customerId = prefs.getString(cnst.Session.id);
-      var config = jsonDecode(prefs.getString("config"));
-      double sgst = double.parse(config["sgst"]);
-      double cgst = double.parse(config["cgst"]);
-      double taxTotal = widget.grandTotal * (sgst + cgst) / 100;
-      double total = taxTotal + widget.grandTotal;
-      String addOnIds = "";
-
-      setState(() {
-        items = [];
-      });
-      for (int i = 0; i < widget.cartItems.length; i++) {
-        var cartData = await SQFLiteTables.where(
-            table: Tables.CART_ADDON,
-            column: "cart_id",
-            value: widget.cartItems[i].cartId);
-        setState(() {
-          addOnIds = "";
-        });
-        for (int i = 0; i < cartData.length; i++) {
-          setState(() {
-            (i == (cartData.length - 1))
-                ? addOnIds += cartData[i]["addon_id"] + ""
-                : addOnIds += cartData[i]["addon_id"] + ", ";
-          });
-        }
-        var addOns = await SQFLiteTables.where(
-            table: Tables.ADDONS, column: "addon_item_id", value: addOnIds);
-        setState(() {
-          items += [
-            {
-              "item":
-                  "${widget.cartItems[i].itemId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].itemPrice}^${widget.cartItems[i].qty}^desc^",
-              "addon": addOns ?? []
-            }
-          ];
-        });
-      }
       FormData formData = FormData.fromMap({
         "address_id": address.id,
         "customer_id": customerId,
@@ -343,13 +366,17 @@ class _CheckoutState extends State<Checkout> {
         "total": total,
         "api_key": "0imfnc8mVLWwsAawjYr4Rx",
         "payment_type": "COD",
+        "payment_id": "",
         "items": items
       });
-      print(formData.fields);
-      // AppServices.saveOrder(formData).then((value) {
-      //   //print(formData.fields);
-      //   // print(value.value);
-      // });
+      AppServices.saveOrder(formData).then((value) {
+        if (value.value == "true") {
+          clearCart();
+          Fluttertoast.showToast(msg: value.message);
+        } else {
+          Fluttertoast.showToast(msg: value.message);
+        }
+      });
     }
   }
 }
