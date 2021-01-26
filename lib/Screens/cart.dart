@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'checkout.dart';
+
 class Cart extends StatefulWidget {
   @override
   _CartState createState() => _CartState();
@@ -130,50 +132,19 @@ class _CartState extends State<Cart> {
                         style: TextStyle(color: Colors.white, fontSize: 14),
                       ),
                       color: appPrimaryMaterialColor,
-                      onPressed: _checkOut,
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => Checkout(
+                                    grandTotal: grandTotal,
+                                    cartItems: cartItems,
+                                  ))),
                       padding: EdgeInsets.symmetric(vertical: 13),
                     )),
                   ],
                 ),
               )
             : null);
-  }
-
-  _checkOut() async {
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (_) => Checkout(
-    //               grandTotal: grandTotal,
-    //             )));
-    String addOnIds = "";
-    cartItems.forEach((element) async {
-      var cartData = await SQFLiteTables.where(
-          table: Tables.CART_ADDON, column: "cart_id", value: element.cartId);
-      setState(() {
-        addOnIds = "";
-      });
-      for (int i = 0; i < cartData.length; i++) {
-        setState(() {
-          (i == (cartData.length - 1))
-              ? addOnIds += cartData[i]["addon_id"] + ""
-              : addOnIds += cartData[i]["addon_id"] + ", ";
-        });
-      }
-      var addOns = await SQFLiteTables.where(
-          table: Tables.ADDONS, column: "addon_item_id", value: addOnIds);
-      setState(() {
-        items += [
-          {
-            "items[]":
-                "${element.itemId}^${element.itemName}^${element.itemPrice}^${element.qty}^$addOns"
-          }
-        ];
-      });
-    });
-    for (int i = 0; i < items.length; i++) {
-      print(items[i]["items[]"]);
-    }
   }
 
   _removeFromCart({String cartId, CartData items}) async {

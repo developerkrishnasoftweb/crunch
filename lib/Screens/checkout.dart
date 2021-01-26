@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
+import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +18,8 @@ import 'new_home.dart';
 
 class Checkout extends StatefulWidget {
   final double grandTotal;
-  Checkout({this.grandTotal});
+  final List<CartData> cartItems;
+  Checkout({@required this.grandTotal, @required this.cartItems});
   @override
   _CheckoutState createState() => _CheckoutState();
 }
@@ -24,6 +27,7 @@ class Checkout extends StatefulWidget {
 class _CheckoutState extends State<Checkout> {
   bool isLoading = false;
   List<Addresses> _address = [];
+  List items = [];
   PAYMENTMETHOD _paymentMethod = PAYMENTMETHOD.CASHONDELIVERY;
   Addresses address;
   // static const platform = const MethodChannel("razorpay_flutter");
@@ -284,7 +288,57 @@ class _CheckoutState extends State<Checkout> {
   _makePayment() async {
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
-    } else {}
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String customerId = prefs.getString(cnst.Session.id);
+      var config = jsonDecode(prefs.getString("config"));
+      double sgst = double.parse(config["sgst"]);
+      double cgst = double.parse(config["cgst"]);
+      double taxTotal = widget.grandTotal * (sgst + cgst) / 100;
+      double total = taxTotal + widget.grandTotal;
+      String addOnIds = "";
+      await widget.cartItems.forEach((element) async {
+        var cartData = await SQFLiteTables.where(
+            table: Tables.CART_ADDON, column: "cart_id", value: element.cartId);
+        setState(() {
+          addOnIds = "";
+        });
+        for (int i = 0; i < cartData.length; i++) {
+          setState(() {
+            (i == (cartData.length - 1))
+                ? addOnIds += cartData[i]["addon_id"] + ""
+                : addOnIds += cartData[i]["addon_id"] + ", ";
+          });
+        }
+        var addOns = await SQFLiteTables.where(
+            table: Tables.ADDONS, column: "addon_item_id", value: addOnIds);
+        setState(() {
+          items += [
+            {
+              "item":
+                  "${element.itemId}^${element.itemName}^${element.itemPrice}^${element.qty}^desc^",
+              "addon": addOns
+            }
+          ];
+        });
+      });
+      FormData formData = FormData.fromMap({
+        "address_id": address.id,
+        "customer_id": customerId,
+        "delivery_charges": config["delivery_charge"],
+        "packing_charges": config["packing_charge"],
+        "discount_total": "0",
+        "description": "",
+        "tax_total": taxTotal,
+        "total": total,
+        "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+        "payment_type": "COD",
+        "items": items
+      });
+      AppServices.saveOrder(formData).then((value) {
+        print(value.value);
+      });
+    }
   }
 }
 

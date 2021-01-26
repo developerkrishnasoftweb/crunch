@@ -5,7 +5,7 @@ import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Common/classes.dart';
-import 'package:crunch/Static/Constant.dart';
+import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -47,10 +47,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   getBanners() async {
     setLoading(true);
     String databasePath = await getDatabasesPath();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     Database db = await openDatabase(databasePath + 'myDb.db',
         version: 1, onCreate: (Database db, int version) async {});
     AppServices.getSlider().then((value) async {
       if (value.value == "y") {
+        await prefs.setString("config", jsonEncode(value.data[0]["config"]));
         for (int i = 0; i < value.data[0]["banners"].length; i++) {
           setState(() {
             banners.add(Banners(
@@ -144,7 +146,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: appPrimaryMaterialColor,
+          backgroundColor: cnst.appPrimaryMaterialColor,
           elevation: 2,
           automaticallyImplyLeading: false,
           title: Text(
