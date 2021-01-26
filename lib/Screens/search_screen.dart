@@ -52,8 +52,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           child: Container(
             height: 45,
             decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4)),
+                color: Colors.white, borderRadius: BorderRadius.circular(4)),
             child: TextField(
               decoration: InputDecoration(
                   hintText: "Search",
@@ -155,25 +154,33 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                                           await _getAddOnById(
                                               addOnId: items[index].addon[0]
                                                   ["addon_group_id"]);
-                                          Scaffold.of(context)
-                                              .showBottomSheet((context) {
-                                            return BottomSheet(
-                                                onClosing: () {},
-                                                elevation: 4,
-                                                animationController:
-                                                    _controller,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return Container(
-                                                      height: size.height * 0.4,
-                                                      width: size.width,
-                                                      color: Colors.white,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: addOnItems(
-                                                          item: items[index]));
+                                          showModalBottomSheet(
+                                              context: context,
+                                              builder: (_) {
+                                                return StatefulBuilder(builder:
+                                                    (BuildContext context,
+                                                        StateSetter state) {
+                                                  return BottomSheet(
+                                                      onClosing: () {},
+                                                      animationController:
+                                                          _controller,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Container(
+                                                            height:
+                                                                size.height *
+                                                                    0.4,
+                                                            width: size.width,
+                                                            color: Colors.white,
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: addOnItems(
+                                                                item: items[
+                                                                    index],
+                                                                state: state));
+                                                      });
                                                 });
-                                          });
+                                              });
                                         } else {
                                           setState(() {
                                             items[index].addedToCart = true;
@@ -235,7 +242,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         ));
   }
 
-  Widget addOnItems({ItemData item}) {
+  Widget addOnItems({ItemData item, StateSetter state, List<AddOnGroup> addOnGroup}) {
     return Column(
       children: [
         Padding(
@@ -243,7 +250,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                addOnGroupName ?? "N/A",
+                "ADD ONS",
                 style: TextStyle(color: Colors.grey, fontSize: 20),
               )),
         ),
@@ -255,13 +262,13 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   value: addOnGroups[index].selected,
                   onChanged: (value) {
                     if (addOnGroups[index].selected) {
-                      setState(() {
+                      state(() {
                         addOnGroups[index].selected = false;
                         price = price -
                             double.parse(addOnGroups[index].addOnItemPrice);
                       });
                     } else {
-                      setState(() {
+                      state(() {
                         addOnGroups[index].selected = true;
                         price = price +
                             double.parse(addOnGroups[index].addOnItemPrice);
