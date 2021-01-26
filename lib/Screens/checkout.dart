@@ -224,7 +224,7 @@ class _CheckoutState extends State<Checkout> {
                   "Make Payment",
                   style: TextStyle(color: Colors.white),
                 ),
-                onPressed: _makePayment,
+                onPressed: makePayment,
                 color: cnst.appPrimaryMaterialColor,
               ))
           : null,
@@ -289,7 +289,7 @@ class _CheckoutState extends State<Checkout> {
     }
   }
 
-  _makePayment() async {
+  makePayment() async {
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
     } else {
@@ -305,9 +305,11 @@ class _CheckoutState extends State<Checkout> {
       setState(() {
         items = [];
       });
-      await widget.cartItems.forEach((element) async {
+      for (int i = 0; i < widget.cartItems.length; i++) {
         var cartData = await SQFLiteTables.where(
-            table: Tables.CART_ADDON, column: "cart_id", value: element.cartId);
+            table: Tables.CART_ADDON,
+            column: "cart_id",
+            value: widget.cartItems[i].cartId);
         setState(() {
           addOnIds = "";
         });
@@ -318,27 +320,18 @@ class _CheckoutState extends State<Checkout> {
                 : addOnIds += cartData[i]["addon_id"] + ", ";
           });
         }
-        await SQFLiteTables.where(
-                table: Tables.ADDONS, column: "addon_item_id", value: addOnIds)
-            .then((value) {
-          // print(value);
-          setState(() {
-            items += [
-              {
-                "item":
-                    "${element.itemId}^${element.itemName}^${element.itemPrice}^${element.qty}^desc^",
-                "addon": value
-              }
-            ];
-            // print({
-            //   "item":
-            //       "${element.itemId}^${element.itemName}^${element.itemPrice}^${element.qty}^desc^",
-            //   "addon": value
-            // });
-          });
+        var addOns = await SQFLiteTables.where(
+            table: Tables.ADDONS, column: "addon_item_id", value: addOnIds);
+        setState(() {
+          items += [
+            {
+              "item":
+                  "${widget.cartItems[i].itemId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].itemPrice}^${widget.cartItems[i].qty}^desc^",
+              "addon": addOns ?? []
+            }
+          ];
         });
-      });
-      print(items.length);
+      }
       FormData formData = FormData.fromMap({
         "address_id": address.id,
         "customer_id": customerId,
@@ -352,6 +345,7 @@ class _CheckoutState extends State<Checkout> {
         "payment_type": "COD",
         "items": items
       });
+      print(formData.fields);
       // AppServices.saveOrder(formData).then((value) {
       //   //print(formData.fields);
       //   // print(value.value);
