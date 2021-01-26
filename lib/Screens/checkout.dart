@@ -27,7 +27,7 @@ class Checkout extends StatefulWidget {
 class _CheckoutState extends State<Checkout> {
   bool isLoading = false;
   List<Addresses> _address = [];
-  List items = [];
+  List<Map<String, dynamic>> items = [];
   PAYMENTMETHOD _paymentMethod = PAYMENTMETHOD.CASHONDELIVERY;
   Addresses address;
   // static const platform = const MethodChannel("razorpay_flutter");
@@ -301,6 +301,7 @@ class _CheckoutState extends State<Checkout> {
       double taxTotal = widget.grandTotal * (sgst + cgst) / 100;
       double total = taxTotal + widget.grandTotal;
       String addOnIds = "";
+
       setState(() {
         items = [];
       });
@@ -317,18 +318,27 @@ class _CheckoutState extends State<Checkout> {
                 : addOnIds += cartData[i]["addon_id"] + ", ";
           });
         }
-        var addOns = await SQFLiteTables.where(
-            table: Tables.ADDONS, column: "addon_item_id", value: addOnIds);
-        setState(() {
-          items += [
-            {
-              "item":
-                  "${element.itemId}^${element.itemName}^${element.itemPrice}^${element.qty}^desc^",
-              "addon": addOns
-            }
-          ];
+        await SQFLiteTables.where(
+                table: Tables.ADDONS, column: "addon_item_id", value: addOnIds)
+            .then((value) {
+          // print(value);
+          setState(() {
+            items += [
+              {
+                "item":
+                    "${element.itemId}^${element.itemName}^${element.itemPrice}^${element.qty}^desc^",
+                "addon": value
+              }
+            ];
+            // print({
+            //   "item":
+            //       "${element.itemId}^${element.itemName}^${element.itemPrice}^${element.qty}^desc^",
+            //   "addon": value
+            // });
+          });
         });
       });
+      print(items.length);
       FormData formData = FormData.fromMap({
         "address_id": address.id,
         "customer_id": customerId,
@@ -342,11 +352,10 @@ class _CheckoutState extends State<Checkout> {
         "payment_type": "COD",
         "items": items
       });
-      //print(formData.fields);
-      AppServices.saveOrder(formData).then((value) {
-        //print(formData.fields);
-        print(value.value);
-      });
+      // AppServices.saveOrder(formData).then((value) {
+      //   //print(formData.fields);
+      //   // print(value.value);
+      // });
     }
   }
 }
