@@ -119,173 +119,171 @@ class _SignUpState extends State<SignUp> {
     Size size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-              width: size.width,
-              height: size.height,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/spalsh.png"),
-                  fit: BoxFit.fill,
-                  colorFilter: new ColorFilter.mode(
-                      Colors.black.withOpacity(0.7), BlendMode.softLight),
-                ),
+        body: Container(
+            width: size.width,
+            height: size.height,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/spalsh.png"),
+                fit: BoxFit.fill,
+                colorFilter: new ColorFilter.mode(
+                    Colors.black.withOpacity(0.7), BlendMode.softLight),
               ),
-              child: Container(
-                height: size.height,
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 20.0),
-                      width: 180,
-                      height: 180,
-                      child: Stack(
-                        children: [
-                          Container(
-                              height: 170,
-                              width: 170,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color:
-                                    cnst.AppColors.whitecolor.withOpacity(0.3),
-                              ),
-                              child: _profileImage == null
-                                  ? Icon(
-                                      Icons.person_outline,
-                                      size: 50.0,
-                                      color: cnst.AppColors.whitecolor,
-                                    )
-                                  : CircleAvatar(
-                                      backgroundImage: FileImage(_profileImage),
-                                      radius: 150.0,
-                                    )),
-                          Positioned(
-                            bottom: -10,
-                            right: -13,
-                            child: GestureDetector(
-                              onTap: () => _ImagePopup(context),
-                              child: Container(
-                                margin: EdgeInsets.all(25.0),
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: cnst.appPrimaryMaterialColor)),
-                                child: Container(
-                                    margin: EdgeInsets.all(3.0),
-                                    width: 15,
-                                    height: 15,
-                                    decoration: BoxDecoration(
-                                      color: cnst.appPrimaryMaterialColor,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.arrow_upward,
-                                      color: cnst.AppColors.whitecolor,
-                                    )),
-                              ),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 20.0),
+                    width: 180,
+                    height: 180,
+                    child: Stack(
+                      children: [
+                        Container(
+                            height: 170,
+                            width: 170,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: cnst.AppColors.whitecolor.withOpacity(0.3),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 25.0,
-                    ),
-                    CustomTextField(
-                      hint: "Name",
-                      obtext: false,
-                      textcontroller: Name,
-                      textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.person_outline,
-                          color: cnst.AppColors.whitecolor, size: 25.0),
-                    ),
-                    SizedBox(
-                      height: 13.0,
-                    ),
-                    CustomTextField(
-                      hint: "Email",
-                      obtext: false,
-                      textcontroller: Email,
-                      textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.mail_outline,
-                          color: cnst.AppColors.whitecolor, size: 25.0),
-                    ),
-                    SizedBox(
-                      height: 13.0,
-                    ),
-                    buildRadioButton(size),
-                    SizedBox(
-                      height: 13.0,
-                    ),
-                    CustomTextField(
-                      hint: "Mobile",
-                      obtext: false,
-                      textcontroller: Mobile,
-                      textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.phone,
-                          color: cnst.AppColors.whitecolor, size: 25.0),
-                    ),
-                    SizedBox(
-                      height: 13.0,
-                    ),
-                    CustomTextField(
-                      hint: "Password",
-                      obtext: true,
-                      textcontroller: Password,
-                      textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.lock_outline,
-                          color: cnst.AppColors.whitecolor, size: 25.0),
-                    ),
-                    SizedBox(
-                      height: 13.0,
-                    ),
-                    CustomTextField(
-                      hint: "Confirm Password",
-                      obtext: true,
-                      textcontroller: ConfirmPassword,
-                      textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(Icons.lock_outline,
-                          color: cnst.AppColors.whitecolor, size: 25.0),
-                    ),
-                    SizedBox(
-                      height: 40.0,
-                    ),
-                    CustomButton(
-                      title: "Sign UP",
-                      btncolor: cnst.appPrimaryMaterialColor,
-                      ontap: () {
-                        userValidation();
-                      },
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Login()));
-                      },
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(
-                          "Already have an account? Login",
-                          style: TextStyle(
-                            color: cnst.AppColors.whitecolor,
-                            fontSize: 15,
+                            child: _profileImage == null
+                                ? Icon(
+                                    Icons.person_outline,
+                                    size: 50.0,
+                                    color: cnst.AppColors.whitecolor,
+                                  )
+                                : CircleAvatar(
+                                    backgroundImage: FileImage(_profileImage),
+                                    radius: 150.0,
+                                  )),
+                        Positioned(
+                          bottom: -10,
+                          right: -13,
+                          child: GestureDetector(
+                            onTap: () => _ImagePopup(context),
+                            child: Container(
+                              margin: EdgeInsets.all(25.0),
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: cnst.appPrimaryMaterialColor)),
+                              child: Container(
+                                  margin: EdgeInsets.all(3.0),
+                                  width: 15,
+                                  height: 15,
+                                  decoration: BoxDecoration(
+                                    color: cnst.appPrimaryMaterialColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.arrow_upward,
+                                    color: cnst.AppColors.whitecolor,
+                                  )),
+                            ),
                           ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25.0,
+                  ),
+                  CustomTextField(
+                    hint: "Name",
+                    obtext: false,
+                    textcontroller: Name,
+                    textColor: cnst.AppColors.whitecolor,
+                    texticon: Icon(Icons.person_outline,
+                        color: cnst.AppColors.whitecolor, size: 25.0),
+                  ),
+                  SizedBox(
+                    height: 13.0,
+                  ),
+                  CustomTextField(
+                    hint: "Email",
+                    obtext: false,
+                    textcontroller: Email,
+                    textColor: cnst.AppColors.whitecolor,
+                    texticon: Icon(Icons.mail_outline,
+                        color: cnst.AppColors.whitecolor, size: 25.0),
+                  ),
+                  SizedBox(
+                    height: 13.0,
+                  ),
+                  buildRadioButton(size),
+                  SizedBox(
+                    height: 13.0,
+                  ),
+                  CustomTextField(
+                    hint: "Mobile",
+                    obtext: false,
+                    textcontroller: Mobile,
+                    textColor: cnst.AppColors.whitecolor,
+                    texticon: Icon(Icons.phone,
+                        color: cnst.AppColors.whitecolor, size: 25.0),
+                  ),
+                  SizedBox(
+                    height: 13.0,
+                  ),
+                  CustomTextField(
+                    hint: "Password",
+                    obtext: true,
+                    textcontroller: Password,
+                    textColor: cnst.AppColors.whitecolor,
+                    texticon: Icon(Icons.lock_outline,
+                        color: cnst.AppColors.whitecolor, size: 25.0),
+                  ),
+                  SizedBox(
+                    height: 13.0,
+                  ),
+                  CustomTextField(
+                    hint: "Confirm Password",
+                    obtext: true,
+                    textcontroller: ConfirmPassword,
+                    textColor: cnst.AppColors.whitecolor,
+                    texticon: Icon(Icons.lock_outline,
+                        color: cnst.AppColors.whitecolor, size: 25.0),
+                  ),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  CustomButton(
+                    title: "Sign UP",
+                    btncolor: cnst.appPrimaryMaterialColor,
+                    ontap: () {
+                      userValidation();
+                    },
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Login()));
+                    },
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Text(
+                        "Already have an account? Login",
+                        style: TextStyle(
+                          color: cnst.AppColors.whitecolor,
+                          fontSize: 15,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              )),
-        ),
+                  ),
+                  SizedBox(
+                    height: 13,
+                  ),
+                ],
+              ),
+            )),
       ),
     );
   }
@@ -410,6 +408,7 @@ class _SignUpState extends State<SignUp> {
                 'Male',
                 style:
                     TextStyle(color: cnst.AppColors.whitecolor, fontSize: 16.0),
+                maxLines: 1,
               ),
               value: 'Male',
               onChanged: (val) {
@@ -427,6 +426,7 @@ class _SignUpState extends State<SignUp> {
                 'Female',
                 style:
                     TextStyle(color: cnst.AppColors.whitecolor, fontSize: 16.0),
+                maxLines: 1,
               ),
               value: 'Female',
               onChanged: (val) {

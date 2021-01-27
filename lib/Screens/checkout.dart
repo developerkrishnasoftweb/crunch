@@ -110,12 +110,11 @@ class _CheckoutState extends State<Checkout> {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    Fluttertoast.showToast(
-        msg: "ERROR: " + response.code.toString() + " - " + response.message);
+    Fluttertoast.showToast(msg: "Payment Failed");
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    Fluttertoast.showToast(msg: "EXTERNAL_WALLET: " + response.walletName);
+    Fluttertoast.showToast(msg: "Something went wrong");
   }
 
   void getUserData() async {
