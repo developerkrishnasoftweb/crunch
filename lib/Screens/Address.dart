@@ -6,7 +6,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../APIS/AppServices.dart';
@@ -21,16 +20,12 @@ class Address extends StatefulWidget {
 class _AddressState extends State<Address> {
   bool isLoading = true;
   List<Addresses> _address = List();
-  ProgressDialog pr;
   Addresses address;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    pr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Please wait..");
     getAddresses();
   }
 
@@ -39,118 +34,105 @@ class _AddressState extends State<Address> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            )),
-        backgroundColor: Colors.white,
+        automaticallyImplyLeading: true,
+        backgroundColor: cnst.appPrimaryMaterialColor,
         elevation: 1.0,
         title: Text(
           "Address",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.white),
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
-      body: _address.length > 0
-          ? SingleChildScrollView(
-              child: Container(
-                  width: size.width,
-                  height: size.height,
-                  padding: EdgeInsets.symmetric(horizontal: 17, vertical: 5.0),
-                  child: ListView.builder(
-                      itemCount: _address.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10.0, bottom: 10.0, left: 7.0, right: 7.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: size.width * 0.55,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        _address[index].contactPerson,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                        _address[index].address1 +
-                                            ", " +
-                                            _address[index].address2 +
-                                            "\n" +
-                                            _address[index].landmark +
-                                            "\n" +
-                                            _address[index].city +
-                                            " - " +
-                                            _address[index].pinCode,
-                                        style: TextStyle(
-                                            fontSize: 14, color: Colors.grey),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                        _address[index].contactNumber,
-                                        style: TextStyle(
-                                            fontSize: 14, color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                            icon: Icon(Icons.edit),
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          EditAddress(
-                                                            _address[index],
-                                                          )));
-                                            }),
-                                        IconButton(
-                                            icon: Icon(Icons.delete),
-                                            onPressed: () {
-                                              _deleteAddress(
-                                                  _address[index].id);
-                                            }),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
+      body: _address.length != 0
+          ? ListView.builder(
+              itemCount: _address.length,
+              physics: BouncingScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10.0, horizontal: 10.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _address[index].contactPerson,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 17),
                             ),
-                          ),
-                        );
-                      })),
-            )
-          : Center(child: CircularProgressIndicator()),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              _address[index].address1 +
+                                  ", " +
+                                  _address[index].address2 +
+                                  "\n" +
+                                  _address[index].landmark +
+                                  "\n" +
+                                  _address[index].city +
+                                  " - " +
+                                  _address[index].pinCode,
+                              maxLines: 3,
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.grey),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              _address[index].contactNumber,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )),
+                        IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditAddress(
+                                            _address[index],
+                                          )));
+                            }),
+                        IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              _deleteAddress(_address[index]);
+                            }),
+                      ],
+                    ),
+                  ),
+                );
+              })
+          : Center(child: Text("No address available")),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Add_Address()))
-              .then((value) {
-            getAddresses();
-          });
-        },
-        child: Icon(Icons.add),
+        onPressed: isLoading
+            ? null
+            : () {
+                Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Add_Address()))
+                    .then((value) {
+                  getAddresses();
+                });
+              },
+        child: isLoading
+            ? SizedBox(
+                height: 25,
+                width: 25,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 1.5,
+                ),
+              )
+            : Icon(Icons.add),
       ),
     );
   }
@@ -212,7 +194,7 @@ class _AddressState extends State<Address> {
     }
   }
 
-  _toastMesssage(String message) {
+  toastMessage(String message) {
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
@@ -223,35 +205,37 @@ class _AddressState extends State<Address> {
         fontSize: 16.0);
   }
 
-  _deleteAddress(String id) async {
+  _deleteAddress(Addresses addresses) async {
     try {
-      pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         FormData d = FormData.fromMap({
           "api_key": "0imfnc8mVLWwsAawjYr4Rx",
-          "id": id,
+          "id": addresses.id,
         });
         setState(() {
           isLoading = true;
         });
-        print("id is " + id);
         AppServices.deleteAddress(d).then((data) async {
-          pr.hide();
           if (data.value == "y") {
-            _toastMesssage(data.message);
-            getAddresses();
+            toastMessage(data.message);
+            _address.remove(addresses);
+            setState(() {
+              isLoading = false;
+            });
           } else {
-            _toastMesssage("Something went wrong.");
+            toastMessage("Something went wrong.");
+            setState(() {
+              isLoading = false;
+            });
           }
-        }, onError: (e) {
-          pr.hide();
-          _toastMesssage("Something went wrong.");
         });
       }
     } on SocketException catch (_) {
-      pr.hide();
-      _toastMesssage("No Internet Connection.");
+      toastMessage("No Internet Connection");
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 }

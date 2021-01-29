@@ -73,97 +73,93 @@ class _Add_AddressState extends State<Add_Address> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Container(
-          width: size.width,
-          height: size.height,
-          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: contactPerson,
-                obtext: false,
-                hint: "Name *",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: contactNumber,
-                obtext: false,
-                hint: "Number *",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: address1,
-                obtext: false,
-                hint: "Address 1 *",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: address2,
-                obtext: false,
-                hint: "Address 2 *",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: landmark,
-                obtext: false,
-                hint: "Landmark *",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: pincode,
-                obtext: false,
-                hint: "Pincode *",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomTextField(
-                textcontroller: city,
-                obtext: false,
-                hint: "City *",
-                textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
-                borderside: 1.0,
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              CustomButton(
-                title: "Add Address",
-                btncolor: cnst.appPrimaryMaterialColor,
-                ontap: () {
-                  FocusScope.of(context).unfocus();
-                  Validation();
-                },
-              ),
-            ],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 16.0,
+              width: size.width,
+            ),
+            CustomTextField(
+              textcontroller: contactPerson,
+              obtext: false,
+              hint: "Name *",
+              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              borderside: 1.0,
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+            CustomTextField(
+              textcontroller: contactNumber,
+              obtext: false,
+              hint: "Number *",
+              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              borderside: 1.0,
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+            CustomTextField(
+              textcontroller: address1,
+              obtext: false,
+              hint: "Address 1 *",
+              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              borderside: 1.0,
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+            CustomTextField(
+              textcontroller: address2,
+              obtext: false,
+              hint: "Address 2 *",
+              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              borderside: 1.0,
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+            CustomTextField(
+              textcontroller: landmark,
+              obtext: false,
+              hint: "Landmark *",
+              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              borderside: 1.0,
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+            CustomTextField(
+              textcontroller: pincode,
+              obtext: false,
+              hint: "Pincode *",
+              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              borderside: 1.0,
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+            CustomTextField(
+              textcontroller: city,
+              obtext: false,
+              hint: "City *",
+              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              borderside: 1.0,
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+            CustomButton(
+              title: "Add Address",
+              btncolor: cnst.appPrimaryMaterialColor,
+              ontap: () {
+                FocusScope.of(context).unfocus();
+                Validation();
+              },
+            ),
+          ],
         ),
       ),
     );

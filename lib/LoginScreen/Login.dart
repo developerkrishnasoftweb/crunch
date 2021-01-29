@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
 import 'package:crunch/LoginScreen/SignUp.dart';
+import 'package:crunch/Screens/dashboard.dart';
 import 'package:crunch/Screens/new_home.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -76,7 +77,7 @@ class _LoginState extends State<Login> {
 
     if (id != null) {
       Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (context) => Home()), (route) => false);
+          MaterialPageRoute(builder: (context) => Dashboard()), (route) => false);
     }
   }
 

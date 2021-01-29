@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
-import 'package:crunch/Common/AppBottomBar.dart';
 import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
@@ -376,16 +375,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               )
             : Center(
                 child: SizedBox(
-                  height: 30,
-                  width: 30,
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Colors.grey),
-                  ),
-                ),
-              ),
-        bottomNavigationBar: AppBottomBar(
-          currentindex: 0,
-        ));
+                    height: 30,
+                    width: 30,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(Colors.grey),
+                    ))));
   }
 
   _getAddOnById({ItemData itemData}) async {
