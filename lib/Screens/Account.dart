@@ -41,11 +41,13 @@ class _AccountState extends State<Account> {
           children: [
             ListTile(
               title: Text(
-                name,
+                name ?? "N/A",
                 style: TextStyle(fontSize: 20.0),
               ),
               subtitle: Text(
-                mobile + "-" + email,
+                mobile != null && email != null
+                    ? mobile + " - " + email
+                    : "N/A",
                 style: TextStyle(fontSize: 13.0),
               ),
               trailing: Text("Edit"),
@@ -117,9 +119,12 @@ class _AccountState extends State<Account> {
               trailing: Icon(Icons.power_settings_new),
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.clear();
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
+                prefs.clear().then((value) {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => Login()),
+                      (route) => false);
+                });
               },
             )
           ],
@@ -150,12 +155,13 @@ class _AccountState extends State<Account> {
     );
   }
 
-  getData() async {
+  Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       name = prefs.getString(cnst.Session.name);
       mobile = prefs.getString(cnst.Session.mobile);
       email = prefs.getString(cnst.Session.email);
     });
+    return;
   }
 }

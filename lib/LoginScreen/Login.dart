@@ -3,9 +3,7 @@ import 'dart:io';
 
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
-import 'package:crunch/LoginScreen/SignUp.dart';
 import 'package:crunch/Screens/dashboard.dart';
-import 'package:crunch/Screens/new_home.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -76,8 +74,10 @@ class _LoginState extends State<Login> {
     String id = prefs.getString(cnst.Session.id);
 
     if (id != null) {
-      Navigator.pushAndRemoveUntil(context,
-          MaterialPageRoute(builder: (context) => Dashboard()), (route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Dashboard()),
+          (route) => false);
     }
   }
 
@@ -179,8 +179,10 @@ class _LoginState extends State<Login> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => SignUp()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Dashboard()));
                       },
                       child: Align(
                         alignment: Alignment.bottomCenter,
@@ -237,7 +239,7 @@ class _LoginState extends State<Login> {
             prefs.setString(cnst.Session.gender, data.data[0]["gender"]);
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => Home()),
+                MaterialPageRoute(builder: (context) => Dashboard()),
                 (route) => false);
           } else {
             _toastMesssage("Invalid username or password");
