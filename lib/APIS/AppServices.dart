@@ -291,4 +291,27 @@ class AppServices {
       throw Exception(e.toString());
     }
   }
+
+  /*
+  * Get orders
+  * */
+  static Future<SaveDataClass> orders(body) async {
+    String url = Base_URL + 'get_orders';
+    try {
+      final response = await dio.post(url, data: body);
+      if (response.statusCode == 200) {
+        SaveDataClass saveDataClass =
+            new SaveDataClass(message: 'No Data', value: "n");
+        final jsonResponse = json.decode(response.data);
+        saveDataClass.message = jsonResponse['message'];
+        saveDataClass.value = jsonResponse['status'];
+        saveDataClass.data = [jsonResponse['data']];
+        return saveDataClass;
+      } else {
+        throw Exception("Something went Wrong");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:crunch/LoginScreen/Login.dart';
+import 'package:crunch/Screens/my_orders.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -113,6 +114,8 @@ class _AccountState extends State<Account> {
                 "MyOrder",
               ),
               trailing: Icon(Icons.arrow_forward),
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MyOrders())),
             ),
             ListTile(
               title: Text("Logout"),
