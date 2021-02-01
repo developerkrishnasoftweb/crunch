@@ -120,6 +120,7 @@ class _MyOrdersState extends State<MyOrders> {
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
                       child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Items"),
                       Text(
