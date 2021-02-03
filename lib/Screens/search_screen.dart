@@ -17,7 +17,7 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   List<ItemData> items = [];
   List<AddOnGroup> addOnGroups = [];
-  bool isLoading = false;
+  bool isLoading = false, noDataFound = false;
   String addOnGroupName = "", databasePath = "";
   Database db;
   AnimationController _controller;
@@ -65,7 +65,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         ),
         backgroundColor: appPrimaryMaterialColor,
       ),
-      body: isLoading
+      body: noDataFound ? Center(
+        child: Text("No item (s) found :("),
+      ) : isLoading
           ? Center(
               child: SizedBox(
                 height: 30,
@@ -76,7 +78,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               ),
             )
           : ListView.builder(
-              itemCount: items.length > 10 ? 10 : items.length,
+              itemCount: items.length,
               shrinkWrap: true,
               physics: BouncingScrollPhysics(),
               scrollDirection: Axis.vertical,
@@ -395,6 +397,14 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       });
       var value = await db.rawQuery(
           "select * from ${SQFLiteTables.tableItems} where itemname like '$keyword%'");
+      if(value.length == 0)
+        setState(() {
+          noDataFound = true;
+        });
+      else
+        setState(() {
+          noDataFound = false;
+        });
       for (int i = 0; i < value.length; i++) {
         setState(() {
           items.add(ItemData(

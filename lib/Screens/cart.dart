@@ -23,6 +23,9 @@ class _CartState extends State<Cart> {
   }
 
   getCartData() async {
+    setState(() {
+      cartItems.clear();
+    });
     var cartData = await SQFLiteTables.getData(table: Tables.CART);
     for (int i = 0; i < cartData.length; i++) {
       setState(() {
@@ -142,7 +145,9 @@ class _CartState extends State<Cart> {
                               builder: (_) => Checkout(
                                     grandTotal: grandTotal,
                                     cartItems: cartItems,
-                                  ))),
+                                  ))).then((value) {
+                                    getCartData();
+                      }),
                       padding: EdgeInsets.symmetric(vertical: 13),
                     )),
                   ],

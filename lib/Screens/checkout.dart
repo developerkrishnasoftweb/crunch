@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/classes.dart';
+import 'package:crunch/Screens/dashboard.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -77,8 +78,7 @@ class _CheckoutState extends State<Checkout> {
     Database db = await openDatabase(databasePath + 'myDb.db',
         version: 1, onCreate: (Database db, int version) async {});
     await db.rawQuery("delete from ${SQFLiteTables.tableCart}");
-    Navigator.pushAndRemoveUntil(context,
-        MaterialPageRoute(builder: (context) => Home()), (route) => false);
+    Navigator.pop(context);
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {

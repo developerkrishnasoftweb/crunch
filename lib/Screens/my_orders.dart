@@ -3,6 +3,7 @@ import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,11 +13,16 @@ class MyOrders extends StatefulWidget {
 }
 
 class _MyOrdersState extends State<MyOrders> {
-  bool isLoading = false;
+  bool isLoading = false, isDeleting = false;
   List<OrderDetails> orderDetails = [];
   setLoading(bool status) {
     setState(() {
       isLoading = status;
+    });
+  }
+  setDelete(bool status) {
+    setState(() {
+      isDeleting = status;
     });
   }
 
@@ -189,8 +195,8 @@ class _MyOrdersState extends State<MyOrders> {
                             orderDetails[index].orderStatus.toLowerCase() ==
                                     "pending"
                                 ? FlatButton(
-                                    onPressed: _cancelOrder,
-                                    child: Text(
+                                    onPressed: isDeleting ? null : () => _cancelOrder(orderDetails[index]),
+                                    child: isDeleting ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 1,)) : Text(
                                       "CANCEL",
                                       style: TextStyle(color: Colors.red),
                                     ))
@@ -208,7 +214,23 @@ class _MyOrdersState extends State<MyOrders> {
               ));
   }
 
-  _cancelOrder() {}
+  _cancelOrder(OrderDetails order) async {
+    setDelete(true);
+    FormData formData = FormData.fromMap({
+      "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+      "order_id": order.id,
+    });
+    await AppServices.cancelOrder(formData).then((value) {
+      if (value.value == "true") {
+        getOrders();
+        Fluttertoast.showToast(msg: value.message);
+        setDelete(false);
+      } else {
+        Fluttertoast.showToast(msg: value.message);
+        setDelete(false);
+      }
+    });
+  }
 }
 
 class OrderDetails {
