@@ -3,6 +3,7 @@ import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyOrders extends StatefulWidget {
@@ -82,8 +83,9 @@ class _MyOrdersState extends State<MyOrders> {
                 packingCharges: value.data[0]["orders"][i]["packing_charges"],
                 paymentId: value.data[0]["orders"][i]["payment_id"],
                 paymentType: value.data[0]["orders"][i]["payment_type"],
-                petpoojaOrderId: value.data[0]["orders"][i]
+                petPoojaOrderId: value.data[0]["orders"][i]
                     ["petpooja_order_id"],
+                created: value.data[0]["orders"][i]["created"],
                 taxtotal: value.data[0]["orders"][i]["tax_total"],
                 items: itemData,
                 total: value.data[0]["orders"][i]["total"]));
@@ -117,21 +119,96 @@ class _MyOrdersState extends State<MyOrders> {
                     : Text("No orders found"),
               )
             : ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Items"),
-                      Text(
-                          "${orderDetails[index].items[0].quantity} x ${orderDetails[index].items[0].name}")
-                    ],
+                      child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Items",
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        for (int i = 0;
+                            i < orderDetails[index].items.length;
+                            i++) ...[
+                          Text(
+                            "${orderDetails[index].items[i].quantity} x ${orderDetails[index].items[i].name}",
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          )
+                        ],
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          "ORDERED ON",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "${orderDetails[index].created != null ? DateFormat("MMM d, y").format(DateTime.parse(orderDetails[index].created)) : "N/A"} at ${orderDetails[index].created != null ? orderDetails[index].created.split(" ").last : "N/A"}",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          "TOTAL",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "${orderDetails[index].total}",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        Divider(
+                          thickness: 2,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "${orderDetails[index].orderStatus.toUpperCase()}",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            orderDetails[index].orderStatus.toLowerCase() ==
+                                    "pending"
+                                ? FlatButton(
+                                    onPressed: _cancelOrder,
+                                    child: Text(
+                                      "CANCEL",
+                                      style: TextStyle(color: Colors.red),
+                                    ))
+                                : SizedBox(
+                                    height: 30,
+                                  ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ));
                 },
                 physics: BouncingScrollPhysics(),
                 itemCount: orderDetails.length,
               ));
   }
+
+  _cancelOrder() {}
 }
 
 class OrderDetails {
@@ -147,7 +224,8 @@ class OrderDetails {
       total,
       addressId,
       orderStatus,
-      petpoojaOrderId,
+      petPoojaOrderId,
+      created,
       paymentId;
   final List<ItemData> items;
   OrderDetails(
@@ -164,7 +242,8 @@ class OrderDetails {
       this.orderType,
       this.packingCharges,
       this.paymentType,
-      this.petpoojaOrderId,
+      this.created,
+      this.petPoojaOrderId,
       this.taxtotal});
 }
 
