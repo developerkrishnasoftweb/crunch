@@ -142,6 +142,7 @@ class AppServices {
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
+      print(response);
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
             new SaveDataClass(message: 'No Data', value: "n");

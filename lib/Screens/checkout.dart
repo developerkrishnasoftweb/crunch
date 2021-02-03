@@ -185,7 +185,7 @@ class _CheckoutState extends State<Checkout> {
             ),
           ),
           Expanded(
-              child: _address.length > 0
+              child: _address != null ? _address.length > 0
                   ? ListView.builder(
                       itemCount: _address.length,
                       padding: EdgeInsets.only(bottom: 70),
@@ -235,7 +235,9 @@ class _CheckoutState extends State<Checkout> {
                       })
                   : Center(
                       child: CircularProgressIndicator(),
-                    )),
+                    ) : Center(
+                child: Text("No address available"),
+              )),
         ],
       ),
       floatingActionButton: address != null
@@ -256,60 +258,45 @@ class _CheckoutState extends State<Checkout> {
   }
 
   getAddresses() async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String id = prefs.getString(cnst.Session.id);
-        FormData d = FormData.fromMap({
-          "api_key": "0imfnc8mVLWwsAawjYr4Rx",
-          "customer_id": id,
-        });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = prefs.getString(cnst.Session.id);
+    FormData d = FormData.fromMap({
+      "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+      "customer_id": id,
+    });
+    setState(() {
+      isLoading = true;
+      _address = [];
+    });
+    AppServices.getAddress(d).then((data) async {
+      if (data.value == "y") {
         setState(() {
-          isLoading = true;
-          _address = [];
+          isLoading = false;
         });
-        AppServices.getAddress(d).then((data) async {
-          if (data.value == "y") {
-            setState(() {
-              isLoading = false;
-            });
-            for (int i = 0; i < data.data.length; i++) {
-              setState(() {
-                _address.add(Addresses(
-                    address1: data.data[i]["address1"],
-                    address2: data.data[i]["address2"],
-                    city: data.data[i]["city"],
-                    customerId: data.data[i]["customer_id"],
-                    id: data.data[i]["id"],
-                    contactPerson: data.data[i]["contact_person"],
-                    contactNumber: data.data[i]["contact_number"],
-                    landmark: data.data[i]["landmark"],
-                    pinCode: data.data[i]["pincode"]));
-              });
-            }
-            setState(() {
-              address = _address[0];
-            });
-          } else {
-            setState(() {
-              isLoading = false;
-              _address.clear();
-            });
-          }
-        }, onError: (e) {
+        for (int i = 0; i < data.data.length; i++) {
           setState(() {
-            isLoading = false;
+            _address.add(Addresses(
+                address1: data.data[i]["address1"],
+                address2: data.data[i]["address2"],
+                city: data.data[i]["city"],
+                customerId: data.data[i]["customer_id"],
+                id: data.data[i]["id"],
+                contactPerson: data.data[i]["contact_person"],
+                contactNumber: data.data[i]["contact_number"],
+                landmark: data.data[i]["landmark"],
+                pinCode: data.data[i]["pincode"]));
           });
-          Fluttertoast.showToast(msg: "Something went wrong.");
+        }
+        setState(() {
+          address = _address[0];
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          _address = null;
         });
       }
-    } on SocketException catch (_) {
-      setState(() {
-        isLoading = false;
-      });
-      Fluttertoast.showToast(msg: "No Internet Connection.");
-    }
+    });
   }
 
   makePayment() async {
