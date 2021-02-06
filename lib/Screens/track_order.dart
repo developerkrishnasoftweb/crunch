@@ -19,7 +19,8 @@ class _TrackOrderState extends State<TrackOrder> {
   int statusCode = 1;
   bool isLoading = false;
   int deliveryTime = 0;
-  Duration difference;
+  DateTime created;
+  Duration diff = Duration();
   setLoading(bool status) {
     setState(() {
       isLoading = status;
@@ -55,10 +56,10 @@ class _TrackOrderState extends State<TrackOrder> {
     var config = await jsonDecode(sharedPreferences.getString("config"));
     setState(() {
       deliveryTime = double.parse(config["delivery_time"].toString()).round();
-      difference = DateTime.parse(widget.orderDetails.created)
-          .add(Duration(minutes: deliveryTime))
-          .difference(DateTime.now());
+      created = DateTime.parse(widget.orderDetails.created)
+          .add(Duration(minutes: deliveryTime));
     });
+    getDiff();
   }
 
   int getStatusCode(String value) {
@@ -84,8 +85,17 @@ class _TrackOrderState extends State<TrackOrder> {
     }
   }
 
+  getDiff() async {
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        diff = created.difference(DateTime.now());
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(created);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -156,7 +166,7 @@ class _TrackOrderState extends State<TrackOrder> {
                   buildIconStatus(
                       title: "Order received",
                       status: statusCode > 4 ? true : false),
-                  difference != null ? Expanded(
+                  created != null ? Expanded(
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -167,9 +177,9 @@ class _TrackOrderState extends State<TrackOrder> {
                             width: 140,
                             alignment: Alignment.center,
                             child: Text(
-                              difference.isNegative
+                              diff.isNegative
                                   ? "0 hrs : 0 mins"
-                                  : difference.inMinutes.toString() + " : " + difference.inSeconds.toString().substring(0, 2),
+                                  : diff.inMinutes.toString() + " : " + (diff.inSeconds % 60).toString(),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -187,7 +197,7 @@ class _TrackOrderState extends State<TrackOrder> {
                             height: 20,
                           ),
                           Text(
-                              difference.isNegative
+                              diff.isNegative
                                   ? "Expect your delivery any time"
                                   : "Estimated delivery time",
                               style: TextStyle(
