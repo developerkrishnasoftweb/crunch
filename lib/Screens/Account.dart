@@ -111,7 +111,7 @@ class _AccountState extends State<Account> {
             ),
             ListTile(
               title: Text(
-                "MyOrder",
+                "My Order",
               ),
               trailing: Icon(Icons.arrow_forward),
               onTap: () => Navigator.push(
