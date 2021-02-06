@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Screens/my_orders.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TrackOrder extends StatefulWidget {
   final OrderDetails orderDetails;
@@ -15,24 +17,52 @@ class TrackOrder extends StatefulWidget {
 
 class _TrackOrderState extends State<TrackOrder> {
   int statusCode = 1;
+  bool isLoading = false;
+  int deliveryTime = 0;
+  Duration difference;
+  setLoading(bool status) {
+    setState(() {
+      isLoading = status;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     trackOrder();
   }
-  trackOrder () async {
-    AppServices.trackOrder(FormData.fromMap({
+
+  trackOrder() async {
+    setLoading(true);
+    await AppServices.trackOrder(FormData.fromMap({
       "api_key": "0imfnc8mVLWwsAawjYr4Rx",
       "order_id": widget.orderDetails.id
     })).then((value) {
-      setState(() {
-        statusCode = getStatusCode(value.data[0]["orders"]["detail"]["order_status"]);
-      });
+      if (value.value == "true") {
+        setState(() {
+          statusCode =
+              getStatusCode(value.data[0]["orders"]["detail"]["order_status"]);
+        });
+        setLoading(false);
+      } else {
+        setState(() {
+          statusCode = null;
+        });
+        setLoading(false);
+      }
+    });
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var config = await jsonDecode(sharedPreferences.getString("config"));
+    setState(() {
+      deliveryTime = double.parse(config["delivery_time"].toString()).round();
+      difference = DateTime.parse(widget.orderDetails.created)
+          .add(Duration(minutes: deliveryTime))
+          .difference(DateTime.now());
     });
   }
 
-  int getStatusCode (String value) {
-    switch(value.toLowerCase()) {
+  int getStatusCode(String value) {
+    switch (value.toLowerCase()) {
       case "pending":
         return 1;
         break;
@@ -64,45 +94,113 @@ class _TrackOrderState extends State<TrackOrder> {
         ),
         backgroundColor: appPrimaryMaterialColor,
         elevation: 1,
+        actions: [
+          IconButton(
+              icon: isLoading
+                  ? SizedBox(
+                      height: 17,
+                      width: 17,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Icon(Icons.refresh_outlined),
+              onPressed: trackOrder)
+        ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "#Order Id : " + widget.orderDetails.id,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      body: statusCode == null
+          ? Center(
+              child: Text("Tracking details not found"),
+            )
+          : Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "#Order Id : " + widget.orderDetails.id,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Order Status",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  buildIconStatus(
+                      title: "Order accepted",
+                      status: statusCode > 1 ? true : false),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  buildIconStatus(
+                      title: "Driver at store",
+                      status: statusCode > 2 ? true : false),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  buildIconStatus(
+                      title: "Order on the way",
+                      status: statusCode > 3 ? true : false),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  buildIconStatus(
+                      title: "Order received",
+                      status: statusCode > 4 ? true : false),
+                  difference != null ? Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 140,
+                            width: 140,
+                            alignment: Alignment.center,
+                            child: Text(
+                              difference.isNegative
+                                  ? "0 hrs : 0 mins"
+                                  : difference.inMinutes.toString() + " : " + difference.inSeconds.toString().substring(0, 2),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(150),
+                              border: Border.all(
+                                  color: appPrimaryMaterialColor, width: 2),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                              difference.isNegative
+                                  ? "Expect your delivery any time"
+                                  : "Estimated delivery time",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: appPrimaryMaterialColor)),
+                        ],
+                      ),
+                    ),
+                  ) : SizedBox()
+                ],
+              ),
             ),
-            SizedBox(
-              height: 10,
-            ),
-            Text(
-              "Order Status",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            buildIconStatus(title: "Order accepted", status: statusCode > 1 ? true : false),
-            SizedBox(
-              height: 10,
-            ),
-            buildIconStatus(title: "Driver at store", status: statusCode > 2 ? true : false),
-            SizedBox(
-              height: 10,
-            ),
-            buildIconStatus(title: "Order on the way", status: statusCode > 3 ? true : false),
-            SizedBox(
-              height: 10,
-            ),
-            buildIconStatus(title: "Order received", status: statusCode > 4 ? true : false),
-            Expanded(child: ListView.builder(itemBuilder: (_, index) {
-              return SizedBox();
-            }))
-          ],
-        ),
-      ),
     );
   }
 
@@ -140,7 +238,7 @@ class _TrackOrderState extends State<TrackOrder> {
           title,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 20,
+            fontSize: 18,
             color: status ? Colors.green : appPrimaryMaterialColor,
           ),
         )

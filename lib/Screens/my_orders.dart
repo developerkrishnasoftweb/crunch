@@ -21,6 +21,7 @@ class _MyOrdersState extends State<MyOrders> {
       isLoading = status;
     });
   }
+
   setDelete(bool status) {
     setState(() {
       isDeleting = status;
@@ -176,7 +177,7 @@ class _MyOrdersState extends State<MyOrders> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          "${orderDetails[index].total}",
+                          "\u20b9${orderDetails[index].total}",
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
@@ -190,27 +191,70 @@ class _MyOrdersState extends State<MyOrders> {
                               "${orderDetails[index].orderStatus.toUpperCase()}",
                               style: TextStyle(
                                   fontSize: 14,
-                                  color: orderDetails[index].orderStatus.toLowerCase() == "cancelled" ? Colors.red : orderDetails[index].orderStatus.toLowerCase() == "delivered" ? Colors.green : cnst.appPrimaryMaterialColor[700],
+                                  color: orderDetails[index]
+                                              .orderStatus
+                                              .toLowerCase() ==
+                                          "cancelled"
+                                      ? Colors.red
+                                      : orderDetails[index]
+                                                  .orderStatus
+                                                  .toLowerCase() ==
+                                              "delivered"
+                                          ? Colors.green
+                                          : cnst.appPrimaryMaterialColor[700],
                                   fontWeight: FontWeight.bold),
                             ),
-                            orderDetails[index].orderStatus.toLowerCase() ==
-                                    "pending"
+                            orderDetails[index].orderStatus.toLowerCase() !=
+                                        "cancelled" &&
+                                    orderDetails[index]
+                                            .orderStatus
+                                            .toLowerCase() !=
+                                        "delivered"
                                 ? Row(
-                                  children: [
-                                    FlatButton(
-                                        onPressed: isDeleting ? null : () => _cancelOrder(orderDetails[index]),
-                                        child: isDeleting ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 1,)) : Text(
-                                          "CANCEL",
-                                          style: TextStyle(color: Colors.red),
-                                        )),
-                                    FlatButton(
-                                        onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => TrackOrder(orderDetails: orderDetails[index],))),
-                                        child: Text(
-                                          "TRACK",
-                                          style: TextStyle(color: cnst.appPrimaryMaterialColor, fontWeight: FontWeight.bold),
-                                        )),
-                                  ],
-                                )
+                                    children: [
+                                      orderDetails[index]
+                                                  .orderStatus
+                                                  .toLowerCase() ==
+                                              "pending"
+                                          ? FlatButton(
+                                              onPressed: isDeleting
+                                                  ? null
+                                                  : () => _cancelOrder(
+                                                      orderDetails[index]),
+                                              child: isDeleting
+                                                  ? SizedBox(
+                                                      height: 20,
+                                                      width: 20,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        strokeWidth: 1,
+                                                      ))
+                                                  : Text(
+                                                      "CANCEL",
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ))
+                                          : SizedBox(),
+                                      FlatButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        TrackOrder(
+                                                            orderDetails:
+                                                                orderDetails[
+                                                                    index])));
+                                          },
+                                          child: Text(
+                                            "TRACK",
+                                            style: TextStyle(
+                                                color: cnst
+                                                    .appPrimaryMaterialColor,
+                                                fontWeight: FontWeight.bold),
+                                          )),
+                                    ],
+                                  )
                                 : SizedBox(
                                     height: 30,
                                   ),
