@@ -6,8 +6,8 @@ import 'AppServices.dart';
 
 const String API_BASE_URL =
     "http://52.76.48.26:4524/petpoojabilling_api/V1/pendingorders/mapped_restaurant_menus/";
-const String Base_URL = "http://crunch.kriishnacab.com/api/";
-const String Image_URL = "http://crunch.kriishnacab.com/";
+const String Base_URL = "https://www.manage.crunchpremiumburgers.com/api/";
+const String Image_URL = "https://www.manage.crunchpremiumburgers.com/";
 const String API_Key = "0imfnc8mVLWwsAawjYr4Rx";
 
 /*

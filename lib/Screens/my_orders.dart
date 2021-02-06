@@ -1,4 +1,5 @@
 import 'package:crunch/APIS/AppServices.dart';
+import 'package:crunch/Screens/track_order.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -189,17 +190,27 @@ class _MyOrdersState extends State<MyOrders> {
                               "${orderDetails[index].orderStatus.toUpperCase()}",
                               style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey,
+                                  color: orderDetails[index].orderStatus.toLowerCase() == "cancelled" ? Colors.red : orderDetails[index].orderStatus.toLowerCase() == "delivered" ? Colors.green : cnst.appPrimaryMaterialColor[700],
                                   fontWeight: FontWeight.bold),
                             ),
                             orderDetails[index].orderStatus.toLowerCase() ==
                                     "pending"
-                                ? FlatButton(
-                                    onPressed: isDeleting ? null : () => _cancelOrder(orderDetails[index]),
-                                    child: isDeleting ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 1,)) : Text(
-                                      "CANCEL",
-                                      style: TextStyle(color: Colors.red),
-                                    ))
+                                ? Row(
+                                  children: [
+                                    FlatButton(
+                                        onPressed: isDeleting ? null : () => _cancelOrder(orderDetails[index]),
+                                        child: isDeleting ? SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 1,)) : Text(
+                                          "CANCEL",
+                                          style: TextStyle(color: Colors.red),
+                                        )),
+                                    FlatButton(
+                                        onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => TrackOrder(orderDetails: orderDetails[index],))),
+                                        child: Text(
+                                          "TRACK",
+                                          style: TextStyle(color: cnst.appPrimaryMaterialColor, fontWeight: FontWeight.bold),
+                                        )),
+                                  ],
+                                )
                                 : SizedBox(
                                     height: 30,
                                   ),

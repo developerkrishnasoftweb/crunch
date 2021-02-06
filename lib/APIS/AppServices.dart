@@ -55,7 +55,7 @@ class AppServices {
       }
     } catch (e) {
       // print("Seller Registration Error : " + e.toString());
-      throw Exception("Something went wrong");
+      throw Exception(e);
     }
   }
 
@@ -321,6 +321,29 @@ class AppServices {
   * */
   static Future<SaveDataClass> cancelOrder(body) async {
     String url = Base_URL + 'cancel_order';
+    try {
+      final response = await dio.post(url, data: body);
+      if (response.statusCode == 200) {
+        SaveDataClass saveDataClass =
+        new SaveDataClass(message: 'No Data', value: "n");
+        final jsonResponse = json.decode(response.data);
+        saveDataClass.message = jsonResponse['message'];
+        saveDataClass.value = jsonResponse['status'];
+        saveDataClass.data = [jsonResponse['data']];
+        return saveDataClass;
+      } else {
+        throw Exception("Something went Wrong");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  /*
+  * Track order
+  * */
+  static Future<SaveDataClass> trackOrder(body) async {
+    String url = Base_URL + 'get_order_detail';
     try {
       final response = await dio.post(url, data: body);
       if (response.statusCode == 200) {
