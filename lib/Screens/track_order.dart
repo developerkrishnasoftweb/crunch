@@ -90,12 +90,14 @@ class _TrackOrderState extends State<TrackOrder> {
       setState(() {
         diff = created.difference(DateTime.now());
       });
+      if(diff.isNegative) {
+        timer.cancel();
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(created);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -178,8 +180,8 @@ class _TrackOrderState extends State<TrackOrder> {
                             alignment: Alignment.center,
                             child: Text(
                               diff.isNegative
-                                  ? "0 hrs : 0 mins"
-                                  : diff.inMinutes.toString() + " : " + (diff.inSeconds % 60).toString(),
+                                  ? "0 mins : 0 sec"
+                                  : diff.inMinutes.toString() + "mins : " + (diff.inSeconds % 60).toString() + " sec",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
