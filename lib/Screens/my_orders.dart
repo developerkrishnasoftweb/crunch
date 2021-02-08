@@ -170,6 +170,19 @@ class _MyOrdersState extends State<MyOrders> {
                           height: 8,
                         ),
                         Text(
+                          "GST",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "+ \u20b9${orderDetails[index].taxtotal}",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 5,),
+                        Text(
                           "TOTAL",
                           style: TextStyle(
                               fontSize: 14,

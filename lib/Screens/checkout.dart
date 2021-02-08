@@ -18,9 +18,10 @@ import 'Add_Address.dart';
 import 'new_home.dart';
 
 class Checkout extends StatefulWidget {
-  final double grandTotal;
+  final double grandTotal, couponAmount;
   final List<CartData> cartItems;
-  Checkout({@required this.grandTotal, @required this.cartItems});
+  final String couponCode;
+  Checkout({@required this.grandTotal, @required this.cartItems, this.couponAmount : 0.0, this.couponCode : ""});
   @override
   _CheckoutState createState() => _CheckoutState();
 }
@@ -98,8 +99,8 @@ class _CheckoutState extends State<Checkout> {
       "payment_type": "PPD",
       "payment_id": response.paymentId,
       "items": items,
-      "coupon_applied" : "",
-      "coupon_amount" : ""
+      "coupon_applied" : widget.couponCode,
+      "coupon_amount" : widget.couponAmount
     });
     AppServices.saveOrder(formData).then((value) {
       if (value.value == "true") {

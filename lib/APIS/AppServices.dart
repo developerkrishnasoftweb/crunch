@@ -142,7 +142,6 @@ class AppServices {
     dio.options.contentType = Headers.jsonContentType;
     try {
       final response = await dio.post(url, data: body);
-      print(response);
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
             new SaveDataClass(message: 'No Data', value: "n");
@@ -338,6 +337,53 @@ class AppServices {
       throw Exception(e.toString());
     }
   }
+
+  /*
+  * Get coupons
+  * */
+  static Future<SaveDataClass> getCoupons() async {
+    String url = Base_URL + 'get_all_coupons';
+    try {
+      final response = await dio.post(url, data: FormData.fromMap({"api_key" : "0imfnc8mVLWwsAawjYr4Rx"}));
+      if (response.statusCode == 200) {
+        SaveDataClass saveDataClass =
+        new SaveDataClass(message: 'No Data', value: "n");
+        final jsonResponse = json.decode(response.data);
+        saveDataClass.message = jsonResponse['message'];
+        saveDataClass.value = jsonResponse['status'];
+        saveDataClass.data = jsonResponse['data'];
+        return saveDataClass;
+      } else {
+        throw Exception("Something went Wrong");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  /*
+  * Get coupons
+  * */
+  static Future<SaveDataClass> checkCoupon({String couponCode, String amount}) async {
+    String url = Base_URL + 'check_coupon';
+    try {
+      final response = await dio.post(url, data: FormData.fromMap({"api_key" : "0imfnc8mVLWwsAawjYr4Rx", "code" : couponCode, "amount" : amount}));
+      if (response.statusCode == 200) {
+        SaveDataClass saveDataClass =
+        new SaveDataClass(message: 'No Data', value: "n");
+        final jsonResponse = json.decode(response.data);
+        saveDataClass.message = jsonResponse['message'];
+        saveDataClass.value = jsonResponse['status'];
+        saveDataClass.data = [jsonResponse['data']];
+        return saveDataClass;
+      } else {
+        throw Exception("Something went Wrong");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
 
   /*
   * Track order
