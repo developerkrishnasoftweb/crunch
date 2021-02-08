@@ -97,7 +97,9 @@ class _CheckoutState extends State<Checkout> {
       "api_key": "0imfnc8mVLWwsAawjYr4Rx",
       "payment_type": "PPD",
       "payment_id": response.paymentId,
-      "items": items
+      "items": items,
+      "coupon_applied" : "",
+      "coupon_amount" : ""
     });
     AppServices.saveOrder(formData).then((value) {
       if (value.value == "true") {
@@ -353,7 +355,9 @@ class _CheckoutState extends State<Checkout> {
         "api_key": "0imfnc8mVLWwsAawjYr4Rx",
         "payment_type": "COD",
         "payment_id": "",
-        "items": items
+        "items": items,
+        "coupon_applied" : "",
+        "coupon_amount" : ""
       });
       AppServices.saveOrder(formData).then((value) {
         if (value.value == "true") {

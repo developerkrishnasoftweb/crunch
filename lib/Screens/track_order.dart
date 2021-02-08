@@ -181,7 +181,7 @@ class _TrackOrderState extends State<TrackOrder> {
                             child: Text(
                               diff.isNegative
                                   ? "0 mins : 0 sec"
-                                  : diff.inMinutes.toString() + "mins : " + (diff.inSeconds % 60).toString() + " sec",
+                                  : diff.inMinutes.toString() + " mins : " + (diff.inSeconds % 60).toString() + " sec",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
