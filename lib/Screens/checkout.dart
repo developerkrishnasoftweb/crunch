@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/classes.dart';
+import 'package:crunch/Screens/my_orders.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,7 +37,7 @@ class _CheckoutState extends State<Checkout> {
   // static const platform = const MethodChannel("razorpay_flutter");
   Razorpay _razorpay;
   String mobile = "", email = "";
-  double sgst = 0, cgst = 0, taxTotal = 0, total = 0;
+  double sgst = 0, cgst = 0, taxTotal = 0, total = 0, grandTotal = 0.0;
   var config;
 
   @override
@@ -44,7 +45,6 @@ class _CheckoutState extends State<Checkout> {
     super.initState();
     getUserData();
     getAddresses();
-    configData();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -60,7 +60,7 @@ class _CheckoutState extends State<Checkout> {
   void openCheckout() async {
     var options = {
       'key': 'rzp_test_tCWge1Ntpmfg1d',
-      'amount': widget.grandTotal * 100,
+      'amount': grandTotal * 100,
       'name': 'Crunch',
       'description': 'Fresh Foods',
       'image':
@@ -83,17 +83,8 @@ class _CheckoutState extends State<Checkout> {
         version: 1, onCreate: (Database db, int version) async {});
     await db.rawQuery("delete from ${SQFLiteTables.tableCart}");
     Navigator.pop(context);
-  }
-
-  void configData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      config = jsonDecode(prefs.getString("config"));
-      sgst = double.parse(config["sgst"]);
-      cgst = double.parse(config["cgst"]);
-      taxTotal = widget.grandTotal * (sgst + cgst) / 100;
-      total = taxTotal + widget.grandTotal;
-    });
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MyOrders()));
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
@@ -107,7 +98,7 @@ class _CheckoutState extends State<Checkout> {
       "discount_total": "0",
       "description": "",
       "tax_total": taxTotal,
-      "total": total,
+      "total": grandTotal,
       "api_key": "0imfnc8mVLWwsAawjYr4Rx",
       "payment_type": "PPD",
       "payment_id": response.paymentId,
@@ -138,6 +129,16 @@ class _CheckoutState extends State<Checkout> {
     setState(() {
       mobile = sharedPreferences.getString(cnst.Session.mobile);
       email = sharedPreferences.getString(cnst.Session.email);
+      config = jsonDecode(sharedPreferences.getString("config"));
+      sgst = double.parse(config["sgst"]);
+      cgst = double.parse(config["cgst"]);
+      taxTotal = widget.grandTotal * (sgst + cgst) / 100;
+      total = taxTotal + widget.grandTotal;
+      grandTotal =
+          (((widget.grandTotal + (widget.grandTotal * (cgst + sgst)) / 100) -
+                  widget.couponAmount) +
+              (double.parse(config["packing_charge"].toString() ?? "0") +
+                  double.parse(config["delivery_charge"].toString() ?? "0")));
     });
   }
 
@@ -155,11 +156,12 @@ class _CheckoutState extends State<Checkout> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildRow("Packing Charges", config["packing_charge"]),
-          buildRow("Delivery Charges", config["delivery_charge"]),
-          buildRow("SGST", "+" + sgst.toString() + "%"),
-          buildRow("CGST", "+" + cgst.toString() + "%"),
-          buildRow("Coupon", "-" + widget.couponAmount.toString()),
+          buildRow("CART VALUE", widget.grandTotal.toString()),
+          buildRow("PACKING CHARGES", "+ " + config["packing_charge"]),
+          buildRow("DELIVERY CHARGES", "+ " + config["delivery_charge"]),
+          buildRow("SGST($sgst%)", "+${((widget.grandTotal * sgst) / 100)}"),
+          buildRow("CGST($cgst%)", "+${((widget.grandTotal * cgst) / 100)}"),
+          buildRow("COUPONS", "-" + widget.couponAmount.toString()),
           Divider(
             indent: 8,
             endIndent: 8,
@@ -169,7 +171,7 @@ class _CheckoutState extends State<Checkout> {
           ),
           buildRow(
             "Total",
-            "",
+            grandTotal.toString(),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -379,7 +381,7 @@ class _CheckoutState extends State<Checkout> {
         "discount_total": "0",
         "description": "",
         "tax_total": taxTotal,
-        "total": total,
+        "total": grandTotal,
         "api_key": "0imfnc8mVLWwsAawjYr4Rx",
         "payment_type": "COD",
         "payment_id": "",
@@ -400,17 +402,17 @@ class _CheckoutState extends State<Checkout> {
 
   Widget buildRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label ?? "N/A",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
           Text(
             value ?? "0.0",
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ],
       ),
