@@ -55,7 +55,10 @@ class _TrackOrderState extends State<TrackOrder> {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var config = await jsonDecode(sharedPreferences.getString("config"));
     setState(() {
-      deliveryTime = double.parse(config["delivery_time"].toString()).round();
+      deliveryTime = double.parse(config["delivery_time"] != null
+              ? config["delivery_time"].toString()
+              : "0")
+          .round();
       created = DateTime.parse(widget.orderDetails.created)
           .add(Duration(minutes: deliveryTime));
     });
@@ -90,7 +93,7 @@ class _TrackOrderState extends State<TrackOrder> {
       setState(() {
         diff = created.difference(DateTime.now());
       });
-      if(diff.isNegative) {
+      if (diff.isNegative) {
         timer.cancel();
       }
     });
@@ -168,48 +171,54 @@ class _TrackOrderState extends State<TrackOrder> {
                   buildIconStatus(
                       title: "Order received",
                       status: statusCode > 4 ? true : false),
-                  created != null ? Expanded(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 140,
-                            width: 140,
-                            alignment: Alignment.center,
-                            child: Text(
-                              diff.isNegative
-                                  ? "0 mins : 0 sec"
-                                  : diff.inMinutes.toString() + " mins : " + (diff.inSeconds % 60).toString() + " sec",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(150),
-                              border: Border.all(
-                                  color: appPrimaryMaterialColor, width: 2),
+                  created != null
+                      ? Expanded(
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  height: 140,
+                                  width: 140,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    diff.isNegative
+                                        ? "0 mins : 0 sec"
+                                        : diff.inMinutes.toString() +
+                                            " mins : " +
+                                            (diff.inSeconds % 60).toString() +
+                                            " sec",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(150),
+                                    border: Border.all(
+                                        color: appPrimaryMaterialColor,
+                                        width: 2),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                    diff.isNegative
+                                        ? "Expect your delivery any time"
+                                        : "Estimated delivery time",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: appPrimaryMaterialColor)),
+                              ],
                             ),
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                              diff.isNegative
-                                  ? "Expect your delivery any time"
-                                  : "Estimated delivery time",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: appPrimaryMaterialColor)),
-                        ],
-                      ),
-                    ),
-                  ) : SizedBox()
+                        )
+                      : SizedBox()
                 ],
               ),
             ),
