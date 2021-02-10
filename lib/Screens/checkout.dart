@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/Constants.dart';
 import 'package:crunch/Common/classes.dart';
-import 'package:crunch/Screens/dashboard.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,13 +13,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'Add_Address.dart';
-import 'new_home.dart';
 
 class Checkout extends StatefulWidget {
   final double grandTotal, couponAmount;
   final List<CartData> cartItems;
   final String couponCode;
-  Checkout({@required this.grandTotal, @required this.cartItems, this.couponAmount : 0.0, this.couponCode : ""});
+  Checkout(
+      {@required this.grandTotal,
+      @required this.cartItems,
+      this.couponAmount: 0.0,
+      this.couponCode: ""});
   @override
   _CheckoutState createState() => _CheckoutState();
 }
@@ -36,12 +37,14 @@ class _CheckoutState extends State<Checkout> {
   Razorpay _razorpay;
   String mobile = "", email = "";
   double sgst = 0, cgst = 0, taxTotal = 0, total = 0;
+  var config;
 
   @override
   void initState() {
     super.initState();
     getUserData();
     getAddresses();
+    configData();
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -82,10 +85,20 @@ class _CheckoutState extends State<Checkout> {
     Navigator.pop(context);
   }
 
+  void configData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      config = jsonDecode(prefs.getString("config"));
+      sgst = double.parse(config["sgst"]);
+      cgst = double.parse(config["cgst"]);
+      taxTotal = widget.grandTotal * (sgst + cgst) / 100;
+      total = taxTotal + widget.grandTotal;
+    });
+  }
+
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String customerId = prefs.getString(cnst.Session.id);
-    var config = jsonDecode(prefs.getString("config"));
     FormData formData = FormData.fromMap({
       "address_id": address.id,
       "customer_id": customerId,
@@ -99,8 +112,8 @@ class _CheckoutState extends State<Checkout> {
       "payment_type": "PPD",
       "payment_id": response.paymentId,
       "items": items,
-      "coupon_applied" : widget.couponCode,
-      "coupon_amount" : widget.couponAmount
+      "coupon_applied": widget.couponCode,
+      "coupon_amount": widget.couponAmount
     });
     AppServices.saveOrder(formData).then((value) {
       if (value.value == "true") {
@@ -142,6 +155,11 @@ class _CheckoutState extends State<Checkout> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          buildRow("Packing Charges", config["packing_charge"]),
+          buildRow("Delivery Charges", config["delivery_charge"]),
+          buildRow("SGST", sgst.toString()),
+          buildRow("CGST", cgst.toString()),
+          buildRow("Total", widget.grandTotal.toString()),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -188,59 +206,62 @@ class _CheckoutState extends State<Checkout> {
             ),
           ),
           Expanded(
-              child: _address != null ? _address.length > 0
-                  ? ListView.builder(
-                      itemCount: _address.length,
-                      padding: EdgeInsets.only(bottom: 70),
-                      physics: BouncingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return RadioListTile<Addresses>(
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _address[index].contactPerson,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+              child: _address != null
+                  ? _address.length > 0
+                      ? ListView.builder(
+                          itemCount: _address.length,
+                          padding: EdgeInsets.only(bottom: 70),
+                          physics: BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return RadioListTile<Addresses>(
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _address[index].contactPerson,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      _address[index].address1 +
+                                          ", " +
+                                          _address[index].address2 +
+                                          "\n" +
+                                          _address[index].landmark +
+                                          "\n" +
+                                          _address[index].city +
+                                          " - " +
+                                          _address[index].pinCode,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.grey),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      _address[index].contactNumber,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.grey),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  _address[index].address1 +
-                                      ", " +
-                                      _address[index].address2 +
-                                      "\n" +
-                                      _address[index].landmark +
-                                      "\n" +
-                                      _address[index].city +
-                                      " - " +
-                                      _address[index].pinCode,
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.grey),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  _address[index].contactNumber,
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                            value: _address[index],
-                            groupValue: address,
-                            onChanged: (value) {
-                              setState(() {
-                                address = value;
-                              });
-                            });
-                      })
+                                value: _address[index],
+                                groupValue: address,
+                                onChanged: (value) {
+                                  setState(() {
+                                    address = value;
+                                  });
+                                });
+                          })
+                      : Center(
+                          child: CircularProgressIndicator(),
+                        )
                   : Center(
-                      child: CircularProgressIndicator(),
-                    ) : Center(
-                child: Text("No address available"),
-              )),
+                      child: Text("No address available"),
+                    )),
         ],
       ),
       floatingActionButton: address != null
@@ -308,11 +329,6 @@ class _CheckoutState extends State<Checkout> {
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String customerId = prefs.getString(cnst.Session.id);
-    var config = jsonDecode(prefs.getString("config"));
-    double sgst = double.parse(config["sgst"]);
-    double cgst = double.parse(config["cgst"]);
-    taxTotal = widget.grandTotal * (sgst + cgst) / 100;
-    total = taxTotal + widget.grandTotal;
     String addOnIds = "";
     for (int i = 0; i < widget.cartItems.length; i++) {
       var cartData = await SQFLiteTables.where(
@@ -357,8 +373,8 @@ class _CheckoutState extends State<Checkout> {
         "payment_type": "COD",
         "payment_id": "",
         "items": items,
-        "coupon_applied" : "",
-        "coupon_amount" : ""
+        "coupon_applied": "",
+        "coupon_amount": ""
       });
       AppServices.saveOrder(formData).then((value) {
         if (value.value == "true") {
@@ -369,6 +385,25 @@ class _CheckoutState extends State<Checkout> {
         }
       });
     }
+  }
+
+  Widget buildRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label ?? "N/A",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            value ?? "0.0",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
   }
 }
 
