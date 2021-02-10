@@ -18,7 +18,7 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   List<CartData> cartItems = [];
-  double grandTotal = 0.0, couponAmount = 0.0, total = 0.0;
+  double grandTotal = 0.0, couponAmount = 0.0;
   List items = [];
   TextEditingController couponCode = TextEditingController();
   bool isApplied = false;
@@ -32,7 +32,7 @@ class _CartState extends State<Cart> {
   getCartData() async {
     setState(() {
       cartItems.clear();
-      grandTotal = total = 0.0;
+      grandTotal = 0.0;
     });
     var cartData = await SQFLiteTables.getData(table: Tables.CART);
     for (int i = 0; i < cartData.length; i++) {
@@ -40,7 +40,6 @@ class _CartState extends State<Cart> {
         grandTotal += (double.parse(cartData[i]["item_price"]) *
                 double.parse(cartData[i]["qty"])) +
             double.parse(cartData[i]["combined_price"]);
-        total = grandTotal - couponAmount;
         cartItems.add(CartData(
             itemPrice: cartData[i]["item_price"].toString(),
             itemName: cartData[i]["item_name"].toString(),
@@ -125,7 +124,7 @@ class _CartState extends State<Cart> {
                             alignment: Alignment.center,
                             padding: EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 10),
-                            height: 160,
+                            height: 150,
                             color: Colors.white,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -134,7 +133,7 @@ class _CartState extends State<Cart> {
                                   children: [
                                     Expanded(
                                         child: TextField(
-                                          controller: couponCode,
+                                      controller: couponCode,
                                       readOnly: isApplied,
                                       decoration: InputDecoration(
                                           hintText: "Enter Coupon Code",
@@ -150,83 +149,88 @@ class _CartState extends State<Cart> {
                                     SizedBox(
                                         height: 47,
                                         child: FlatButton(
-                                          onPressed: !isApplied ? _apply : _cancel,
+                                          onPressed:
+                                              !isApplied ? _apply : _cancel,
                                           child: Text(
                                             !isApplied ? "APPLY" : "CANCEL",
                                             style:
                                                 TextStyle(color: Colors.white),
                                           ),
-                                          color: !isApplied ? appPrimaryMaterialColor : Colors.red,
+                                          color: !isApplied
+                                              ? appPrimaryMaterialColor
+                                              : Colors.red,
                                         )),
                                   ],
                                 ),
                                 SizedBox(
                                   height: 5,
                                 ),
-                                !isApplied ? Align(
-                                  alignment: Alignment.centerRight,
+                                Align(
+                                  alignment: Alignment.centerLeft,
                                   child: GestureDetector(
-                                    onTap: _coupons,
+                                    onTap: !isApplied ? _coupons : null,
                                     child: Text(
-                                      "VIEW COUPONS",
+                                      !isApplied
+                                          ? "VIEW COUPONS"
+                                          : "Coupon value : $couponAmount",
                                       style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: appPrimaryMaterialColor[600]),
+                                          color: !isApplied
+                                              ? appPrimaryMaterialColor[600]
+                                              : Colors.green),
                                     ),
                                   ),
-                                ) : SizedBox(),
+                                ),
                                 SizedBox(
-                                  height: 3,
+                                  height: 8,
                                 ),
                                 Row(
                                   children: [
                                     Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                      "Grand Total : $grandTotal",
-                                      style: TextStyle(
-                                              color: appPrimaryMaterialColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14)),
-                                        Text(
-                                          "Coupon : $couponAmount",
-                                          style: TextStyle(
-                                              color: appPrimaryMaterialColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14)),
-                                            Divider(height: 8, thickness: 1, endIndent: 20, color: appPrimaryMaterialColor,),
-                                            Text(
-                                                "Total : $total",
-                                                style: TextStyle(
-                                                    color: appPrimaryMaterialColor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14)),
-                                          ],
-                                        )),
-                                    Expanded(
                                         child: FlatButton(
-                                      child: Text(
-                                        "CHECKOUT",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 14),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                "CART VALUE : ${grandTotal - couponAmount}",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14),
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                "CHECKOUT",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14),
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
                                       color: appPrimaryMaterialColor,
                                       onPressed: () => Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (_) => Checkout(
-                                                    grandTotal: total,
+                                                    grandTotal: grandTotal,
                                                     cartItems: cartItems,
-                                                couponAmount: couponAmount,
-                                                couponCode: couponCode.text,
+                                                    couponAmount: couponAmount,
+                                                    couponCode: couponCode.text,
                                                   ))).then((value) {
                                         getCartData();
                                       }),
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 13),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 15, horizontal: 20),
                                     )),
                                   ],
                                 )
@@ -241,13 +245,15 @@ class _CartState extends State<Cart> {
                 child: Text("Your cart is empty."),
               ));
   }
-  _apply () async {
-    AppServices.checkCoupon(amount: grandTotal.toString(), couponCode: couponCode.text).then((value) {
-      if(value.value == "true") {
+
+  _apply() async {
+    AppServices.checkCoupon(
+            amount: grandTotal.toString(), couponCode: couponCode.text)
+        .then((value) {
+      if (value.value == "true") {
         setState(() {
           isApplied = true;
           couponAmount = double.parse(value.data[0]["amount"]);
-          total = grandTotal - couponAmount;
         });
         Fluttertoast.showToast(msg: value.message);
       } else {
@@ -255,14 +261,15 @@ class _CartState extends State<Cart> {
       }
     });
   }
-  _cancel () async {
+
+  _cancel() async {
     setState(() {
       isApplied = false;
       couponCode.clear();
       couponAmount = 0.0;
-      total = grandTotal;
     });
   }
+
   _coupons() async {
     List<Coupon> coupons = [];
     await AppServices.getCoupons().then((value) {
@@ -303,7 +310,9 @@ class _CartState extends State<Cart> {
                         });
                         Navigator.pop(context);
                       },
-                      subtitle: coupons[index].description != null ? Text(coupons[index].description) : null,
+                      subtitle: coupons[index].description != null
+                          ? Text(coupons[index].description)
+                          : null,
                     );
                   },
                   itemCount: coupons.length,
@@ -329,7 +338,6 @@ class _CartState extends State<Cart> {
         grandTotal = grandTotal -
             (double.parse(items.combinedPrice) +
                 (double.parse(items.itemPrice) * double.parse(items.qty)));
-        total = grandTotal - couponAmount;
         cartItems.remove(items);
       });
     }

@@ -157,9 +157,20 @@ class _CheckoutState extends State<Checkout> {
         children: [
           buildRow("Packing Charges", config["packing_charge"]),
           buildRow("Delivery Charges", config["delivery_charge"]),
-          buildRow("SGST", sgst.toString()),
-          buildRow("CGST", cgst.toString()),
-          buildRow("Total", widget.grandTotal.toString()),
+          buildRow("SGST", "+" + sgst.toString() + "%"),
+          buildRow("CGST", "+" + cgst.toString() + "%"),
+          buildRow("Coupon", "-" + widget.couponAmount.toString()),
+          Divider(
+            indent: 8,
+            endIndent: 8,
+            height: 2,
+            thickness: 2,
+            color: cnst.appPrimaryMaterialColor,
+          ),
+          buildRow(
+            "Total",
+            "",
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
