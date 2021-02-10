@@ -179,12 +179,12 @@ class _TrackOrderState extends State<TrackOrder> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Container(
-                                  height: 140,
-                                  width: 140,
+                                  height: 150,
+                                  width: 150,
                                   alignment: Alignment.center,
                                   child: Text(
                                     diff.isNegative
-                                        ? "0 mins : 0 sec"
+                                        ? "00 mins : 00 sec"
                                         : diff.inMinutes.toString() +
                                             " mins : " +
                                             (diff.inSeconds % 60).toString() +
