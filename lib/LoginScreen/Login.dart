@@ -15,6 +15,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../APIS/AppServices.dart';
 import '../APIS/Constants.dart';
 import '../Static/Constant.dart' as cnst;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:math';
 
 class Login extends StatefulWidget {
   @override
@@ -28,16 +30,23 @@ class _LoginState extends State<Login> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String fcm = "";
   ProgressDialog pr;
-
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      new FlutterLocalNotificationsPlugin();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    var android = new AndroidInitializationSettings('mipmap/ic_launcher');
+    var ios = new IOSInitializationSettings();
+    var platform = new InitializationSettings(android: android, iOS: ios);
+    flutterLocalNotificationsPlugin.initialize(platform);
+
     pr = ProgressDialog(context,
         type: ProgressDialogType.Normal, isDismissible: false);
     pr.style(message: "Please wait..");
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
+          showNotification(message);
       print("onMessage  $message");
     }, onLaunch: (Map<String, dynamic> message) async {
       print("onLaunch  $message");
@@ -45,6 +54,12 @@ class _LoginState extends State<Login> {
       print("onResume  $message");
     });
     _configureNotification();
+  }
+  showNotification(Map<String, dynamic> msg) async {
+    var android = new AndroidNotificationDetails('channel_id', 'CHANNEL NAME', 'channelDescription');
+    var ios = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android: android, iOS: ios);
+    await flutterLocalNotificationsPlugin.show(Random().nextInt(100), msg["notification"]["title"], msg["notification"]["body"], platform);
   }
 
   _configureNotification() async {
