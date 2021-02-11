@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "176425446004",
+    "project_id": "crunch-4d5e5",
+    "storage_bucket": "crunch-4d5e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176425446004:android:11c203bbcb317436f8ff21",
+        "android_client_info": {
+          "package_name": "com.linksys.crunch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176425446004-tgrao80jjqh2fdree68k937m8mjueimp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe4Y6sC3fCmtTiSPbeIoY-3_lLc0ir-Uc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176425446004-tgrao80jjqh2fdree68k937m8mjueimp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
