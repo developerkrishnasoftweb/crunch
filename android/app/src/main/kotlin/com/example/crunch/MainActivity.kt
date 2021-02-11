@@ -1,4 +1,4 @@
-package com.example.crunch
+package com.linksys.crunch
 
 import io.flutter.embedding.android.FlutterActivity
 
