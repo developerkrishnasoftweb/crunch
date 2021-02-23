@@ -130,7 +130,7 @@ class _CategoryItemsState extends State<CategoryItems>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "\u20b9${items[index].price != null && items[index].price != "" ? items[index].price : "N/A"}",
+                              "\u20b9${items[index].price != null && items[index].price != "" ? double.parse(items[index].price).toStringAsFixed(2) : "N/A"}",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 21),
                             ),
