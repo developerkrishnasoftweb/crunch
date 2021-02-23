@@ -236,27 +236,24 @@ class AppServices {
   * Fetch restaurants menu and data
   * */
   static Future<FetchMenu> fetchMenu() async {
-    String url =
-        "http://52.76.48.26:4524/petpoojabilling_api/V1/pendingorders/mapped_restaurant_menus/";
     var headers = {
-      'Content-Type': 'text/plain',
+      'Content-Type': 'application/json; charset=UTF-8',
       'Cookie': 'CAKEPHP=ikabifbaphe2m3eobl92here51'
     };
     try {
-      var request = http.Request('POST', Uri.parse(url));
-      request.body = '''{
-        "access_token": "04fc7877ce7e5f771328b2a1434cb040ad1b2c0f",
-        "app_key": "f14qd3se9a6juzbmoit85c0nrvhykgwp",
-        "app_secret": "0ecb9930ec89b68dbc923d3ecedc43f37901cf61",
-        "restID": "k13cv5ho",
-        "last_updated_on": "",
-        "data_type": "json"
-      }''';
-      request.headers.addAll(headers);
-      http.StreamedResponse response = await request.send();
-      if (response.statusCode == 200) {
+      var request = await http.post(API_BASE_URL,
+          headers: headers,
+          body: jsonEncode({
+            "access_token": "998d2c96566d545b4b4c5c60835b3e7a94ee7775",
+            "api_key": "the6pya9ksjmucn4goqdvzx0273r8bf1",
+            "api_secret": "85f2c43cefec0072744107ef5321eef7875e40e0",
+            "restID": "yp941tsn",
+            "last_updated_on": "",
+            "data_type": "json"
+          }));
+      if (request.statusCode == 200) {
         FetchMenu data;
-        var fetchedData = jsonDecode(await response.stream.bytesToString());
+        var fetchedData = jsonDecode(request.body);
         data = FetchMenu.fromJson(fetchedData);
         return data;
       } else {
@@ -324,7 +321,7 @@ class AppServices {
       final response = await dio.post(url, data: body);
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
-        new SaveDataClass(message: 'No Data', value: "n");
+            new SaveDataClass(message: 'No Data', value: "n");
         final jsonResponse = json.decode(response.data);
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'];
@@ -344,10 +341,11 @@ class AppServices {
   static Future<SaveDataClass> getCoupons() async {
     String url = Base_URL + 'get_all_coupons';
     try {
-      final response = await dio.post(url, data: FormData.fromMap({"api_key" : "0imfnc8mVLWwsAawjYr4Rx"}));
+      final response = await dio.post(url,
+          data: FormData.fromMap({"api_key": "0imfnc8mVLWwsAawjYr4Rx"}));
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
-        new SaveDataClass(message: 'No Data', value: "n");
+            new SaveDataClass(message: 'No Data', value: "n");
         final jsonResponse = json.decode(response.data);
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'];
@@ -364,13 +362,19 @@ class AppServices {
   /*
   * Get coupons
   * */
-  static Future<SaveDataClass> checkCoupon({String couponCode, String amount}) async {
+  static Future<SaveDataClass> checkCoupon(
+      {String couponCode, String amount}) async {
     String url = Base_URL + 'check_coupon';
     try {
-      final response = await dio.post(url, data: FormData.fromMap({"api_key" : "0imfnc8mVLWwsAawjYr4Rx", "code" : couponCode, "amount" : amount}));
+      final response = await dio.post(url,
+          data: FormData.fromMap({
+            "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+            "code": couponCode,
+            "amount": amount
+          }));
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
-        new SaveDataClass(message: 'No Data', value: "n");
+            new SaveDataClass(message: 'No Data', value: "n");
         final jsonResponse = json.decode(response.data);
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'];
@@ -384,7 +388,6 @@ class AppServices {
     }
   }
 
-
   /*
   * Track order
   * */
@@ -394,7 +397,7 @@ class AppServices {
       final response = await dio.post(url, data: body);
       if (response.statusCode == 200) {
         SaveDataClass saveDataClass =
-        new SaveDataClass(message: 'No Data', value: "n");
+            new SaveDataClass(message: 'No Data', value: "n");
         final jsonResponse = json.decode(response.data);
         saveDataClass.message = jsonResponse['message'];
         saveDataClass.value = jsonResponse['status'];

@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'AppServices.dart';
 
 const String API_BASE_URL =
-    "http://52.76.48.26:4524/petpoojabilling_api/V1/pendingorders/mapped_restaurant_menus/";
+    "https://pponlineordercb.petpooja.com/mapped_restaurant_menus";
 const String Base_URL = "https://www.manage.crunchpremiumburgers.com/api/";
 const String Image_URL = "https://www.manage.crunchpremiumburgers.com/";
 const String API_Key = "0imfnc8mVLWwsAawjYr4Rx";
@@ -96,7 +96,7 @@ class SQFLiteTables {
           }
           for (int i = 0; i < menuList.addOnGroups.length; i++) {
             await db.execute(
-                "insert into `$tableAddOnGroups` values ('${menuList.addOnGroups[i]["addongroupid"]}', '${menuList.addOnGroups[i]["addongroup_rank"]}', '${menuList.addOnGroups[i]["active"]}', '${jsonEncode(menuList.addOnGroups[i]["addongroupitems"])}', '${menuList.addOnGroups[i]["addongroup_name"]}')");
+                "insert into `$tableAddOnGroups` values ('${menuList.addOnGroups[i]["addongroupid"]}', '${menuList.addOnGroups[i]["addongroup_rank"]}', '${menuList.addOnGroups[i]["active"]}', '${jsonEncode(menuList.addOnGroups[i]["addongroupitems"])}', '${replaceChar(menuList.addOnGroups[i]["addongroup_name"])}')");
             for (int j = 0;
                 j < menuList.addOnGroups[i]["addongroupitems"].length;
                 j++) {

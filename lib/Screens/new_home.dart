@@ -49,7 +49,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Database db = await openDatabase(databasePath + 'myDb.db',
         version: 1, onCreate: (Database db, int version) async {});
-    AppServices.getSlider().then((value) async {
+    await AppServices.getSlider().then((value) async {
       if (value.value == "y") {
         await prefs.setString("config", jsonEncode(value.data[0]["config"]));
         for (int i = 0; i < value.data[0]["banners"].length; i++) {
@@ -61,7 +61,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           });
         }
         if (value.data[0]["config"]["sync_status"] == "y") {
-          SQFLiteTables.insertData(db: db);
+          await SQFLiteTables.insertData(db: db);
           setData();
         } else {
           setData();
@@ -299,7 +299,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              "\u20b9${items[index].price != null && items[index].price != "" ? items[index].price : "N/A"}",
+                                              "\u20b9${items[index].price != null && items[index].price != "" ? double.parse(items[index].price).toStringAsFixed(2) : "N/A"}",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 21),
