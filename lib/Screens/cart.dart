@@ -82,7 +82,7 @@ class _CartState extends State<Cart> {
                         subtitle: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(
-                            "Grand total : $total",
+                            "Grand total : ${total.toStringAsFixed(2)}",
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
@@ -92,14 +92,17 @@ class _CartState extends State<Cart> {
                             EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         children: [
                           buildTitledRow(
-                              title: "Price", val: cartItems[index].itemPrice),
+                              title: "Price",
+                              val: double.parse(cartItems[index].itemPrice)
+                                  .toStringAsFixed(2)),
                           buildTitledRow(
                               title: "Qty", val: cartItems[index].qty),
                           buildTitledRow(
                               title: "Add on price",
                               val: cartItems[index].combinedPrice),
                           Divider(),
-                          buildTitledRow(title: "Total", val: total.toString()),
+                          buildTitledRow(
+                              title: "Total", val: total.toStringAsFixed(2)),
                           Align(
                             alignment: Alignment.centerRight,
                             child: FlatButton(
@@ -195,7 +198,7 @@ class _CartState extends State<Cart> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                "CART VALUE : ${grandTotal - couponAmount}",
+                                                "CART VALUE : ${double.parse((grandTotal - couponAmount).toString()).toStringAsFixed(2)}",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 14),

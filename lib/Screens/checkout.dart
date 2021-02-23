@@ -60,7 +60,7 @@ class _CheckoutState extends State<Checkout> {
   void openCheckout() async {
     var options = {
       'key': 'rzp_test_tCWge1Ntpmfg1d',
-      'amount': grandTotal * 100,
+      'amount': grandTotal.ceil() * 100,
       'name': 'Crunch',
       'description': 'Fresh Foods',
       'image':
@@ -70,6 +70,7 @@ class _CheckoutState extends State<Checkout> {
         'wallets': ['paytm']
       }
     };
+    print(options);
     try {
       _razorpay.open(options);
     } catch (e) {
@@ -156,11 +157,13 @@ class _CheckoutState extends State<Checkout> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildRow("CART VALUE", widget.grandTotal.toString()),
+          buildRow("CART VALUE", widget.grandTotal.toStringAsFixed(2)),
           buildRow("PACKING CHARGES", "+ " + config["packing_charge"]),
           buildRow("DELIVERY CHARGES", "+ " + config["delivery_charge"]),
-          buildRow("SGST($sgst%)", "+${((widget.grandTotal * sgst) / 100)}"),
-          buildRow("CGST($cgst%)", "+${((widget.grandTotal * cgst) / 100)}"),
+          buildRow("SGST($sgst%)",
+              "+${((widget.grandTotal * sgst) / 100).toStringAsFixed(2)}"),
+          buildRow("CGST($cgst%)",
+              "+${((widget.grandTotal * cgst) / 100).toStringAsFixed(2)}"),
           buildRow("COUPONS", "-" + widget.couponAmount.toString()),
           Divider(
             indent: 8,
@@ -171,7 +174,7 @@ class _CheckoutState extends State<Checkout> {
           ),
           buildRow(
             "Total",
-            grandTotal.toString(),
+            grandTotal.toStringAsFixed(2),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

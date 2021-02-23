@@ -303,7 +303,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
             children: [
               Expanded(
                   child: Text(
-                "Total payable : \u20b9$price",
+                "Total payable : \u20b9${price.toStringAsFixed(2)}",
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
               )),
