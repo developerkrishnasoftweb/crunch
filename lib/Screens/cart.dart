@@ -250,7 +250,7 @@ class _CartState extends State<Cart> {
   }
 
   _apply() async {
-    AppServices.checkCoupon(
+    await AppServices.checkCoupon(
             amount: grandTotal.toString(), couponCode: couponCode.text)
         .then((value) {
       if (value.value == "true") {
@@ -294,40 +294,42 @@ class _CartState extends State<Cart> {
         });
       }
     });
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter state) {
-            return DraggableScrollableSheet(
-              builder: (context, scrollController) {
-                return ListView.builder(
-                  controller: scrollController,
-                  itemBuilder: (_, index) {
-                    return ListTile(
-                      title: Text(coupons[index].title,
-                          style: TextStyle(color: Colors.black)),
-                      onTap: () {
-                        state(() {
-                          couponCode.text = coupons[index].code;
-                        });
-                        Navigator.pop(context);
-                      },
-                      subtitle: coupons[index].description != null
-                          ? Text(coupons[index].description)
-                          : null,
-                    );
-                  },
-                  itemCount: coupons.length,
-                );
-              },
-              expand: false,
-              initialChildSize: 0.4,
-              maxChildSize: 1,
-              minChildSize: 0.2,
-            );
+    if(coupons.length > 0) {
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(
+                builder: (BuildContext context, StateSetter state) {
+                  return DraggableScrollableSheet(
+                    builder: (context, scrollController) {
+                      return ListView.builder(
+                        controller: scrollController,
+                        itemBuilder: (_, index) {
+                          return ListTile(
+                            title: Text(coupons[index].title,
+                                style: TextStyle(color: Colors.black)),
+                            onTap: () {
+                              state(() {
+                                couponCode.text = coupons[index].code;
+                              });
+                              Navigator.pop(context);
+                            },
+                            subtitle: coupons[index].description != null
+                                ? Text(coupons[index].description)
+                                : null,
+                          );
+                        },
+                        itemCount: coupons.length,
+                      );
+                    },
+                    expand: false,
+                    initialChildSize: 0.4,
+                    maxChildSize: 1,
+                    minChildSize: 0.2,
+                  );
+                });
           });
-        });
+    }
   }
 
   _removeFromCart({String cartId, CartData items}) async {

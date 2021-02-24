@@ -39,7 +39,6 @@ class _CheckoutState extends State<Checkout> {
   String mobile = "", email = "";
   double sgst = 0, cgst = 0, taxTotal = 0, total = 0, grandTotal = 0.0;
   var config;
-
   @override
   void initState() {
     super.initState();
@@ -128,9 +127,9 @@ class _CheckoutState extends State<Checkout> {
   void getUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
+      config = jsonDecode(sharedPreferences.getString("config"));
       mobile = sharedPreferences.getString(cnst.Session.mobile);
       email = sharedPreferences.getString(cnst.Session.email);
-      config = jsonDecode(sharedPreferences.getString("config"));
       sgst = double.parse(config["sgst"]);
       cgst = double.parse(config["cgst"]);
       taxTotal = widget.grandTotal * (sgst + cgst) / 100;
@@ -154,12 +153,12 @@ class _CheckoutState extends State<Checkout> {
         ),
         backgroundColor: cnst.appPrimaryMaterialColor,
       ),
-      body: Column(
+      body: isLoading ? Center(child: CircularProgressIndicator()) : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildRow("CART VALUE", widget.grandTotal.toStringAsFixed(2)),
-          buildRow("PACKING CHARGES", "+ " + config["packing_charge"]),
-          buildRow("DELIVERY CHARGES", "+ " + config["delivery_charge"]),
+          buildRow("PACKING CHARGES", "+ " + config["packing_charge"] ?? "0"),
+          buildRow("DELIVERY CHARGES", "+ " + config["delivery_charge"] ?? "0"),
           buildRow("SGST($sgst%)",
               "+${((widget.grandTotal * sgst) / 100).toStringAsFixed(2)}"),
           buildRow("CGST($cgst%)",
@@ -389,8 +388,8 @@ class _CheckoutState extends State<Checkout> {
         "payment_type": "COD",
         "payment_id": "",
         "items": items,
-        "coupon_applied": "",
-        "coupon_amount": ""
+        "coupon_applied": widget.couponCode,
+        "coupon_amount": widget.couponAmount
       });
       AppServices.saveOrder(formData).then((value) {
         if (value.value == "true") {
