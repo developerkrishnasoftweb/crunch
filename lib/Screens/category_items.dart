@@ -175,8 +175,6 @@ class _CategoryItemsState extends State<CategoryItems>
                                         items[index].addedToCart = true;
                                       });
                                       _addToCart(itemData: items[index]);
-                                      Fluttertoast.showToast(
-                                          msg: "Added to cart");
                                     }
                                   })
                           ],
