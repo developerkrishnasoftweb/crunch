@@ -358,6 +358,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                         items[index]
                                                             .addedToCart = true;
                                                       });
+                                                      _addToCart(itemData: items[index]);
                                                     }
                                                   })
                                           ],
@@ -537,11 +538,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
     for (int i = 0; i < addOnGroups.length; i++) {
       if (addOnGroups[i].selected) {
-        db.insert(SQFLiteTables.tableCartAddon,
+        await db.insert(SQFLiteTables.tableCartAddon,
             {"cart_id": "$id", "addon_id": addOnGroups[i].addOnItemId});
       }
     }
-    Navigator.pop(context);
+    if (itemData.addon.length > 0) Navigator.pop(context);
     Fluttertoast.showToast(msg: "Added to cart");
   }
 

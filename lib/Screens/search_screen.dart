@@ -200,8 +200,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                                               });
                                               _addToCart(
                                                   itemData: items[index]);
-                                              Fluttertoast.showToast(
-                                                  msg: "Added to cart");
                                             }
                                           })
                                   ],
