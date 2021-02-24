@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
-import 'package:crunch/APIS/Constants.dart';
+import 'package:crunch/APIS/tables.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';

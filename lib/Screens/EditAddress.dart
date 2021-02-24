@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
-import 'package:crunch/APIS/Constants.dart';
+import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
 import 'package:crunch/Screens/checkout.dart';

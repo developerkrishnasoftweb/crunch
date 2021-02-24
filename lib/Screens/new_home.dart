@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:crunch/APIS/AppServices.dart';
-import 'package:crunch/APIS/Constants.dart';
+import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/Carouel.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;

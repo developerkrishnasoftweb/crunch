@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:crunch/APIS/Constants.dart';
+import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../APIS/Constants.dart';
+import '../APIS/tables.dart';
 import '../Common/classes.dart';
 
 class CategoryItems extends StatefulWidget {

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'Class.dart';
 import 'ClassList.dart';
-import 'Constants.dart';
+import 'tables.dart';
 
 Dio dio = new Dio();
 

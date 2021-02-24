@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../APIS/Constants.dart';
+import '../APIS/tables.dart';
 import '../Common/classes.dart';
 import '../Static/Constant.dart';
 

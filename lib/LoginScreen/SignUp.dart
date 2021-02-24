@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../APIS/Constants.dart';
+import '../APIS/tables.dart';
 import '../Common/TextField.dart';
 import '../Static/Constant.dart' as cnst;
 import 'Login.dart';
