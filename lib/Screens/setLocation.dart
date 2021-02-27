@@ -45,10 +45,7 @@ class _SetLocationState extends State<SetLocation> {
                           child: new Text("Skip",
                               style: new TextStyle(
                                   fontSize: 16.0, color: Colors.white)),
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Home())))),
+                          onPressed: () => Navigator.pop(context))),
                   Align(
                     alignment: Alignment(-0.5, -0.001),
                     child: Container(
@@ -82,8 +79,7 @@ class _SetLocationState extends State<SetLocation> {
                     child: CustomButton(
                         title: "TurnOnGPS",
                         btncolor: cnst.appPrimaryMaterialColor,
-                        ontap: () => Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Home()))),
+                        ontap: () => Navigator.pop(context)),
                   ),
                 ],
               ),

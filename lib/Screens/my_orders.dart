@@ -46,7 +46,7 @@ class _MyOrdersState extends State<MyOrders> {
     await AppServices.orders(formData).then((value) {
       if (value.value == "true") {
         for (int i = 0; i < value.data[0]["orders"].length; i++) {
-          List<ItemData> itemData = [];
+          List<OrderData> itemData = [];
           var details = value.data[0]["orders"][i]["details"];
           for (int j = 0; j < details.length; j++) {
             List<AddonData> addOnData = [];
@@ -65,7 +65,7 @@ class _MyOrdersState extends State<MyOrders> {
               });
             }
             setState(() {
-              itemData.add(ItemData(
+              itemData.add(OrderData(
                   id: details[j]["id"],
                   description: details[j]["description"],
                   itemId: details[j]["item_id"],
@@ -317,7 +317,7 @@ class OrderDetails {
       petPoojaOrderId,
       created,
       paymentId;
-  final List<ItemData> items;
+  final List<OrderData> items;
   OrderDetails(
       {this.id,
       this.paymentId,
@@ -337,7 +337,7 @@ class OrderDetails {
       this.taxtotal});
 }
 
-class ItemData {
+class OrderData {
   final String id,
       itemId,
       orderId,
@@ -348,7 +348,7 @@ class ItemData {
       variationName,
       variationId;
   final List<AddonData> addOn;
-  ItemData(
+  OrderData(
       {this.id,
       this.description,
       this.name,

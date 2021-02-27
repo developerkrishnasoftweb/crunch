@@ -48,10 +48,25 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Container(
+        title: Text(
+          "Search",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: appPrimaryMaterialColor,
+      ),
+      body: Column(
+        children: [
+          Container(
             height: 45,
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[200],
+                  blurRadius: 10
+                )
+              ],
                 color: Colors.white, borderRadius: BorderRadius.circular(4)),
             child: TextField(
               decoration: InputDecoration(
@@ -62,155 +77,157 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               onSubmitted: (value) => FocusScope.of(context).unfocus(),
             ),
           ),
-        ),
-        backgroundColor: appPrimaryMaterialColor,
-      ),
-      body: noDataFound
-          ? Center(
-              child: Text("No item (s) found :("),
-            )
-          : isLoading
-              ? Center(
-                  child: SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation(appPrimaryMaterialColor),
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: items.length,
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(color: Colors.grey[200], blurRadius: 5)
-                          ]),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(7),
-                            child: Image(
-                              height: 90,
-                              width: 100,
-                              image: items[index].image != null &&
-                                      items[index].image != ""
-                                  ? NetworkImage(items[index].image)
-                                  : AssetImage("assets/images/CrunchTM.png"),
-                              fit: BoxFit.fill,
-                            ),
+          Expanded(
+            child: noDataFound
+                ? Center(
+                    child: Text("No item (s) found :("),
+                  )
+                : isLoading
+                    ? Center(
+                        child: SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation(appPrimaryMaterialColor),
                           ),
-                          Expanded(
-                              child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  items[index].name != null &&
-                                          items[index].name != ""
-                                      ? items[index].name
-                                      : "N/A",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  items[index].description != null &&
-                                          items[index].description != ""
-                                      ? items[index].description
-                                      : "N/A",
-                                  style: TextStyle(
-                                      fontSize: 13, color: Colors.grey),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "\u20b9${items[index].price != null && items[index].price != "" ? double.parse(items[index].price).toStringAsFixed(2) : "N/A"}",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 21),
-                                    ),
-                                    items[index].addedToCart
-                                        ? incDecButton(item: items[index])
-                                        : addToCartButton(onPressed: () async {
-                                            if (items[index].addon.length > 0) {
-                                              setState(() {
-                                                price = 0;
-                                                price = double.parse(
-                                                    items[index].price);
-                                              });
-                                              await _getAddOnById(
-                                                  addOnId: items[index].addon[0]
-                                                      ["addon_group_id"]);
-                                              showModalBottomSheet(
-                                                  context: context,
-                                                  builder: (_) {
-                                                    return StatefulBuilder(
-                                                        builder: (BuildContext
-                                                                context,
-                                                            StateSetter state) {
+                        ),
+                      )
+                    : ListView.builder(
+                itemCount: items.length,
+                shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(color: Colors.grey[200], blurRadius: 5)
+                        ]),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(7),
+                          child: Image(
+                            height: 90,
+                            width: 100,
+                            image: items[index].image != null &&
+                                items[index].image != ""
+                                ? NetworkImage(items[index].image)
+                                : AssetImage("assets/images/CrunchTM.png"),
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    items[index].name != null &&
+                                        items[index].name != ""
+                                        ? items[index].name
+                                        : "N/A",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    items[index].description != null &&
+                                        items[index].description != ""
+                                        ? items[index].description
+                                        : "N/A",
+                                    style: TextStyle(
+                                        fontSize: 13, color: Colors.grey),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "\u20b9${items[index].price != null && items[index].price != "" ? double.parse(items[index].price).toStringAsFixed(2) : "N/A"}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 21),
+                                      ),
+                                      items[index].addedToCart
+                                          ? incDecButton(item: items[index])
+                                          : addToCartButton(onPressed: () async {
+                                        if (items[index].addon.length > 0) {
+                                          setState(() {
+                                            price = 0;
+                                            price = double.parse(
+                                                items[index].price);
+                                          });
+                                          await _getAddOnById(
+                                              addOnId: items[index].addon[0]
+                                              ["addon_group_id"]);
+                                          showModalBottomSheet(
+                                              context: context,
+                                              builder: (_) {
+                                                return StatefulBuilder(
+                                                    builder: (BuildContext
+                                                    context,
+                                                        StateSetter state) {
                                                       return BottomSheet(
                                                           onClosing: () {},
                                                           animationController:
-                                                              _controller,
+                                                          _controller,
                                                           builder: (BuildContext
-                                                              context) {
+                                                          context) {
                                                             return Container(
                                                                 height:
-                                                                    size.height *
-                                                                        0.4,
+                                                                size.height *
+                                                                    0.4,
                                                                 width:
-                                                                    size.width,
+                                                                size.width,
                                                                 color: Colors
                                                                     .white,
                                                                 alignment:
-                                                                    Alignment
-                                                                        .center,
+                                                                Alignment
+                                                                    .center,
                                                                 child: addOnItems(
                                                                     item: items[
-                                                                        index],
+                                                                    index],
                                                                     state:
-                                                                        state));
+                                                                    state));
                                                           });
                                                     });
-                                                  });
-                                            } else {
-                                              setState(() {
-                                                items[index].addedToCart = true;
                                               });
-                                              _addToCart(
-                                                  itemData: items[index]);
-                                            }
-                                          })
-                                  ],
-                                )
-                              ],
-                            ),
-                          )),
-                        ],
-                      ),
-                    );
-                  }),
+                                        } else {
+                                          setState(() {
+                                            items[index].addedToCart = true;
+                                          });
+                                          _addToCart(
+                                              itemData: items[index]);
+                                        }
+                                      })
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )),
+                      ],
+                    ),
+                  );
+                }),
+          )
+        ],
+      ),
     );
   }
 

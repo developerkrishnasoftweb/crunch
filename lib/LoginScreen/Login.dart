@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
+import 'package:crunch/LoginScreen/SignUp.dart';
+import 'package:crunch/Screens/ChangePassword.dart';
 import 'package:crunch/Screens/dashboard.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -32,6 +34,7 @@ class _LoginState extends State<Login> {
   ProgressDialog pr;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -46,7 +49,7 @@ class _LoginState extends State<Login> {
     pr.style(message: "Please wait..");
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
-          showNotification(message);
+      showNotification(message);
       print("onMessage  $message");
     }, onLaunch: (Map<String, dynamic> message) async {
       print("onLaunch  $message");
@@ -55,11 +58,14 @@ class _LoginState extends State<Login> {
     });
     _configureNotification();
   }
+
   showNotification(Map<String, dynamic> msg) async {
-    var android = new AndroidNotificationDetails('channel_id', 'CHANNEL NAME', 'channelDescription');
+    var android = new AndroidNotificationDetails(
+        'channel_id', 'CHANNEL NAME', 'channelDescription');
     var ios = new IOSNotificationDetails();
     var platform = new NotificationDetails(android: android, iOS: ios);
-    await flutterLocalNotificationsPlugin.show(Random().nextInt(100), msg["notification"]["title"], msg["notification"]["body"], platform);
+    await flutterLocalNotificationsPlugin.show(Random().nextInt(100),
+        msg["notification"]["title"], msg["notification"]["body"], platform);
   }
 
   _configureNotification() async {
@@ -99,123 +105,113 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Container(
-              width: size.width,
-              height: size.height,
-              decoration: BoxDecoration(
-                image: DecorationImage(
+    return Stack(children: [
+      Container(
+          width: size.width,
+          height: size.height,
+          decoration: BoxDecoration(
+              image: DecorationImage(
                   image: AssetImage("assets/images/spalsh.png"),
                   fit: BoxFit.fill,
                   colorFilter: new ColorFilter.mode(
-                      Colors.black.withOpacity(0.7), BlendMode.softLight),
+                      Colors.black.withOpacity(0.7), BlendMode.softLight)))),
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: size.height * 0.15),
+                  width: size.width * 0.6,
+                  height: size.height * 0.13,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/White_CrunchTM.png"),
+                        fit: BoxFit.fill),
+                  ),
                 ),
-              ),
-              child: Container(
-                height: size.height,
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0, 85.0, 0, 0),
-                      width: size.width * 0.6,
-                      height: size.height * 0.13,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image:
-                                AssetImage("assets/images/White_CrunchTM.png"),
-                            fit: BoxFit.fill),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 120.0,
-                    ),
-                    CustomTextField(
-                      hint: "Email",
-                      textcontroller: Email,
-                      obtext: false,
-                      textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(
-                        Icons.mail_outline,
-                        size: 25.0,
-                        color: cnst.AppColors.whitecolor,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 16.0,
-                    ),
-                    CustomTextField(
-                      hint: "Password",
-                      textcontroller: Password,
-                      obtext: true,
-                      textColor: cnst.AppColors.whitecolor,
-                      texticon: Icon(
-                        Icons.lock_open,
-                        size: 25.0,
-                        color: cnst.AppColors.whitecolor,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 16.0,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
-                      },
-                      child: Container(
-                        width: size.width * 0.85,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            "Forgot Password?",
-                            style: TextStyle(
-                              color: cnst.AppColors.whitecolor,
-                              fontSize: 15,
-                            ),
-                          ),
+                CustomTextField(
+                  hint: "Email",
+                  textcontroller: Email,
+                  obtext: false,
+                  textColor: cnst.AppColors.whitecolor,
+                  texticon: Icon(
+                    Icons.mail_outline,
+                    size: 25.0,
+                    color: cnst.AppColors.whitecolor,
+                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                CustomTextField(
+                  hint: "Password",
+                  textcontroller: Password,
+                  obtext: true,
+                  textColor: cnst.AppColors.whitecolor,
+                  texticon: Icon(
+                    Icons.lock_open,
+                    size: 25.0,
+                    color: cnst.AppColors.whitecolor,
+                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassword()));
+                  },
+                  child: Container(
+                    width: size.width * 0.85,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "Forgot Password?",
+                        style: TextStyle(
+                          color: cnst.AppColors.whitecolor,
+                          fontSize: 15,
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 80.0,
-                    ),
-                    CustomButton(
-                        title: "LOGIN",
-                        btncolor: cnst.appPrimaryMaterialColor,
-                        ontap: () {
-                          LoginValidation();
-                        }),
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Dashboard()));
-                      },
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(
-                          "Create New Account",
-                          style: TextStyle(
-                            color: cnst.AppColors.whitecolor,
-                            fontSize: 15,
-                          ),
-                        ),
+                  ),
+                ),
+                SizedBox(
+                  height: 80.0,
+                ),
+                CustomButton(
+                    title: "LOGIN",
+                    btncolor: cnst.appPrimaryMaterialColor,
+                    ontap: () {
+                      LoginValidation();
+                    }),
+                SizedBox(
+                  height: 30.0,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => SignUp()));
+                  },
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      "Create New Account",
+                      style: TextStyle(
+                        color: cnst.AppColors.whitecolor,
+                        fontSize: 15,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              )),
-        ),
-      ),
-    );
+              ],
+            )),
+      )
+    ]);
   }
 
   LoginValidation() {

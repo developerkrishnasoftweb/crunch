@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
-import 'package:crunch/Common/Carouel.dart';
+import 'package:crunch/Common/carousel.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:flutter/cupertino.dart';
@@ -167,7 +167,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             image: e.image,
                           );
                         }).toList(),
-                        width: size.width * 0.9,
+                        width: size.width,
                         borderRadius: BorderRadius.circular(7),
                         height: (size.height * 0.25) > 200
                             ? 200
@@ -195,27 +195,24 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     categories.length > 0
                         ? Container(
                             height: 35,
-                            child: ListView.separated(
+                            child: ListView.builder(
                                 itemBuilder: (BuildContext context, int index) {
-                                  return FlatButton(
-                                    onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => CategoryItems(
-                                                  categoryId:
-                                                      categories[index].id,
-                                                ))),
-                                    child: Text(categories[index].name),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(40),
-                                        side: BorderSide(
-                                            color: Colors.grey[300])),
-                                  );
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return SizedBox(
-                                    width: 10,
+                                  return Container(
+                                    margin: EdgeInsets.only(right: index == 0 ? 0 : 10),
+                                    child: FlatButton(
+                                      onPressed: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => CategoryItems(
+                                                    categoryId:
+                                                        categories[index].id,
+                                                  ))),
+                                      child: Text(categories[index].name),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(40),
+                                          side: BorderSide(
+                                              color: Colors.grey[300])),
+                                    ),
                                   );
                                 },
                                 scrollDirection: Axis.horizontal,

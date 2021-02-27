@@ -8,7 +8,9 @@ import 'setLocation.dart';
 
 class Categorys extends StatefulWidget {
   List<Category> categories;
+
   Categorys({@required this.categories});
+
   @override
   _CategorysState createState() => _CategorysState();
 }
@@ -20,16 +22,18 @@ class _CategorysState extends State<Categorys> {
       appBar: AppBar(
         backgroundColor: cnst.appPrimaryMaterialColor,
         elevation: 0.0,
-        centerTitle: true,
         title: Text(
           "Category",
           style: TextStyle(color: Colors.white),
         ),
         actions: [
-          IconButton(icon: Icon(Icons.location_on_outlined), onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SetLocation()));
-          })
+          IconButton(
+              icon: Icon(Icons.location_on_outlined),
+              splashRadius: 25,
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SetLocation()));
+              })
         ],
       ),
       body: widget.categories.length > 0
