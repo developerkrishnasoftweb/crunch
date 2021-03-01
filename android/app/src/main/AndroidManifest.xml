@@ -10,7 +10,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="crunch"
+        android:label="Crunch"
         android:icon="@mipmap/ic_launcher">
 
         <activity
