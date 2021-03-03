@@ -58,7 +58,7 @@ class _CheckoutState extends State<Checkout> {
 
   void openCheckout() async {
     var options = {
-      'key': 'rzp_test_tCWge1Ntpmfg1d',
+      'key': config['razorpay_key'],
       'amount': grandTotal.ceil() * 100,
       'name': 'Crunch',
       'description': 'Fresh Foods',
