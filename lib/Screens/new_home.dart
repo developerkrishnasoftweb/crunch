@@ -25,13 +25,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   List<Category> categories = [];
   List<AddOnGroup> addOnGroups = [];
   bool isLoading = false;
-  String addOnsIds = "";
+  String addOnsIds = "", databasePath = "";
   AnimationController _controller;
   double price;
+  Database db;
+
   @override
   void initState() {
     createTables();
     super.initState();
+    setDb();
     _controller = AnimationController(
       vsync: this,
     );
@@ -134,6 +137,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
+  setDb() async {
+    databasePath = await getDatabasesPath();
+    db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -198,18 +207,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             child: ListView.builder(
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
-                                    margin: EdgeInsets.only(right: index == 0 ? 0 : 10),
+                                    margin: EdgeInsets.only(
+                                        right: index == 0 ? 0 : 10),
                                     child: FlatButton(
                                       onPressed: () => Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => CategoryItems(
+                                              builder: (context) =>
+                                                  CategoryItems(
                                                     categoryId:
                                                         categories[index].id,
                                                   ))),
                                       child: Text(categories[index].name),
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(40),
+                                          borderRadius:
+                                              BorderRadius.circular(40),
                                           side: BorderSide(
                                               color: Colors.grey[300])),
                                     ),
@@ -302,7 +314,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                   fontSize: 21),
                                             ),
                                             items[index].addedToCart
-                                                ? incDecButton()
+                                                ? incDecButton(
+                                                    item: items[index])
                                                 : addToCartButton(
                                                     onPressed: () async {
                                                     if (items[index]
@@ -355,7 +368,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                         items[index]
                                                             .addedToCart = true;
                                                       });
-                                                      _addToCart(itemData: items[index]);
+                                                      _addToCart(
+                                                          itemData:
+                                                              items[index]);
                                                     }
                                                   })
                                           ],
@@ -543,7 +558,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     Fluttertoast.showToast(msg: "Added to cart");
   }
 
-  Widget incDecButton() {
+  _updateCart({ItemData itemData}) async {
+    await db.rawQuery(
+        "update ${SQFLiteTables.tableCart} set qty = ${itemData.quantity} where item_id = ${itemData.id}");
+  }
+
+  Widget incDecButton({@required ItemData item}) {
     return Container(
         decoration: BoxDecoration(
             border: Border.all(color: Colors.green[400]),
@@ -553,7 +573,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         child: Row(
           children: [
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                setState(() {
+                  item.quantity = item.quantity + 1;
+                });
+                _updateCart(itemData: item);
+              },
               child: Icon(
                 Icons.add,
                 size: 23,
@@ -563,11 +588,26 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               child: Container(
                 alignment: Alignment.center,
                 color: Colors.green[400],
-                child: Text("1"),
+                child: Text("${item.quantity}"),
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () async {
+                if (item.quantity != 1) {
+                  setState(() {
+                    item.quantity = item.quantity - 1;
+                  });
+                  _updateCart(itemData: item);
+                } else if (item.quantity == 1) {
+                  var status = await db.delete(SQFLiteTables.tableCart,
+                      where: 'item_id = ?', whereArgs: [item.id]);
+                  if (status == 1) {
+                    setState(() {
+                      item.addedToCart = false;
+                    });
+                  }
+                }
+              },
               child: Icon(
                 Icons.remove,
                 size: 23,
