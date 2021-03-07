@@ -23,7 +23,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   List<Banners> banners = [];
   List<ItemData> items = [];
   List<Category> categories = [];
-  List<AddOnGroup> addOnGroups = [];
+  List<AddonWithGroup> addOnGroups = [];
   bool isLoading = false;
   String addOnsIds = "", databasePath = "";
   AnimationController _controller;
@@ -381,12 +381,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 ),
               )
             : Center(
-                child: SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(Colors.grey),
-                    ))));
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        height: 30,
+                        width: 30,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation(cnst.appPrimaryMaterialColor),
+                        )),
+                    SizedBox(height: 10),
+                    Text("Fetching latest menu from restaurant", style: TextStyle(fontSize: 17), maxLines: 2,)
+                  ],
+                )));
   }
 
   _getAddOnById({ItemData itemData}) async {
@@ -405,9 +413,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnsIds);
     for (int i = 0; i < addOns.length; i++) {
       var addOnsList = jsonDecode(addOns[i]["addongroupitems"]);
+      List<AddOnGroup> tempAddOnGroup = [];
       for (int j = 0; j < addOnsList.length; j++) {
         setState(() {
-          addOnGroups.add(AddOnGroup(
+          tempAddOnGroup.add(AddOnGroup(
               active: addOnsList[j]["active"],
               addOnItemId: addOnsList[j]["addonitemid"],
               addOnItemPrice: addOnsList[j]["addonitem_price"],
@@ -416,6 +425,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               selected: false));
         });
       }
+      addOnGroups.add(AddonWithGroup(addOnGroups: tempAddOnGroup, addOnGroupName: addOns[i]['addongroupname'], addOnGroupId: addOns[i]['addongroupid']));
     }
   }
 
@@ -470,25 +480,34 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         Expanded(
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              return CheckboxListTile(
-                  value: addOnGroups[index].selected,
-                  onChanged: (value) {
-                    if (addOnGroups[index].selected) {
-                      state(() {
-                        addOnGroups[index].selected = false;
-                        price = price -
-                            double.parse(addOnGroups[index].addOnItemPrice);
-                      });
-                    } else {
-                      state(() {
-                        addOnGroups[index].selected = true;
-                        price = price +
-                            double.parse(addOnGroups[index].addOnItemPrice);
-                      });
-                    }
-                  },
-                  subtitle: Text("\u20b9" + addOnGroups[index].addOnItemPrice),
-                  title: Text(addOnGroups[index].addOnName));
+              return Column(
+                children: [
+                  Container(
+                    child: Text(addOnGroups[index].addOnGroupName),
+                    alignment: Alignment.center,
+                  ),
+                  for(int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
+                    CheckboxListTile(
+                        value: addOnGroups[index].addOnGroups[i].selected,
+                        onChanged: (value) {
+                          if (addOnGroups[index].addOnGroups[i].selected) {
+                            state(() {
+                              addOnGroups[index].addOnGroups[i].selected = false;
+                              price = price -
+                                  double.parse(addOnGroups[index].addOnGroups[i].addOnItemPrice);
+                            });
+                          } else {
+                            state(() {
+                              addOnGroups[index].addOnGroups[i].selected = true;
+                              price = price +
+                                  double.parse(addOnGroups[index].addOnGroups[i].addOnItemPrice);
+                            });
+                          }
+                        },
+                        subtitle: Text("\u20b9" + addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                        title: Text(addOnGroups[index].addOnGroups[i].addOnName))
+                ]
+              );
             },
             physics: BouncingScrollPhysics(),
             itemCount: addOnGroups.length,
@@ -526,10 +545,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   _addToCart({@required ItemData itemData}) async {
     double combinedTotal = 0;
     for (int i = 0; i < addOnGroups.length; i++) {
-      if (addOnGroups[i].selected) {
-        setState(() {
-          combinedTotal += double.parse(addOnGroups[i].addOnItemPrice);
-        });
+      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+        if (addOnGroups[i].addOnGroups[j].selected) {
+          setState(() {
+            combinedTotal += double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
+          });
+        }
       }
     }
     var id = await db.insert(SQFLiteTables.tableCart, {
@@ -540,9 +561,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       "qty": "1"
     });
     for (int i = 0; i < addOnGroups.length; i++) {
-      if (addOnGroups[i].selected) {
-        await db.insert(SQFLiteTables.tableCartAddon,
-            {"cart_id": "$id", "addon_id": addOnGroups[i].addOnItemId});
+      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+        if (addOnGroups[i].addOnGroups[j].selected) {
+          await db.insert(SQFLiteTables.tableCartAddon,
+              {"cart_id": "$id", "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId});
+        }
       }
     }
     if (itemData.addon.length > 0) Navigator.pop(context);
@@ -607,4 +630,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ],
         ));
   }
+}
+
+class AddonWithGroup {
+  final List<AddOnGroup> addOnGroups;
+  final String addOnGroupName, addOnGroupId;
+
+  AddonWithGroup({this.addOnGroups, this.addOnGroupName, this.addOnGroupId});
 }
