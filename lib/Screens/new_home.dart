@@ -341,8 +341,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                                       (BuildContext
                                                                           context) {
                                                                     return Container(
-                                                                        height: size.height *
-                                                                            0.4,
                                                                         width: size
                                                                             .width,
                                                                         color: Colors
@@ -482,10 +480,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             itemBuilder: (BuildContext context, int index) {
               return Column(
                 children: [
+                  Divider(),
                   Container(
-                    child: Text(addOnGroups[index].addOnGroupName),
-                    alignment: Alignment.center,
+                    child: Text(addOnGroups[index].addOnGroupName, style: TextStyle(
+                      fontSize: 17,
+                      color: cnst.appPrimaryMaterialColor
+                    )),
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   ),
+                  Divider(),
                   for(int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
                     CheckboxListTile(
                         value: addOnGroups[index].addOnGroups[i].selected,
