@@ -48,10 +48,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   getBanners() async {
     setLoading(true);
-    String databasePath = await getDatabasesPath();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     await AppServices.getSlider().then((value) async {
       if (value.value == "y") {
         await prefs.setString("config", jsonEncode(value.data[0]["config"]));
@@ -82,9 +79,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     if (isTablesCreated) {
       getBanners();
     } else {
-      String databasePath = await getDatabasesPath();
-      Database db = await openDatabase(databasePath + 'myDb.db',
-          version: 1, onCreate: (Database db, int version) async {});
       await SQFLiteTables.createTables(db: db).then((value) async {
         if (value) {
           setLoading(true);
@@ -530,9 +524,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   _addToCart({@required ItemData itemData}) async {
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     double combinedTotal = 0;
     for (int i = 0; i < addOnGroups.length; i++) {
       if (addOnGroups[i].selected) {

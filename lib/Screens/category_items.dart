@@ -24,9 +24,10 @@ class _CategoryItemsState extends State<CategoryItems>
 
   List<AddOnGroup> addOnGroups = [];
   bool isLoading = false;
-  String addOnsIds = "";
+  String addOnsIds = "", databasePath = "";
   AnimationController _controller;
   double price;
+  Database db;
   @override
   void initState() {
     super.initState();
@@ -34,6 +35,13 @@ class _CategoryItemsState extends State<CategoryItems>
       vsync: this,
     );
     _getCategoryData();
+    setDb();
+  }
+
+  setDb() async {
+    databasePath = await getDatabasesPath();
+    db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
   }
 
   _getCategoryData() async {
@@ -302,9 +310,6 @@ class _CategoryItemsState extends State<CategoryItems>
   }
 
   _addToCart({@required ItemData itemData}) async {
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     double combinedTotal = 0;
     for (int i = 0; i < addOnGroups.length; i++) {
       if (addOnGroups[i].selected) {
@@ -331,9 +336,6 @@ class _CategoryItemsState extends State<CategoryItems>
   }
 
   _updateCart({ItemData itemData}) async {
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     await db.rawQuery(
         "update ${SQFLiteTables.tableCart} set qty = ${itemData.quantity} where item_id = ${itemData.id}");
   }
@@ -367,12 +369,20 @@ class _CategoryItemsState extends State<CategoryItems>
               ),
             ),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 if (item.quantity != 1) {
                   setState(() {
                     item.quantity = item.quantity - 1;
                   });
                   _updateCart(itemData: item);
+                } else if (item.quantity == 1) {
+                  var status = await db.delete(SQFLiteTables.tableCart,
+                      where: 'item_id = ?', whereArgs: [item.id]);
+                  if (status == 1) {
+                    setState(() {
+                      item.addedToCart = false;
+                    });
+                  }
                 }
               },
               child: Icon(
