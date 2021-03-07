@@ -480,7 +480,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             itemBuilder: (BuildContext context, int index) {
               return Column(
                 children: [
-                  Divider(),
                   Container(
                     child: Text(addOnGroups[index].addOnGroupName, style: TextStyle(
                       fontSize: 17,
