@@ -646,6 +646,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 class AddonWithGroup {
   final List<AddOnGroup> addOnGroups;
   final String addOnGroupName, addOnGroupId;
-
-  AddonWithGroup({this.addOnGroups, this.addOnGroupName, this.addOnGroupId});
+  AddOnGroup addOnGroup;
+  AddonWithGroup({this.addOnGroups, this.addOnGroupName, this.addOnGroupId, this.addOnGroup});
 }
