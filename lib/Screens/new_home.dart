@@ -25,14 +25,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   List<Category> categories = [];
   List<AddonWithGroup> addOnGroups = [];
   bool isLoading = false;
-  String addOnsIds = "", databasePath = "";
+  String addOnsIds = "";
   AnimationController _controller;
   double price;
-  Database db;
 
   @override
   void initState() {
-    setDb();
     createTables();
     _controller = AnimationController(
       vsync: this,
@@ -50,6 +48,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     setLoading(true);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await AppServices.getSlider().then((value) async {
+      String databasePath = await getDatabasesPath();
+      Database db = await openDatabase(databasePath + 'myDb.db',
+          version: 1, onCreate: (Database db, int version) async {});
       if (value.value == "y") {
         await prefs.setString("config", jsonEncode(value.data[0]["config"]));
         for (int i = 0; i < value.data[0]["banners"].length; i++) {
@@ -79,6 +80,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     if (isTablesCreated) {
       getBanners();
     } else {
+      String databasePath = await getDatabasesPath();
+      Database db = await openDatabase(databasePath + 'myDb.db',
+          version: 1, onCreate: (Database db, int version) async {});
       await SQFLiteTables.createTables(db: db).then((value) async {
         if (value) {
           setLoading(true);
@@ -131,11 +135,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
-  setDb() async {
-    databasePath = await getDatabasesPath();
-    db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
-  }
 
   @override
   void dispose() {
@@ -547,6 +546,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   _addToCart({@required ItemData itemData}) async {
     double combinedTotal = 0;
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
     for (int i = 0; i < addOnGroups.length; i++) {
       for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {
@@ -576,6 +578,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   _updateCart({ItemData itemData}) async {
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
     await db.rawQuery(
         "update ${SQFLiteTables.tableCart} set qty = ${itemData.quantity} where item_id = ${itemData.id}");
   }
@@ -610,6 +615,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
             GestureDetector(
               onTap: () async {
+                String databasePath = await getDatabasesPath();
+                Database db = await openDatabase(databasePath + 'myDb.db',
+                    version: 1, onCreate: (Database db, int version) async {});
                 if (item.quantity != 1) {
                   setState(() {
                     item.quantity = item.quantity - 1;
