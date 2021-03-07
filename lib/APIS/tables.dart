@@ -32,17 +32,17 @@ class SQFLiteTables {
       tableAddons = "addons",
       tableTaxes = "taxes";
   static Future<bool> createTables({Database db}) async {
-    await db.execute("drop table if exists $tableRestaurants");
-    await db.execute("drop table if exists $tableOrderType");
-    await db.execute("drop table if exists $tableCategory");
-    await db.execute("drop table if exists $tableItems");
-    await db.execute("drop table if exists $tableVariations");
-    await db.execute("drop table if exists $tableAddOnGroups");
-    await db.execute("drop table if exists $tableAttributes");
-    await db.execute("drop table if exists $tableDiscounts");
-    await db.execute("drop table if exists $tableTaxes");
-    await db.execute("drop table if exists $tableCart");
-    await db.execute("drop table if exists $tableCartAddon");
+    await db.execute("drop table if exists `$tableRestaurants`");
+    await db.execute("drop table if exists `$tableOrderType`");
+    await db.execute("drop table if exists `$tableCategory`");
+    await db.execute("drop table if exists `$tableItems`");
+    await db.execute("drop table if exists `$tableVariations`");
+    await db.execute("drop table if exists `$tableAddOnGroups`");
+    await db.execute("drop table if exists `$tableAttributes`");
+    await db.execute("drop table if exists `$tableDiscounts`");
+    await db.execute("drop table if exists `$tableTaxes`");
+    await db.execute("drop table if exists `$tableCart`");
+    await db.execute("drop table if exists `$tableCartAddon`");
     await db.execute(
         "create table if not exists `$tableRestaurants` (`restaurantid` varchar(10), `menusharingcode` varchar(20), `restaurantname` varchar(50), `address` text, `contact` varchar(20), `lat` varchar(20), `lang` varchar(20), `landmark` varchar(50), `city` varchar(20), `state` varchar(30), `minimumorderamount` varchar(5), `minimumdeliverytime` varchar(30), `deliverycharge` varchar(5), `packaging_charge` varchar(15), `packaging_charge_type` varchar(20))");
     await db.execute(

@@ -32,12 +32,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    createTables();
-    super.initState();
     setDb();
+    createTables();
     _controller = AnimationController(
       vsync: this,
     );
+    super.initState();
   }
 
   setLoading(bool status) {
