@@ -10,6 +10,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../APIS/tables.dart';
 import '../Common/classes.dart';
+import 'new_home.dart';
 
 class CategoryItems extends StatefulWidget {
   final String categoryId;
@@ -22,7 +23,7 @@ class _CategoryItemsState extends State<CategoryItems>
     with SingleTickerProviderStateMixin {
   List<ItemData> items = [];
 
-  List<AddOnGroup> addOnGroups = [];
+  List<AddonWithGroup> addOnGroups = [];
   bool isLoading = false;
   String addOnsIds = "", databasePath = "";
   AnimationController _controller;
@@ -166,8 +167,6 @@ class _CategoryItemsState extends State<CategoryItems>
                                                   builder:
                                                       (BuildContext context) {
                                                     return Container(
-                                                        height:
-                                                            size.height * 0.4,
                                                         width: size.width,
                                                         color: Colors.white,
                                                         alignment:
@@ -213,9 +212,10 @@ class _CategoryItemsState extends State<CategoryItems>
         table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnsIds);
     for (int i = 0; i < addOns.length; i++) {
       var addOnsList = jsonDecode(addOns[i]["addongroupitems"]);
+      List<AddOnGroup> tempAddOnGroup = [];
       for (int j = 0; j < addOnsList.length; j++) {
         setState(() {
-          addOnGroups.add(AddOnGroup(
+          tempAddOnGroup.add(AddOnGroup(
               active: addOnsList[j]["active"],
               addOnItemId: addOnsList[j]["addonitemid"],
               addOnItemPrice: addOnsList[j]["addonitem_price"],
@@ -224,6 +224,7 @@ class _CategoryItemsState extends State<CategoryItems>
               selected: false));
         });
       }
+      addOnGroups.add(AddonWithGroup(addOnGroups: tempAddOnGroup, addOnGroupName: addOns[i]['addongroupname'], addOnGroupId: addOns[i]['addongroupid']));
     }
   }
 
@@ -259,29 +260,46 @@ class _CategoryItemsState extends State<CategoryItems>
         Expanded(
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              return CheckboxListTile(
-                  value: addOnGroups[index].selected,
-                  onChanged: (value) {
-                    if (addOnGroups[index].selected) {
-                      state(() {
-                        addOnGroups[index].selected = false;
-                        price = price -
-                            double.parse(addOnGroups[index].addOnItemPrice);
-                      });
-                    } else {
-                      state(() {
-                        addOnGroups[index].selected = true;
-                        price = price +
-                            double.parse(addOnGroups[index].addOnItemPrice);
-                      });
-                    }
-                  },
-                  subtitle: Text("\u20b9" + addOnGroups[index].addOnItemPrice),
-                  title: Text(addOnGroups[index].addOnName));
+              return Column(
+                  children: [
+                    Container(
+                      child: Text(addOnGroups[index].addOnGroupName, style: TextStyle(
+                          fontSize: 17,
+                          color: appPrimaryMaterialColor
+                      )),
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    ),
+                    Divider(indent: 20, endIndent: 20, height: 0, thickness: 1,),
+                    for(int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
+                      CheckboxListTile(
+                          value: addOnGroups[index].addOnGroups[i].selected,
+                          onChanged: (value) {
+                            if (addOnGroups[index].addOnGroups[i].selected) {
+                              state(() {
+                                addOnGroups[index].addOnGroups[i].selected = false;
+                                price = price -
+                                    double.parse(addOnGroups[index].addOnGroups[i].addOnItemPrice);
+                              });
+                            } else {
+                              state(() {
+                                addOnGroups[index].addOnGroups[i].selected = true;
+                                price = price +
+                                    double.parse(addOnGroups[index].addOnGroups[i].addOnItemPrice);
+                              });
+                            }
+                          },
+                          subtitle: Text("\u20b9" + addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                          title: Text(addOnGroups[index].addOnGroups[i].addOnName))
+                  ]
+              );
             },
             physics: BouncingScrollPhysics(),
             itemCount: addOnGroups.length,
           ),
+        ),
+        Divider(
+          height: 1,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -289,10 +307,10 @@ class _CategoryItemsState extends State<CategoryItems>
             children: [
               Expanded(
                   child: Text(
-                "Total payable : \u20b9${price.toStringAsFixed(2)}",
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
-              )),
+                    "Total payable : \u20b9${price.toStringAsFixed(2)}",
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  )),
               FlatButton(
                 child: Text(
                   "ADD TO CART",
@@ -312,10 +330,12 @@ class _CategoryItemsState extends State<CategoryItems>
   _addToCart({@required ItemData itemData}) async {
     double combinedTotal = 0;
     for (int i = 0; i < addOnGroups.length; i++) {
-      if (addOnGroups[i].selected) {
-        setState(() {
-          combinedTotal += double.parse(addOnGroups[i].addOnItemPrice);
-        });
+      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+        if (addOnGroups[i].addOnGroups[j].selected) {
+          setState(() {
+            combinedTotal += double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
+          });
+        }
       }
     }
     var id = await db.insert(SQFLiteTables.tableCart, {
@@ -326,9 +346,11 @@ class _CategoryItemsState extends State<CategoryItems>
       "qty": "1"
     });
     for (int i = 0; i < addOnGroups.length; i++) {
-      if (addOnGroups[i].selected) {
-        await db.insert(SQFLiteTables.tableCartAddon,
-            {"cart_id": "$id", "addon_id": addOnGroups[i].addOnItemId});
+      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+        if (addOnGroups[i].addOnGroups[j].selected) {
+          await db.insert(SQFLiteTables.tableCartAddon,
+              {"cart_id": "$id", "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId});
+        }
       }
     }
     if (itemData.addon.length > 0) Navigator.pop(context);

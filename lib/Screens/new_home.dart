@@ -395,38 +395,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 )));
   }
 
-  _getAddOnById({ItemData itemData}) async {
-    setState(() {
-      addOnGroups = [];
-      addOnsIds = "";
-    });
-    for (int i = 0; i < itemData.addon.length; i++) {
-      setState(() {
-        (i == (itemData.addon.length - 1))
-            ? addOnsIds += itemData.addon[i]["addon_group_id"] + ""
-            : addOnsIds += itemData.addon[i]["addon_group_id"] + ", ";
-      });
-    }
-    var addOns = await SQFLiteTables.where(
-        table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnsIds);
-    for (int i = 0; i < addOns.length; i++) {
-      var addOnsList = jsonDecode(addOns[i]["addongroupitems"]);
-      List<AddOnGroup> tempAddOnGroup = [];
-      for (int j = 0; j < addOnsList.length; j++) {
-        setState(() {
-          tempAddOnGroup.add(AddOnGroup(
-              active: addOnsList[j]["active"],
-              addOnItemId: addOnsList[j]["addonitemid"],
-              addOnItemPrice: addOnsList[j]["addonitem_price"],
-              addOnName: addOnsList[j]["addonitem_name"],
-              attributes: addOnsList[j]["attributes"],
-              selected: false));
-        });
-      }
-      addOnGroups.add(AddonWithGroup(addOnGroups: tempAddOnGroup, addOnGroupName: addOns[i]['addongroupname'], addOnGroupId: addOns[i]['addongroupid']));
-    }
-  }
-
   Widget addToCartButton({@required VoidCallback onPressed}) {
     return SizedBox(
         width: 73,
@@ -462,6 +430,38 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ));
   }
 
+  _getAddOnById({ItemData itemData}) async {
+    setState(() {
+      addOnGroups = [];
+      addOnsIds = "";
+    });
+    for (int i = 0; i < itemData.addon.length; i++) {
+      setState(() {
+        (i == (itemData.addon.length - 1))
+            ? addOnsIds += itemData.addon[i]["addon_group_id"] + ""
+            : addOnsIds += itemData.addon[i]["addon_group_id"] + ", ";
+      });
+    }
+    var addOns = await SQFLiteTables.where(
+        table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnsIds);
+    for (int i = 0; i < addOns.length; i++) {
+      var addOnsList = jsonDecode(addOns[i]["addongroupitems"]);
+      List<AddOnGroup> tempAddOnGroup = [];
+      for (int j = 0; j < addOnsList.length; j++) {
+        setState(() {
+          tempAddOnGroup.add(AddOnGroup(
+              active: addOnsList[j]["active"],
+              addOnItemId: addOnsList[j]["addonitemid"],
+              addOnItemPrice: addOnsList[j]["addonitem_price"],
+              addOnName: addOnsList[j]["addonitem_name"],
+              attributes: addOnsList[j]["attributes"],
+              selected: false));
+        });
+      }
+      addOnGroups.add(AddonWithGroup(addOnGroups: tempAddOnGroup, addOnGroupName: addOns[i]['addongroupname'], addOnGroupId: addOns[i]['addongroupid']));
+    }
+  }
+
   Widget addOnItems({ItemData item, StateSetter state}) {
     return Column(
       children: [
@@ -489,7 +489,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   ),
-                  Divider(),
+                  Divider(indent: 20, endIndent: 20, height: 0, thickness: 1,),
                   for(int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
                     CheckboxListTile(
                         value: addOnGroups[index].addOnGroups[i].selected,
