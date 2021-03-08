@@ -464,10 +464,24 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               selected: false));
         });
       }
-      addOnGroups.add(AddonWithGroup(
-          addOnGroups: tempAddOnGroup,
-          addOnGroupName: addOns[i]['addongroupname'],
-          addOnGroupId: addOns[i]['addongroupid']));
+      for (int k = 0; k < itemData.addon.length; k++) {
+        if (itemData.addon[k]['addon_group_id'] == addOns[i]['addongroupid']) {
+          // print(itemData.addon[k]['addon_item_selection_min']);
+          // print(itemData.addon[k]['addon_item_selection_max']);
+          addOnGroups.add(AddonWithGroup(
+              addOnGroups: tempAddOnGroup,
+              addOnGroupName: addOns[i]['addongroupname'],
+              addOnGroupId: addOns[i]['addongroupid'],
+              addOnMaxItemSelection:
+                  itemData.addon[k]['addon_item_selection_max'].toString(),
+              addOnMinItemSelection:
+                  itemData.addon[k]['addon_item_selection_min'].toString()));
+        }
+      }
+      // addOnGroups.add(AddonWithGroup(
+      //     addOnGroups: tempAddOnGroup,
+      //     addOnGroupName: addOns[i]['addongroupname'],
+      //     addOnGroupId: addOns[i]['addongroupid'], addOnMaxItemSelection: "1", addOnMinItemSelection: "2"));
     }
   }
 
@@ -502,30 +516,65 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   thickness: 1,
                 ),
                 for (int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
-                  CheckboxListTile(
-                      value: addOnGroups[index].addOnGroups[i].selected,
-                      onChanged: (value) {
-                        if (addOnGroups[index].addOnGroups[i].selected) {
-                          state(() {
-                            addOnGroups[index].addOnGroups[i].selected = false;
-                            price = price -
-                                double.parse(addOnGroups[index]
-                                    .addOnGroups[i]
-                                    .addOnItemPrice);
-                          });
-                        } else {
-                          state(() {
-                            addOnGroups[index].addOnGroups[i].selected = true;
-                            price = price +
-                                double.parse(addOnGroups[index]
-                                    .addOnGroups[i]
-                                    .addOnItemPrice);
-                          });
-                        }
-                      },
-                      subtitle: Text("\u20b9" +
-                          addOnGroups[index].addOnGroups[i].addOnItemPrice),
-                      title: Text(addOnGroups[index].addOnGroups[i].addOnName))
+                  addOnGroups[index].addOnMaxItemSelection != "1"
+                      ? CheckboxListTile(
+                          value: addOnGroups[index].addOnGroups[i].selected,
+                          onChanged: (value) {
+                            if (addOnGroups[index].addOnGroups[i].selected) {
+                              state(() {
+                                addOnGroups[index].addOnGroups[i].selected =
+                                    false;
+                                price = price -
+                                    double.parse(addOnGroups[index]
+                                        .addOnGroups[i]
+                                        .addOnItemPrice);
+                              });
+                            } else {
+                              state(() {
+                                addOnGroups[index].addOnGroups[i].selected =
+                                    true;
+                                price = price +
+                                    double.parse(addOnGroups[index]
+                                        .addOnGroups[i]
+                                        .addOnItemPrice);
+                              });
+                            }
+                          },
+                          subtitle: Text("\u20b9" +
+                              addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                          title:
+                              Text(addOnGroups[index].addOnGroups[i].addOnName))
+                      : RadioListTile<AddOnGroup>(
+                          value: addOnGroups[index].addOnGroups[i],
+                          groupValue: addOnGroups[index].addOnGroup,
+                          controlAffinity: ListTileControlAffinity.trailing,
+                          title:
+                              Text(addOnGroups[index].addOnGroups[i].addOnName),
+                          subtitle: Text("\u20b9" +
+                              addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                          onChanged: (value) {
+                            addOnGroups[index].addOnGroups.forEach((element) {
+                              if (element.selected) {
+                                state(() {
+                                  price = price -
+                                      double.parse(addOnGroups[index]
+                                          .addOnGroups[i]
+                                          .addOnItemPrice);
+                                  element.selected = false;
+                                });
+                              }
+                            });
+                            AddOnGroup selectedAddon = addOnGroups[index]
+                                .addOnGroups
+                                .where((element) => element == value)
+                                .first;
+                            state(() {
+                              addOnGroups[index].addOnGroup = selectedAddon;
+                              selectedAddon.selected = true;
+                              price = price +
+                                  double.parse(selectedAddon.addOnItemPrice);
+                            });
+                          })
               ]);
             },
             physics: BouncingScrollPhysics(),
@@ -678,12 +727,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
 class AddonWithGroup {
   final List<AddOnGroup> addOnGroups;
-  final String addOnGroupName, addOnGroupId;
+  final String addOnGroupName,
+      addOnGroupId,
+      addOnMaxItemSelection,
+      addOnMinItemSelection;
   AddOnGroup addOnGroup;
 
   AddonWithGroup(
       {this.addOnGroups,
       this.addOnGroupName,
       this.addOnGroupId,
-      this.addOnGroup});
+      this.addOnGroup,
+      this.addOnMaxItemSelection,
+      this.addOnMinItemSelection});
 }
