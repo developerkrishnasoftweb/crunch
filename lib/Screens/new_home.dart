@@ -4,6 +4,7 @@ import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/carousel.dart';
 import 'package:crunch/Common/classes.dart';
+import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   String addOnsIds = "";
   AnimationController _controller;
   double price;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -135,7 +137,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
-
   @override
   void dispose() {
     _controller.dispose();
@@ -146,6 +147,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
           backgroundColor: cnst.appPrimaryMaterialColor,
           elevation: 2,
@@ -379,19 +381,24 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               )
             : Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                        height: 30,
-                        width: 30,
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation(cnst.appPrimaryMaterialColor),
-                        )),
-                    SizedBox(height: 10),
-                    Text("Fetching latest menu from restaurant", style: TextStyle(fontSize: 17), maxLines: 2,)
-                  ],
-                )));
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      height: 30,
+                      width: 30,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(
+                            cnst.appPrimaryMaterialColor),
+                      )),
+                  SizedBox(height: 10),
+                  Text(
+                    "Fetching latest menu from restaurant",
+                    style: TextStyle(fontSize: 17),
+                    maxLines: 2,
+                  )
+                ],
+              )));
   }
 
   Widget addToCartButton({@required VoidCallback onPressed}) {
@@ -457,7 +464,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               selected: false));
         });
       }
-      addOnGroups.add(AddonWithGroup(addOnGroups: tempAddOnGroup, addOnGroupName: addOns[i]['addongroupname'], addOnGroupId: addOns[i]['addongroupid']));
+      addOnGroups.add(AddonWithGroup(
+          addOnGroups: tempAddOnGroup,
+          addOnGroupName: addOns[i]['addongroupname'],
+          addOnGroupId: addOns[i]['addongroupid']));
     }
   }
 
@@ -477,39 +487,46 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         Expanded(
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: [
-                  Container(
-                    child: Text(addOnGroups[index].addOnGroupName, style: TextStyle(
-                      fontSize: 17,
-                      color: cnst.appPrimaryMaterialColor
-                    )),
-                    alignment: Alignment.centerLeft,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  ),
-                  Divider(indent: 20, endIndent: 20, height: 0, thickness: 1,),
-                  for(int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
-                    CheckboxListTile(
-                        value: addOnGroups[index].addOnGroups[i].selected,
-                        onChanged: (value) {
-                          if (addOnGroups[index].addOnGroups[i].selected) {
-                            state(() {
-                              addOnGroups[index].addOnGroups[i].selected = false;
-                              price = price -
-                                  double.parse(addOnGroups[index].addOnGroups[i].addOnItemPrice);
-                            });
-                          } else {
-                            state(() {
-                              addOnGroups[index].addOnGroups[i].selected = true;
-                              price = price +
-                                  double.parse(addOnGroups[index].addOnGroups[i].addOnItemPrice);
-                            });
-                          }
-                        },
-                        subtitle: Text("\u20b9" + addOnGroups[index].addOnGroups[i].addOnItemPrice),
-                        title: Text(addOnGroups[index].addOnGroups[i].addOnName))
-                ]
-              );
+              return Column(children: [
+                Container(
+                  child: Text(addOnGroups[index].addOnGroupName,
+                      style: TextStyle(
+                          fontSize: 17, color: cnst.appPrimaryMaterialColor)),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                ),
+                Divider(
+                  indent: 20,
+                  endIndent: 20,
+                  height: 0,
+                  thickness: 1,
+                ),
+                for (int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
+                  CheckboxListTile(
+                      value: addOnGroups[index].addOnGroups[i].selected,
+                      onChanged: (value) {
+                        if (addOnGroups[index].addOnGroups[i].selected) {
+                          state(() {
+                            addOnGroups[index].addOnGroups[i].selected = false;
+                            price = price -
+                                double.parse(addOnGroups[index]
+                                    .addOnGroups[i]
+                                    .addOnItemPrice);
+                          });
+                        } else {
+                          state(() {
+                            addOnGroups[index].addOnGroups[i].selected = true;
+                            price = price +
+                                double.parse(addOnGroups[index]
+                                    .addOnGroups[i]
+                                    .addOnItemPrice);
+                          });
+                        }
+                      },
+                      subtitle: Text("\u20b9" +
+                          addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                      title: Text(addOnGroups[index].addOnGroups[i].addOnName))
+              ]);
             },
             physics: BouncingScrollPhysics(),
             itemCount: addOnGroups.length,
@@ -550,10 +567,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     Database db = await openDatabase(databasePath + 'myDb.db',
         version: 1, onCreate: (Database db, int version) async {});
     for (int i = 0; i < addOnGroups.length; i++) {
-      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+      for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {
           setState(() {
-            combinedTotal += double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
+            combinedTotal +=
+                double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
           });
         }
       }
@@ -566,15 +584,30 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       "qty": "1"
     });
     for (int i = 0; i < addOnGroups.length; i++) {
-      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+      for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {
-          await db.insert(SQFLiteTables.tableCartAddon,
-              {"cart_id": "$id", "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId});
+          await db.insert(SQFLiteTables.tableCartAddon, {
+            "cart_id": "$id",
+            "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId
+          });
         }
       }
     }
     if (itemData.addon.length > 0) Navigator.pop(context);
-    Fluttertoast.showToast(msg: "Added to cart");
+    scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
+        "Added to cart",
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: cnst.appPrimaryMaterialColor,
+      action: SnackBarAction(
+        label: "GO TO CART",
+        textColor: Colors.white,
+        onPressed: () =>
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
+      ),
+    ));
+    // Fluttertoast.showToast(msg: "Added to cart");
   }
 
   _updateCart({ItemData itemData}) async {
@@ -647,5 +680,10 @@ class AddonWithGroup {
   final List<AddOnGroup> addOnGroups;
   final String addOnGroupName, addOnGroupId;
   AddOnGroup addOnGroup;
-  AddonWithGroup({this.addOnGroups, this.addOnGroupName, this.addOnGroupId, this.addOnGroup});
+
+  AddonWithGroup(
+      {this.addOnGroups,
+      this.addOnGroupName,
+      this.addOnGroupId,
+      this.addOnGroup});
 }

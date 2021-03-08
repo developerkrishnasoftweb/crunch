@@ -10,6 +10,7 @@ import 'package:sqflite/sqflite.dart';
 
 import '../APIS/tables.dart';
 import '../Common/classes.dart';
+import 'cart.dart';
 import 'new_home.dart';
 
 class CategoryItems extends StatefulWidget {
@@ -29,6 +30,7 @@ class _CategoryItemsState extends State<CategoryItems>
   AnimationController _controller;
   double price;
   Database db;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -72,6 +74,7 @@ class _CategoryItemsState extends State<CategoryItems>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text(
           "Items",
@@ -329,11 +332,15 @@ class _CategoryItemsState extends State<CategoryItems>
 
   _addToCart({@required ItemData itemData}) async {
     double combinedTotal = 0;
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
     for (int i = 0; i < addOnGroups.length; i++) {
-      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+      for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {
           setState(() {
-            combinedTotal += double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
+            combinedTotal +=
+                double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
           });
         }
       }
@@ -346,15 +353,30 @@ class _CategoryItemsState extends State<CategoryItems>
       "qty": "1"
     });
     for (int i = 0; i < addOnGroups.length; i++) {
-      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+      for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {
-          await db.insert(SQFLiteTables.tableCartAddon,
-              {"cart_id": "$id", "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId});
+          await db.insert(SQFLiteTables.tableCartAddon, {
+            "cart_id": "$id",
+            "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId
+          });
         }
       }
     }
     if (itemData.addon.length > 0) Navigator.pop(context);
-    Fluttertoast.showToast(msg: "Added to cart");
+    scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
+        "Added to cart",
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: appPrimaryMaterialColor,
+      action: SnackBarAction(
+        label: "GO TO CART",
+        textColor: Colors.white,
+        onPressed: () =>
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
+      ),
+    ));
+    // Fluttertoast.showToast(msg: "Added to cart");
   }
 
   _updateCart({ItemData itemData}) async {

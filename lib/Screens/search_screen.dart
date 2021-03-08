@@ -8,6 +8,7 @@ import 'package:sqflite/sqflite.dart';
 import '../APIS/tables.dart';
 import '../Common/classes.dart';
 import '../Static/Constant.dart';
+import 'cart.dart';
 import 'new_home.dart';
 
 class Search extends StatefulWidget {
@@ -23,6 +24,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   Database db;
   AnimationController _controller;
   double price;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   setLoading(bool status) {
     setState(() {
       isLoading = status;
@@ -48,6 +50,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text(
           "Search",
@@ -258,8 +261,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     }
     var addOns = await SQFLiteTables.where(
         table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnsIds);
-    print(addOnsIds);
-    print(addOns.length);
     print((await SQFLiteTables.getData(table: Tables.ADD_ON_GROUPS)).length);
     for (int i = 0; i < addOns.length; i++) {
       var addOnsList = jsonDecode(addOns[i]["addongroupitems"]);
@@ -364,11 +365,15 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   _addToCart({@required ItemData itemData}) async {
     double combinedTotal = 0;
+    String databasePath = await getDatabasesPath();
+    Database db = await openDatabase(databasePath + 'myDb.db',
+        version: 1, onCreate: (Database db, int version) async {});
     for (int i = 0; i < addOnGroups.length; i++) {
-      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+      for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {
           setState(() {
-            combinedTotal += double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
+            combinedTotal +=
+                double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
           });
         }
       }
@@ -381,15 +386,30 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       "qty": "1"
     });
     for (int i = 0; i < addOnGroups.length; i++) {
-      for(int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
+      for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {
-          await db.insert(SQFLiteTables.tableCartAddon,
-              {"cart_id": "$id", "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId});
+          await db.insert(SQFLiteTables.tableCartAddon, {
+            "cart_id": "$id",
+            "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId
+          });
         }
       }
     }
     if (itemData.addon.length > 0) Navigator.pop(context);
-    Fluttertoast.showToast(msg: "Added to cart");
+    scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
+        "Added to cart",
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: appPrimaryMaterialColor,
+      action: SnackBarAction(
+        label: "GO TO CART",
+        textColor: Colors.white,
+        onPressed: () =>
+            Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
+      ),
+    ));
+    // Fluttertoast.showToast(msg: "Added to cart");
   }
 
   _updateCart({ItemData itemData}) async {
