@@ -358,26 +358,31 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                       subtitle: Text("\u20b9" +
                           addOnGroups[index].addOnGroups[i].addOnItemPrice),
                       onChanged: (value) {
-                        addOnGroups[index].addOnGroups.forEach((element) {
-                          if (element.selected) {
+                        for(int i = 0; i < addOnGroups[index].addOnGroups.length; i++) {
+                          if (addOnGroups[index].addOnGroups[i].selected) {
                             state(() {
                               price = price -
                                   double.parse(addOnGroups[index]
                                       .addOnGroups[i]
                                       .addOnItemPrice);
-                              element.selected = false;
+                              addOnGroups[index].addOnGroups[i].selected = false;
                             });
                           }
-                        });
-                        AddOnGroup selectedAddon = addOnGroups[index]
-                            .addOnGroups
-                            .where((element) => element == value)
-                            .first;
+                        }
                         state(() {
-                          addOnGroups[index].addOnGroup = selectedAddon;
-                          selectedAddon.selected = true;
+                          addOnGroups[index].addOnGroup = addOnGroups[index]
+                              .addOnGroups
+                              .where((element) => element == value)
+                              .first;
+                          addOnGroups[index]
+                              .addOnGroups
+                              .where((element) => element == value)
+                              .first.selected = true;
                           price = price +
-                              double.parse(selectedAddon.addOnItemPrice);
+                              double.parse(addOnGroups[index]
+                                  .addOnGroups
+                                  .where((element) => element == value)
+                                  .first.addOnItemPrice);
                         });
                       })
               ]);
@@ -498,12 +503,20 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               ),
             ),
             GestureDetector(
-              onTap: () {
+              onTap: () async {
                 if (item.quantity != 1) {
                   setState(() {
                     item.quantity = item.quantity - 1;
                   });
                   _updateCart(itemData: item);
+                } else if (item.quantity == 1) {
+                  var status = await db.delete(SQFLiteTables.tableCart,
+                      where: 'item_id = ?', whereArgs: [item.id]);
+                  if (status == 1) {
+                    setState(() {
+                      item.addedToCart = false;
+                    });
+                  }
                 }
               },
               child: Icon(
