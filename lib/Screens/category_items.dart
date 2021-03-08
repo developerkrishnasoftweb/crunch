@@ -199,6 +199,21 @@ class _CategoryItemsState extends State<CategoryItems>
     );
   }
 
+  Widget addToCartButton({@required VoidCallback onPressed}) {
+    return SizedBox(
+        width: 73,
+        height: 33,
+        child: FlatButton(
+          child: Text(
+            "ADD",
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+          onPressed: onPressed,
+          color: Colors.green[500],
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        ));
+  }
   _getAddOnById({ItemData itemData}) async {
     setState(() {
       addOnGroups = [];
@@ -227,24 +242,19 @@ class _CategoryItemsState extends State<CategoryItems>
               selected: false));
         });
       }
-      addOnGroups.add(AddonWithGroup(addOnGroups: tempAddOnGroup, addOnGroupName: addOns[i]['addongroupname'], addOnGroupId: addOns[i]['addongroupid']));
+      for (int k = 0; k < itemData.addon.length; k++) {
+        if (itemData.addon[k]['addon_group_id'] == addOns[i]['addongroupid']) {
+          addOnGroups.add(AddonWithGroup(
+              addOnGroups: tempAddOnGroup,
+              addOnGroupName: addOns[i]['addongroupname'],
+              addOnGroupId: addOns[i]['addongroupid'],
+              addOnMaxItemSelection:
+              itemData.addon[k]['addon_item_selection_max'].toString(),
+              addOnMinItemSelection:
+              itemData.addon[k]['addon_item_selection_min'].toString()));
+        }
+      }
     }
-  }
-
-  Widget addToCartButton({@required VoidCallback onPressed}) {
-    return SizedBox(
-        width: 73,
-        height: 33,
-        child: FlatButton(
-          child: Text(
-            "ADD",
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-          ),
-          onPressed: onPressed,
-          color: Colors.green[500],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        ));
   }
 
   Widget addOnItems({ItemData item, StateSetter state}) {
@@ -263,39 +273,81 @@ class _CategoryItemsState extends State<CategoryItems>
         Expanded(
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              return Column(
-                  children: [
-                    Container(
-                      child: Text(addOnGroups[index].addOnGroupName, style: TextStyle(
-                          fontSize: 17,
-                          color: appPrimaryMaterialColor
-                      )),
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    ),
-                    Divider(indent: 20, endIndent: 20, height: 0, thickness: 1,),
-                    for(int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
-                      CheckboxListTile(
-                          value: addOnGroups[index].addOnGroups[i].selected,
-                          onChanged: (value) {
-                            if (addOnGroups[index].addOnGroups[i].selected) {
-                              state(() {
-                                addOnGroups[index].addOnGroups[i].selected = false;
-                                price = price -
-                                    double.parse(addOnGroups[index].addOnGroups[i].addOnItemPrice);
-                              });
-                            } else {
-                              state(() {
-                                addOnGroups[index].addOnGroups[i].selected = true;
-                                price = price +
-                                    double.parse(addOnGroups[index].addOnGroups[i].addOnItemPrice);
-                              });
-                            }
-                          },
-                          subtitle: Text("\u20b9" + addOnGroups[index].addOnGroups[i].addOnItemPrice),
-                          title: Text(addOnGroups[index].addOnGroups[i].addOnName))
-                  ]
-              );
+              return Column(children: [
+                Container(
+                  child: Text(addOnGroups[index].addOnGroupName,
+                      style: TextStyle(
+                          fontSize: 17, color: appPrimaryMaterialColor)),
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                ),
+                Divider(
+                  indent: 20,
+                  endIndent: 20,
+                  height: 0,
+                  thickness: 1,
+                ),
+                for (int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
+                  addOnGroups[index].addOnMaxItemSelection != "1"
+                      ? CheckboxListTile(
+                      value: addOnGroups[index].addOnGroups[i].selected,
+                      onChanged: (value) {
+                        if (addOnGroups[index].addOnGroups[i].selected) {
+                          state(() {
+                            addOnGroups[index].addOnGroups[i].selected =
+                            false;
+                            price = price -
+                                double.parse(addOnGroups[index]
+                                    .addOnGroups[i]
+                                    .addOnItemPrice);
+                          });
+                        } else {
+                          state(() {
+                            addOnGroups[index].addOnGroups[i].selected =
+                            true;
+                            price = price +
+                                double.parse(addOnGroups[index]
+                                    .addOnGroups[i]
+                                    .addOnItemPrice);
+                          });
+                        }
+                      },
+                      subtitle: Text("\u20b9" +
+                          addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                      title:
+                      Text(addOnGroups[index].addOnGroups[i].addOnName))
+                      : RadioListTile<AddOnGroup>(
+                      value: addOnGroups[index].addOnGroups[i],
+                      groupValue: addOnGroups[index].addOnGroup,
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      title:
+                      Text(addOnGroups[index].addOnGroups[i].addOnName),
+                      subtitle: Text("\u20b9" +
+                          addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                      onChanged: (value) {
+                        addOnGroups[index].addOnGroups.forEach((element) {
+                          if (element.selected) {
+                            state(() {
+                              price = price -
+                                  double.parse(addOnGroups[index]
+                                      .addOnGroups[i]
+                                      .addOnItemPrice);
+                              element.selected = false;
+                            });
+                          }
+                        });
+                        AddOnGroup selectedAddon = addOnGroups[index]
+                            .addOnGroups
+                            .where((element) => element == value)
+                            .first;
+                        state(() {
+                          addOnGroups[index].addOnGroup = selectedAddon;
+                          selectedAddon.selected = true;
+                          price = price +
+                              double.parse(selectedAddon.addOnItemPrice);
+                        });
+                      })
+              ]);
             },
             physics: BouncingScrollPhysics(),
             itemCount: addOnGroups.length,

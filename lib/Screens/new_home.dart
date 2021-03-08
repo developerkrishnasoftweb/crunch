@@ -466,8 +466,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       }
       for (int k = 0; k < itemData.addon.length; k++) {
         if (itemData.addon[k]['addon_group_id'] == addOns[i]['addongroupid']) {
-          // print(itemData.addon[k]['addon_item_selection_min']);
-          // print(itemData.addon[k]['addon_item_selection_max']);
           addOnGroups.add(AddonWithGroup(
               addOnGroups: tempAddOnGroup,
               addOnGroupName: addOns[i]['addongroupname'],
@@ -478,10 +476,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   itemData.addon[k]['addon_item_selection_min'].toString()));
         }
       }
-      // addOnGroups.add(AddonWithGroup(
-      //     addOnGroups: tempAddOnGroup,
-      //     addOnGroupName: addOns[i]['addongroupname'],
-      //     addOnGroupId: addOns[i]['addongroupid'], addOnMaxItemSelection: "1", addOnMinItemSelection: "2"));
     }
   }
 
