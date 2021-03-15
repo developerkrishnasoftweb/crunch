@@ -80,7 +80,7 @@ class _Add_AddressState extends State<Add_Address> {
               textcontroller: contactPerson,
               obtext: false,
               hint: "Name *",
-              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              textColor: cnst.primaryColor.withOpacity(0.5),
               borderside: 1.0,
             ),
             SizedBox(
@@ -90,7 +90,7 @@ class _Add_AddressState extends State<Add_Address> {
               textcontroller: contactNumber,
               obtext: false,
               hint: "Number *",
-              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              textColor: cnst.primaryColor.withOpacity(0.5),
               borderside: 1.0,
             ),
             SizedBox(
@@ -100,7 +100,7 @@ class _Add_AddressState extends State<Add_Address> {
               textcontroller: address1,
               obtext: false,
               hint: "Address 1 *",
-              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              textColor: cnst.primaryColor.withOpacity(0.5),
               borderside: 1.0,
             ),
             SizedBox(
@@ -110,7 +110,7 @@ class _Add_AddressState extends State<Add_Address> {
               textcontroller: address2,
               obtext: false,
               hint: "Address 2 *",
-              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              textColor: cnst.primaryColor.withOpacity(0.5),
               borderside: 1.0,
             ),
             SizedBox(
@@ -120,7 +120,7 @@ class _Add_AddressState extends State<Add_Address> {
               textcontroller: landmark,
               obtext: false,
               hint: "Landmark *",
-              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              textColor: cnst.primaryColor.withOpacity(0.5),
               borderside: 1.0,
             ),
             SizedBox(
@@ -130,7 +130,7 @@ class _Add_AddressState extends State<Add_Address> {
               textcontroller: pincode,
               obtext: false,
               hint: "Pincode *",
-              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              textColor: cnst.primaryColor.withOpacity(0.5),
               borderside: 1.0,
             ),
             SizedBox(
@@ -140,7 +140,7 @@ class _Add_AddressState extends State<Add_Address> {
               textcontroller: city,
               obtext: false,
               hint: "City *",
-              textColor: cnst.appPrimaryMaterialColor.withOpacity(0.5),
+              textColor: cnst.primaryColor.withOpacity(0.5),
               borderside: 1.0,
             ),
             SizedBox(
@@ -148,7 +148,7 @@ class _Add_AddressState extends State<Add_Address> {
             ),
             CustomButton(
               title: "Add Address",
-              btncolor: cnst.appPrimaryMaterialColor,
+              btncolor: cnst.primaryColor,
               ontap: () {
                 FocusScope.of(context).unfocus();
                 Validation();

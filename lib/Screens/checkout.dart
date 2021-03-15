@@ -138,7 +138,7 @@ class _CheckoutState extends State<Checkout> {
           "Checkout",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: cnst.appPrimaryMaterialColor,
+        backgroundColor: cnst.primaryColor,
       ),
       body: isLoading ? Center(child: CircularProgressIndicator()) : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +156,7 @@ class _CheckoutState extends State<Checkout> {
             endIndent: 8,
             height: 2,
             thickness: 2,
-            color: cnst.appPrimaryMaterialColor,
+            color: cnst.primaryColor,
           ),
           buildRow(
             "Total",
@@ -197,7 +197,7 @@ class _CheckoutState extends State<Checkout> {
             trailing: IconButton(
               icon: Icon(Icons.add),
               splashRadius: 25,
-              color: cnst.appPrimaryMaterialColor,
+              color: cnst.primaryColor,
               onPressed: () {
                 Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Add_Address()))
@@ -276,7 +276,7 @@ class _CheckoutState extends State<Checkout> {
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: makePayment,
-                color: cnst.appPrimaryMaterialColor,
+                color: cnst.primaryColor,
               ))
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

@@ -104,7 +104,7 @@ class _TrackOrderState extends State<TrackOrder> {
           "Track Order",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: appPrimaryMaterialColor,
+        backgroundColor: primaryColor,
         elevation: 1,
         actions: [
           IconButton(
@@ -196,7 +196,7 @@ class _TrackOrderState extends State<TrackOrder> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(150),
                                     border: Border.all(
-                                        color: appPrimaryMaterialColor,
+                                        color: primaryColor,
                                         width: 2),
                                   ),
                                 ),
@@ -210,7 +210,7 @@ class _TrackOrderState extends State<TrackOrder> {
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: appPrimaryMaterialColor)),
+                                        color: primaryColor)),
                               ],
                             ),
                           ),
@@ -245,7 +245,7 @@ class _TrackOrderState extends State<TrackOrder> {
                   width: status ? 0 : 10,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: appPrimaryMaterialColor,
+                    color: primaryColor,
                   ),
                 ),
               ),
@@ -257,7 +257,7 @@ class _TrackOrderState extends State<TrackOrder> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
-            color: status ? Colors.green : appPrimaryMaterialColor,
+            color: status ? Colors.green : primaryColor,
           ),
         )
       ],

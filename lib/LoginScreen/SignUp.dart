@@ -166,13 +166,13 @@ class _SignUpState extends State<SignUp> {
                                   color: Colors.white,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                      color: cnst.appPrimaryMaterialColor)),
+                                      color: cnst.primaryColor)),
                               child: Container(
                                   margin: EdgeInsets.all(3.0),
                                   width: 15,
                                   height: 15,
                                   decoration: BoxDecoration(
-                                    color: cnst.appPrimaryMaterialColor,
+                                    color: cnst.primaryColor,
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
@@ -249,7 +249,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   CustomButton(
                     title: "Sign UP",
-                    btncolor: cnst.appPrimaryMaterialColor,
+                    btncolor: cnst.primaryColor,
                     ontap: () {
                       userValidation();
                     },

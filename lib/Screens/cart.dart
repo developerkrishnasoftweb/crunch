@@ -60,7 +60,7 @@ class _CartState extends State<Cart> {
             "Cart",
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: appPrimaryMaterialColor,
+          backgroundColor: primaryColor,
           elevation: 1,
         ),
         body: cartItems.length > 0
@@ -160,7 +160,7 @@ class _CartState extends State<Cart> {
                                                 TextStyle(color: Colors.white),
                                           ),
                                           color: !isApplied
-                                              ? appPrimaryMaterialColor
+                                              ? primaryColor
                                               : Colors.red,
                                         )),
                                   ],
@@ -180,7 +180,7 @@ class _CartState extends State<Cart> {
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: !isApplied
-                                              ? appPrimaryMaterialColor[600]
+                                              ? primaryColor[600]
                                               : Colors.green),
                                     ),
                                   ),
@@ -220,7 +220,7 @@ class _CartState extends State<Cart> {
                                           )
                                         ],
                                       ),
-                                      color: appPrimaryMaterialColor,
+                                      color: primaryColor,
                                       onPressed: () => Navigator.push(
                                           context,
                                           MaterialPageRoute(

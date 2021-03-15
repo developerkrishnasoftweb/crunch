@@ -77,7 +77,7 @@ class _SetLocationState extends State<SetLocation> {
                     right: 0,
                     child: CustomButton(
                         title: "TurnOnGPS",
-                        btncolor: cnst.appPrimaryMaterialColor,
+                        btncolor: cnst.primaryColor,
                         ontap: () => Navigator.pop(context)),
                   ),
                 ],

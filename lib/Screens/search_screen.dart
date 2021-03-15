@@ -23,6 +23,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   AnimationController _controller;
   double price;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   setLoading(bool status) {
     setState(() {
       isLoading = status;
@@ -47,7 +48,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           "Search",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: appPrimaryMaterialColor,
+        backgroundColor: primaryColor,
       ),
       body: Column(
         children: [
@@ -56,13 +57,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
             width: double.infinity,
             margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey[200],
-                  blurRadius: 10
-                )
-              ],
-                color: Colors.white, borderRadius: BorderRadius.circular(4)),
+                boxShadow: [BoxShadow(color: Colors.grey[200], blurRadius: 10)],
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4)),
             child: TextField(
               decoration: InputDecoration(
                   hintText: "Search",
@@ -83,139 +80,151 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                           height: 30,
                           width: 30,
                           child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation(appPrimaryMaterialColor),
+                            valueColor: AlwaysStoppedAnimation(primaryColor),
                           ),
                         ),
                       )
                     : ListView.builder(
-                itemCount: items.length,
-                shrinkWrap: true,
-                physics: BouncingScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(color: Colors.grey[200], blurRadius: 5)
-                        ]),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(7),
-                          child: Image(
-                            height: 90,
-                            width: 100,
-                            image: items[index].image != null &&
-                                items[index].image != ""
-                                ? NetworkImage(items[index].image)
-                                : AssetImage("assets/images/CrunchTM.png"),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    items[index].name != null &&
-                                        items[index].name != ""
-                                        ? items[index].name
-                                        : "N/A",
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold),
+                        itemCount: items.length,
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.vertical,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.grey[200], blurRadius: 5)
+                                ]),
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(7),
+                                  child: Image(
+                                    height: 90,
+                                    width: 100,
+                                    image: items[index].image != null &&
+                                            items[index].image != ""
+                                        ? NetworkImage(items[index].image)
+                                        : AssetImage(
+                                            "assets/images/CrunchTM.png"),
+                                    fit: BoxFit.fill,
                                   ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    items[index].description != null &&
-                                        items[index].description != ""
-                                        ? items[index].description
-                                        : "N/A",
-                                    style: TextStyle(
-                                        fontSize: 13, color: Colors.grey),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                ),
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "\u20b9${items[index].price != null && items[index].price != "" ? double.parse(items[index].price).toStringAsFixed(2) : "N/A"}",
+                                        items[index].name != null &&
+                                                items[index].name != ""
+                                            ? items[index].name
+                                            : "N/A",
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 21),
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      items[index].addedToCart
-                                          ? incDecButton(item: items[index])
-                                          : addToCartButton(onPressed: () async {
-                                        if (items[index].addon.length > 0) {
-                                          setState(() {
-                                            price = 0;
-                                            price = double.parse(
-                                                items[index].price);
-                                          });
-                                          await _getAddOnById(
-                                              itemData: items[index]);
-                                          showModalBottomSheet(
-                                              context: context,
-                                              builder: (_) {
-                                                return StatefulBuilder(
-                                                    builder: (BuildContext
-                                                    context,
-                                                        StateSetter state) {
-                                                      return BottomSheet(
-                                                          onClosing: () {},
-                                                          animationController:
-                                                          _controller,
-                                                          builder: (BuildContext
-                                                          context) {
-                                                            return Container(
-                                                                width:
-                                                                size.width,
-                                                                color: Colors
-                                                                    .white,
-                                                                alignment:
-                                                                Alignment
-                                                                    .center,
-                                                                child: addOnItems(
-                                                                    item: items[
-                                                                    index],
-                                                                    state:
-                                                                    state));
-                                                          });
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text(
+                                        items[index].description != null &&
+                                                items[index].description != ""
+                                            ? items[index].description
+                                            : "N/A",
+                                        style: TextStyle(
+                                            fontSize: 13, color: Colors.grey),
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "\u20b9${items[index].price != null && items[index].price != "" ? double.parse(items[index].price).toStringAsFixed(2) : "N/A"}",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 21),
+                                          ),
+                                          items[index].addedToCart
+                                              ? incDecButton(item: items[index])
+                                              : addToCartButton(
+                                                  onPressed: () async {
+                                                  if (items[index]
+                                                          .addon
+                                                          .length >
+                                                      0) {
+                                                    setState(() {
+                                                      price = 0;
+                                                      price = double.parse(
+                                                          items[index].price);
                                                     });
-                                              });
-                                        } else {
-                                          setState(() {
-                                            items[index].addedToCart = true;
-                                          });
-                                          _addToCart(
-                                              itemData: items[index]);
-                                        }
-                                      })
+                                                    await _getAddOnById(
+                                                        itemData: items[index]);
+                                                    showModalBottomSheet(
+                                                        context: context,
+                                                        builder: (_) {
+                                                          return StatefulBuilder(
+                                                              builder: (BuildContext
+                                                                      context,
+                                                                  StateSetter
+                                                                      state) {
+                                                            return BottomSheet(
+                                                                onClosing:
+                                                                    () {},
+                                                                animationController:
+                                                                    _controller,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return Container(
+                                                                      width: size
+                                                                          .width,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                      child: addOnItems(
+                                                                          item: items[
+                                                                              index],
+                                                                          state:
+                                                                              state));
+                                                                });
+                                                          });
+                                                        });
+                                                  } else {
+                                                    setState(() {
+                                                      items[index].addedToCart =
+                                                          true;
+                                                    });
+                                                    _addToCart(
+                                                        itemData: items[index]);
+                                                  }
+                                                })
+                                        ],
+                                      )
                                     ],
-                                  )
-                                ],
-                              ),
-                            )),
-                      ],
-                    ),
-                  );
-                }),
+                                  ),
+                                )),
+                              ],
+                            ),
+                          );
+                        }),
           )
         ],
       ),
@@ -273,9 +282,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               addOnGroupName: addOns[i]['addongroupname'],
               addOnGroupId: addOns[i]['addongroupid'],
               addOnMaxItemSelection:
-              itemData.addon[k]['addon_item_selection_max'].toString(),
+                  itemData.addon[k]['addon_item_selection_max'].toString(),
               addOnMinItemSelection:
-              itemData.addon[k]['addon_item_selection_min'].toString()));
+                  itemData.addon[k]['addon_item_selection_min'].toString()));
         }
       }
     }
@@ -300,8 +309,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               return Column(children: [
                 Container(
                   child: Text(addOnGroups[index].addOnGroupName,
-                      style: TextStyle(
-                          fontSize: 17, color: appPrimaryMaterialColor)),
+                      style: TextStyle(fontSize: 17, color: primaryColor)),
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 ),
@@ -314,68 +322,73 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                 for (int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
                   addOnGroups[index].addOnMaxItemSelection != "1"
                       ? CheckboxListTile(
-                      value: addOnGroups[index].addOnGroups[i].selected,
-                      onChanged: (value) {
-                        if (addOnGroups[index].addOnGroups[i].selected) {
-                          state(() {
-                            addOnGroups[index].addOnGroups[i].selected =
-                            false;
-                            price = price -
-                                double.parse(addOnGroups[index]
-                                    .addOnGroups[i]
-                                    .addOnItemPrice);
-                          });
-                        } else {
-                          state(() {
-                            addOnGroups[index].addOnGroups[i].selected =
-                            true;
-                            price = price +
-                                double.parse(addOnGroups[index]
-                                    .addOnGroups[i]
-                                    .addOnItemPrice);
-                          });
-                        }
-                      },
-                      subtitle: Text("\u20b9" +
-                          addOnGroups[index].addOnGroups[i].addOnItemPrice),
-                      title:
-                      Text(addOnGroups[index].addOnGroups[i].addOnName))
+                          value: addOnGroups[index].addOnGroups[i].selected,
+                          onChanged: (value) {
+                            if (addOnGroups[index].addOnGroups[i].selected) {
+                              state(() {
+                                addOnGroups[index].addOnGroups[i].selected =
+                                    false;
+                                price = price -
+                                    double.parse(addOnGroups[index]
+                                        .addOnGroups[i]
+                                        .addOnItemPrice);
+                              });
+                            } else {
+                              state(() {
+                                addOnGroups[index].addOnGroups[i].selected =
+                                    true;
+                                price = price +
+                                    double.parse(addOnGroups[index]
+                                        .addOnGroups[i]
+                                        .addOnItemPrice);
+                              });
+                            }
+                          },
+                          subtitle: Text("\u20b9" +
+                              addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                          title:
+                              Text(addOnGroups[index].addOnGroups[i].addOnName))
                       : RadioListTile<AddOnGroup>(
-                      value: addOnGroups[index].addOnGroups[i],
-                      groupValue: addOnGroups[index].addOnGroup,
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      title:
-                      Text(addOnGroups[index].addOnGroups[i].addOnName),
-                      subtitle: Text("\u20b9" +
-                          addOnGroups[index].addOnGroups[i].addOnItemPrice),
-                      onChanged: (value) {
-                        for(int i = 0; i < addOnGroups[index].addOnGroups.length; i++) {
-                          if (addOnGroups[index].addOnGroups[i].selected) {
+                          value: addOnGroups[index].addOnGroups[i],
+                          groupValue: addOnGroups[index].addOnGroup,
+                          controlAffinity: ListTileControlAffinity.trailing,
+                          title:
+                              Text(addOnGroups[index].addOnGroups[i].addOnName),
+                          subtitle: Text("\u20b9" +
+                              addOnGroups[index].addOnGroups[i].addOnItemPrice),
+                          onChanged: (value) {
+                            for (int i = 0;
+                                i < addOnGroups[index].addOnGroups.length;
+                                i++) {
+                              if (addOnGroups[index].addOnGroups[i].selected) {
+                                state(() {
+                                  price = price -
+                                      double.parse(addOnGroups[index]
+                                          .addOnGroups[i]
+                                          .addOnItemPrice);
+                                  addOnGroups[index].addOnGroups[i].selected =
+                                      false;
+                                });
+                              }
+                            }
                             state(() {
-                              price = price -
-                                  double.parse(addOnGroups[index]
-                                      .addOnGroups[i]
-                                      .addOnItemPrice);
-                              addOnGroups[index].addOnGroups[i].selected = false;
-                            });
-                          }
-                        }
-                        state(() {
-                          addOnGroups[index].addOnGroup = addOnGroups[index]
-                              .addOnGroups
-                              .where((element) => element == value)
-                              .first;
-                          addOnGroups[index]
-                              .addOnGroups
-                              .where((element) => element == value)
-                              .first.selected = true;
-                          price = price +
-                              double.parse(addOnGroups[index]
+                              addOnGroups[index].addOnGroup = addOnGroups[index]
                                   .addOnGroups
                                   .where((element) => element == value)
-                                  .first.addOnItemPrice);
-                        });
-                      })
+                                  .first;
+                              addOnGroups[index]
+                                  .addOnGroups
+                                  .where((element) => element == value)
+                                  .first
+                                  .selected = true;
+                              price = price +
+                                  double.parse(addOnGroups[index]
+                                      .addOnGroups
+                                      .where((element) => element == value)
+                                      .first
+                                      .addOnItemPrice);
+                            });
+                          })
               ]);
             },
             physics: BouncingScrollPhysics(),
@@ -391,10 +404,10 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
             children: [
               Expanded(
                   child: Text(
-                    "Total payable : \u20b9${price.toStringAsFixed(2)}",
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
-                  )),
+                "Total payable : \u20b9${price.toStringAsFixed(2)}",
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              )),
               FlatButton(
                 child: Text(
                   "ADD TO CART",
@@ -446,7 +459,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         "Added to cart",
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      backgroundColor: appPrimaryMaterialColor,
+      backgroundColor: primaryColor,
       action: SnackBarAction(
         label: "GO TO CART",
         textColor: Colors.white,

@@ -71,7 +71,7 @@ class _CategoryItemsState extends State<CategoryItems>
           "Items",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: appPrimaryMaterialColor,
+        backgroundColor: primaryColor,
       ),
       body: ListView.builder(
           itemCount: items.length > 10 ? 10 : items.length,
@@ -268,7 +268,7 @@ class _CategoryItemsState extends State<CategoryItems>
                 Container(
                   child: Text(addOnGroups[index].addOnGroupName,
                       style: TextStyle(
-                          fontSize: 17, color: appPrimaryMaterialColor)),
+                          fontSize: 17, color: primaryColor)),
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 ),
@@ -408,7 +408,7 @@ class _CategoryItemsState extends State<CategoryItems>
         "Added to cart",
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      backgroundColor: appPrimaryMaterialColor,
+      backgroundColor: primaryColor,
       action: SnackBarAction(
         label: "GO TO CART",
         textColor: Colors.white,

@@ -35,7 +35,7 @@ class _AddressState extends State<Address> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        backgroundColor: cnst.appPrimaryMaterialColor,
+        backgroundColor: cnst.primaryColor,
         elevation: 1.0,
         title: Text(
           "Address",

@@ -20,7 +20,7 @@ Future<void> main() async {
   runApp(MaterialApp(
     title: 'Pal Agent',
     theme: ThemeData(
-      primarySwatch: cnst.appPrimaryMaterialColor,
+      primarySwatch: cnst.primaryColor,
       visualDensity: VisualDensity.adaptivePlatformDensity,
       fontFamily: "Poppins",
     ),

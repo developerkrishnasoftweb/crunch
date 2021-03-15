@@ -66,7 +66,7 @@ class _AddRatingsState extends State<AddRatings> {
                       padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 10.0),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.0),
-                        color: cnst.appPrimaryMaterialColor.withOpacity(0.1),
+                        color: cnst.primaryColor.withOpacity(0.1),
                       ),
                       child: Center(
                       ),

@@ -5,7 +5,7 @@ import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/carousel.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/cart.dart';
-import 'package:crunch/Static/Constant.dart' as cnst;
+import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:crunch/models/banners_model.dart';
 import 'package:crunch/models/config_model.dart';
@@ -119,7 +119,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     return Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
-          backgroundColor: cnst.appPrimaryMaterialColor,
+          backgroundColor: primaryColor,
           elevation: 2,
           automaticallyImplyLeading: false,
           title: Text(
@@ -359,7 +359,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       width: 30,
                       child: CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation(
-                            cnst.appPrimaryMaterialColor),
+                            primaryColor),
                       )),
                   SizedBox(height: 10),
                   Text(
@@ -469,7 +469,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 Container(
                   child: Text(addOnGroups[index].addOnGroupName,
                       style: TextStyle(
-                          fontSize: 17, color: cnst.appPrimaryMaterialColor)),
+                          fontSize: 17, color: primaryColor)),
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 ),
@@ -609,7 +609,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         "Added to cart",
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
-      backgroundColor: cnst.appPrimaryMaterialColor,
+      backgroundColor: primaryColor,
       action: SnackBarAction(
         label: "GO TO CART",
         textColor: Colors.white,

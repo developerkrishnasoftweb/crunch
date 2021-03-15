@@ -20,7 +20,7 @@ class _CategorysState extends State<Categorys> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: cnst.appPrimaryMaterialColor,
+        backgroundColor: cnst.primaryColor,
         elevation: 0.0,
         title: Text(
           "Category",

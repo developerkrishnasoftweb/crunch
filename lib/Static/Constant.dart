@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Map<int, Color> appPrimaryColors = {
+Map<int, Color> primaryColorSwatch = {
   50: Color.fromRGBO(86, 99, 255, .1),
   100: Color.fromRGBO(86, 99, 255, .2),
   200: Color.fromRGBO(86, 99, 255, .3),
@@ -19,8 +19,8 @@ class AppColors {
   static Color greencolor = Color(0xFF56b72a);
 }
 
-MaterialColor appPrimaryMaterialColor =
-MaterialColor(0xFF5663ff, appPrimaryColors);
+MaterialColor primaryColor =
+MaterialColor(0xFF5663ff, primaryColorSwatch);
 
 class Session {
   static const String id = "id";

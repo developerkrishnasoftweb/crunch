@@ -100,7 +100,7 @@ class _EditAddressState extends State<EditAddress> {
                 textcontroller: contactPerson,
                 obtext: false,
                 hint: "Name",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 borderside: 1.0,
               ),
               SizedBox(
@@ -110,7 +110,7 @@ class _EditAddressState extends State<EditAddress> {
                 textcontroller: contactNumber,
                 obtext: false,
                 hint: "Number",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 borderside: 1.0,
               ),
               SizedBox(
@@ -120,7 +120,7 @@ class _EditAddressState extends State<EditAddress> {
                 textcontroller: edtaddress,
                 obtext: false,
                 hint: "Address1",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 borderside: 1.0,
               ),
               SizedBox(
@@ -130,7 +130,7 @@ class _EditAddressState extends State<EditAddress> {
                 textcontroller: address2,
                 obtext: false,
                 hint: "Address2",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 borderside: 1.0,
               ),
               SizedBox(
@@ -140,7 +140,7 @@ class _EditAddressState extends State<EditAddress> {
                 textcontroller: landmark,
                 obtext: false,
                 hint: "Landmark",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 borderside: 1.0,
               ),
               SizedBox(
@@ -150,7 +150,7 @@ class _EditAddressState extends State<EditAddress> {
                 textcontroller: edtpincode,
                 obtext: false,
                 hint: "Pincode",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 borderside: 1.0,
               ),
               SizedBox(
@@ -160,7 +160,7 @@ class _EditAddressState extends State<EditAddress> {
                 textcontroller: edtcity,
                 obtext: false,
                 hint: "City",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 borderside: 1.0,
               ),
               SizedBox(
@@ -168,7 +168,7 @@ class _EditAddressState extends State<EditAddress> {
               ),
               CustomButton(
                 title: "Update Address",
-                btncolor: cnst.appPrimaryMaterialColor,
+                btncolor: cnst.primaryColor,
                 ontap: () {
                   Validation();
                 },

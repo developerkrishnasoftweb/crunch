@@ -41,7 +41,7 @@ class _DashboardState extends State<Dashboard> {
         currentIndex: bottomNavigationCurrentIndex,
         elevation: 0,
         unselectedItemColor: Colors.grey,
-        selectedItemColor: appPrimaryMaterialColor,
+        selectedItemColor: primaryColor,
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 15,
         unselectedFontSize: 15,

@@ -166,7 +166,7 @@ class _LoginState extends State<Login> {
                 ),
                 CustomButton(
                     title: "LOGIN",
-                    btncolor: cnst.appPrimaryMaterialColor,
+                    btncolor: cnst.primaryColor,
                     ontap: LoginValidation),
                 SizedBox(
                   height: 30.0,

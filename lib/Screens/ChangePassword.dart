@@ -67,9 +67,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                 textcontroller: CurrentPassword,
                 obtext: true,
                 hint: "Current Password",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 texticon: Icon(Icons.lock_outline,
-                    color: cnst.appPrimaryMaterialColor, size: 25.0),
+                    color: cnst.primaryColor, size: 25.0),
                 borderside: 1.0,
               ),
               SizedBox(
@@ -79,9 +79,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                 textcontroller: NewPassword,
                 obtext: true,
                 hint: "New Password",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 texticon: Icon(Icons.lock_outline,
-                    color: cnst.appPrimaryMaterialColor, size: 25.0),
+                    color: cnst.primaryColor, size: 25.0),
                 borderside: 1.0,
               ),
               SizedBox(
@@ -91,16 +91,16 @@ class _ChangePasswordState extends State<ChangePassword> {
                 textcontroller: ConfirmPassword,
                 obtext: true,
                 hint: "Confirm Password",
-                textColor: cnst.appPrimaryMaterialColor,
+                textColor: cnst.primaryColor,
                 texticon: Icon(Icons.lock_outline,
-                    color: cnst.appPrimaryMaterialColor, size: 25.0),
+                    color: cnst.primaryColor, size: 25.0),
                 borderside: 1.0,
               ),
               SizedBox(
                 height: 16.0,
               ),
               CustomButton(
-                title: "Update", btncolor: cnst.appPrimaryMaterialColor,
+                title: "Update", btncolor: cnst.primaryColor,
                 // ontap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>Home()))
               ),
             ],

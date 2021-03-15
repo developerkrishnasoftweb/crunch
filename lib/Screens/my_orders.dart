@@ -115,7 +115,7 @@ class _MyOrdersState extends State<MyOrders> {
             "Your Orders",
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: cnst.appPrimaryMaterialColor,
+          backgroundColor: cnst.primaryColor,
           elevation: 1,
         ),
         body: isLoading
@@ -212,7 +212,7 @@ class _MyOrdersState extends State<MyOrders> {
                                                   .toLowerCase() ==
                                               "delivered"
                                           ? Colors.green
-                                          : cnst.appPrimaryMaterialColor[700],
+                                          : cnst.primaryColor[700],
                                   fontWeight: FontWeight.bold),
                             ),
                             orderDetails[index].orderStatus.toLowerCase() !=
@@ -261,7 +261,7 @@ class _MyOrdersState extends State<MyOrders> {
                                             "TRACK",
                                             style: TextStyle(
                                                 color: cnst
-                                                    .appPrimaryMaterialColor,
+                                                    .primaryColor,
                                                 fontWeight: FontWeight.bold),
                                           )),
                                     ],
