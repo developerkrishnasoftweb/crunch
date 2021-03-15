@@ -1,16 +1,18 @@
 import 'dart:convert';
 
 import 'package:crunch/APIS/tables.dart';
+import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Screens/new_home.dart';
 import 'package:crunch/Static/Constant.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:flutter/material.dart';
 
 import 'classes.dart';
 
-bottomSheet({ItemData itemData, BuildContext context, AnimationController animationController}) async {
+showItemAddons({ItemData itemData, BuildContext context, AnimationController animationController}) async {
   List<AddonWithGroup> addonWithGroups = [];
   String addOnIds = "";
-  double price = 0;
+  double price = double.parse(itemData.price);
   for (int i = 0; i < itemData.addon.length; i++) {
     (i == (itemData.addon.length - 1))
         ? addOnIds += itemData.addon[i]["addon_group_id"] + ""
@@ -77,12 +79,12 @@ bottomSheet({ItemData itemData, BuildContext context, AnimationController animat
                                     style: TextStyle(color: Colors.grey, fontSize: 20),
                                   )),
                             ),
-                            Padding(
+                            itemData.variation.length > 0 ? Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               child: Text("Variations",
                                   style: TextStyle(fontSize: 17, color: primaryColor)),
-                            ),
-                            Container(
+                            ) : SizedBox(),
+                            itemData.variation.length > 0 ? Container(
                               height: 60,
                               child: ListView.builder(
                                   itemBuilder: (_, index) {
@@ -100,7 +102,7 @@ bottomSheet({ItemData itemData, BuildContext context, AnimationController animat
                                   scrollDirection: Axis.horizontal,
                                   shrinkWrap: true,
                                   itemCount: 10),
-                            ),
+                            ) : SizedBox(),
                             Divider(),
                             Expanded(
                               child: ListView.builder(
@@ -203,7 +205,50 @@ bottomSheet({ItemData itemData, BuildContext context, AnimationController animat
                                       style: TextStyle(
                                           color: Colors.white, fontWeight: FontWeight.bold),
                                     ),
-                                    // onPressed: () => _addToCart(itemData: itemData),
+                                    onPressed: () async {
+                                      double combinedTotal = 0;
+                                      for (int i = 0; i < addonWithGroups.length; i++) {
+                                        for (int j = 0; j < addonWithGroups[i].addOnGroups.length; j++) {
+                                          if (addonWithGroups[i].addOnGroups[j].selected) {
+                                            state(() {
+                                              combinedTotal +=
+                                                  double.parse(addonWithGroups[i].addOnGroups[j].addOnItemPrice);
+                                            });
+                                          }
+                                        }
+                                      }
+                                      var id = await db.insert(SQFLiteTables.tableCart, {
+                                        "item_id": "${itemData.id}",
+                                        "item_name": "${itemData.name}",
+                                        "item_price": "${itemData.price}",
+                                        "combined_price": "$combinedTotal",
+                                        "qty": "1"
+                                      });
+                                      for (int i = 0; i < addonWithGroups.length; i++) {
+                                        for (int j = 0; j < addonWithGroups[i].addOnGroups.length; j++) {
+                                          if (addonWithGroups[i].addOnGroups[j].selected) {
+                                            await db.insert(SQFLiteTables.tableCartAddon, {
+                                              "cart_id": "$id",
+                                              "addon_id": addonWithGroups[i].addOnGroups[j].addOnItemId
+                                            });
+                                          }
+                                        }
+                                      }
+                                      if (itemData.addon.length > 0) Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        content: Text(
+                                          "Added to cart",
+                                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                        ),
+                                        backgroundColor: primaryColor,
+                                        action: SnackBarAction(
+                                          label: "GO TO CART",
+                                          textColor: Colors.white,
+                                          onPressed: () =>
+                                              Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
+                                        ),
+                                      ));
+                                    },
                                     color: Colors.green,
                                   ),
                                 ],
@@ -214,4 +259,35 @@ bottomSheet({ItemData itemData, BuildContext context, AnimationController animat
                   });
             });
       });
+}
+
+addToCart({@required ItemData itemData}) async {
+  await db.insert(SQFLiteTables.tableCart, {
+    "item_id": "${itemData.id}",
+    "item_name": "${itemData.name}",
+    "item_price": "${itemData.price}",
+    "combined_price": "${itemData.price}",
+    "qty": "1"
+  });
+}
+
+Widget addToCartButton({@required VoidCallback onPressed}) {
+  return SizedBox(
+      width: 73,
+      height: 33,
+      child: FlatButton(
+        child: Text(
+          "ADD",
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+        ),
+        onPressed: onPressed,
+        color: Colors.green[500],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ));
+}
+
+updateCart({ItemData itemData}) async {
+  await db.rawQuery(
+      "update ${SQFLiteTables.tableCart} set qty = ${itemData.quantity} where item_id = ${itemData.id}");
 }

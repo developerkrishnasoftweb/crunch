@@ -4,6 +4,7 @@ import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/carousel.dart';
 import 'package:crunch/Common/classes.dart';
+import 'package:crunch/Common/items_addons.dart';
 import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
@@ -24,12 +25,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   List<Banners> banners = [];
   List<ItemData> items = [];
   List<Category> categories = [];
-  List<AddonWithGroup> addOnGroups = [];
   bool isLoading = false;
-  String addOnsIds = "";
   AnimationController _controller;
-  double price;
-  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -58,8 +55,20 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           });
         }
         if (Config.fromJson(value.data[0]["config"]).syncStatus == "y") {
-          await SQFLiteTables.truncate();
-          await SQFLiteTables.insertData();
+          await SQFLiteTables.truncate(tables: [
+            Tables.RESTAURANTS,
+            Tables.ORDER_TYPE,
+            Tables.CATEGORY,
+            Tables.ITEMS,
+            Tables.VARIATIONS,
+            Tables.ADD_ON_GROUPS,
+            Tables.ATTRIBUTES,
+            Tables.DISCOUNTS,
+            Tables.TAXES,
+            Tables.ADDONS
+          ]).then((value) async {
+            await SQFLiteTables.insertData();
+          });
           setData();
         } else {
           setData();
@@ -118,7 +127,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        key: scaffoldKey,
         appBar: AppBar(
           backgroundColor: primaryColor,
           elevation: 2,
@@ -174,7 +182,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
                                     margin: EdgeInsets.only(
-                                        right: index == 0 ? 0 : 10),
+                                        left: index == 0 ? 0 : 10),
                                     child: FlatButton(
                                       onPressed: () => Navigator.push(
                                           context,
@@ -288,54 +296,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                             .addon
                                                             .length >
                                                         0) {
-                                                      setState(() {
-                                                        price = 0;
-                                                        price = double.parse(
-                                                            items[index].price);
-                                                      });
-                                                      await _getAddOnById(
-                                                          itemData:
-                                                              items[index]);
-                                                      showModalBottomSheet(
-                                                          context: context,
-                                                          builder: (_) {
-                                                            return StatefulBuilder(
-                                                                builder: (BuildContext
-                                                                        context,
-                                                                    StateSetter
-                                                                        state) {
-                                                              return BottomSheet(
-                                                                  onClosing:
-                                                                      () {},
-                                                                  animationController:
-                                                                      _controller,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                                    return Container(
-                                                                        width: size
-                                                                            .width,
-                                                                        color: Colors
-                                                                            .white,
-                                                                        alignment:
-                                                                            Alignment
-                                                                                .center,
-                                                                        child: addOnItems(
-                                                                            item:
-                                                                                items[index],
-                                                                            state: state));
-                                                                  });
-                                                            });
-                                                          });
+                                                      showItemAddons(context: context, animationController: _controller, itemData: items[index]);
                                                     } else {
                                                       if(items[index].variation.length == 0) {
                                                         setState(() {
-                                                          items[index]
-                                                              .addedToCart = true;
+                                                          items[index].addedToCart = true;
                                                         });
-                                                        _addToCart(
-                                                            itemData:
-                                                            items[index]);
+                                                        addToCart(itemData: items[index]);
                                                       } else {
 
                                                       }
@@ -375,284 +342,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               )));
   }
 
-  Widget addToCartButton({@required VoidCallback onPressed}) {
-    return SizedBox(
-        width: 73,
-        height: 33,
-        child: FlatButton(
-          child: Text(
-            "ADD",
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
-          ),
-          onPressed: onPressed,
-          color: Colors.green[500],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        ));
-  }
-
-  Widget removeFromCart({@required VoidCallback onPressed}) {
-    return SizedBox(
-        width: 73,
-        height: 33,
-        child: FlatButton(
-          child: Text(
-            "REMOVE",
-            style: TextStyle(
-                color: Colors.green[500],
-                fontWeight: FontWeight.bold,
-                fontSize: 10),
-          ),
-          onPressed: onPressed,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-              side: BorderSide(color: Colors.green[500])),
-        ));
-  }
-
-  _getAddOnById({ItemData itemData}) async {
-    setState(() {
-      addOnGroups = [];
-      addOnsIds = "";
-    });
-    for (int i = 0; i < itemData.addon.length; i++) {
-      setState(() {
-        (i == (itemData.addon.length - 1))
-            ? addOnsIds += itemData.addon[i]["addon_group_id"] + ""
-            : addOnsIds += itemData.addon[i]["addon_group_id"] + ", ";
-      });
-    }
-    var addOns = await SQFLiteTables.where(
-        table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnsIds);
-    for (int i = 0; i < addOns.length; i++) {
-      var addOnsList = jsonDecode(addOns[i]["addongroupitems"]);
-      List<AddOnGroup> tempAddOnGroup = [];
-      for (int j = 0; j < addOnsList.length; j++) {
-        setState(() {
-          tempAddOnGroup.add(AddOnGroup(
-              active: addOnsList[j]["active"],
-              addOnItemId: addOnsList[j]["addonitemid"],
-              addOnItemPrice: addOnsList[j]["addonitem_price"],
-              addOnName: addOnsList[j]["addonitem_name"],
-              attributes: addOnsList[j]["attributes"],
-              selected: false));
-        });
-      }
-      for (int k = 0; k < itemData.addon.length; k++) {
-        if (itemData.addon[k]['addon_group_id'] == addOns[i]['addongroupid']) {
-          addOnGroups.add(AddonWithGroup(
-              addOnGroups: tempAddOnGroup,
-              addOnGroupName: addOns[i]['addongroupname'],
-              addOnGroupId: addOns[i]['addongroupid'],
-              addOnMaxItemSelection:
-                  itemData.addon[k]['addon_item_selection_max'].toString(),
-              addOnMinItemSelection:
-                  itemData.addon[k]['addon_item_selection_min'].toString()));
-        }
-      }
-    }
-  }
-
-  Widget addOnItems({ItemData item, StateSetter state}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "ADD ONS",
-                style: TextStyle(color: Colors.grey, fontSize: 20),
-              )),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: Text("Variations",
-              style: TextStyle(fontSize: 17, color: primaryColor)),
-        ),
-        Container(
-          height: 60,
-          child: ListView.builder(
-              itemBuilder: (_, index) {
-                return Container(
-                  child: Text("Hello", style: TextStyle(color: Colors.black)),
-                  margin: EdgeInsets.only(right: 10, left: index == 0 ? 10 : 0),
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.grey)
-                  ),
-                );
-              },
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: 10),
-        ),
-        Divider(),
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return Column(children: [
-                Container(
-                  child: Text(addOnGroups[index].addOnGroupName,
-                      style: TextStyle(fontSize: 17, color: primaryColor)),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                ),
-                Divider(
-                  indent: 20,
-                  endIndent: 20,
-                  height: 0,
-                  thickness: 1,
-                ),
-                for (int i = 0; i < addOnGroups[index].addOnGroups.length; i++)
-                  addOnGroups[index].addOnMaxItemSelection != "1"
-                      ? CheckboxListTile(
-                          value: addOnGroups[index].addOnGroups[i].selected,
-                          onChanged: (value) {
-                            if (addOnGroups[index].addOnGroups[i].selected) {
-                              state(() {
-                                addOnGroups[index].addOnGroups[i].selected =
-                                    false;
-                                price = price -
-                                    double.parse(addOnGroups[index]
-                                        .addOnGroups[i]
-                                        .addOnItemPrice);
-                              });
-                            } else {
-                              state(() {
-                                addOnGroups[index].addOnGroups[i].selected =
-                                    true;
-                                price = price +
-                                    double.parse(addOnGroups[index]
-                                        .addOnGroups[i]
-                                        .addOnItemPrice);
-                              });
-                            }
-                          },
-                          subtitle: Text("\u20b9" +
-                              addOnGroups[index].addOnGroups[i].addOnItemPrice),
-                          title:
-                              Text(addOnGroups[index].addOnGroups[i].addOnName))
-                      : RadioListTile<AddOnGroup>(
-                          value: addOnGroups[index].addOnGroups[i],
-                          groupValue: addOnGroups[index].addOnGroup,
-                          controlAffinity: ListTileControlAffinity.trailing,
-                          title:
-                              Text(addOnGroups[index].addOnGroups[i].addOnName),
-                          subtitle: Text("\u20b9" +
-                              addOnGroups[index].addOnGroups[i].addOnItemPrice),
-                          onChanged: (value) {
-                            addOnGroups[index].addOnGroups.forEach((element) {
-                              if (element.selected) {
-                                state(() {
-                                  price = price -
-                                      double.parse(addOnGroups[index]
-                                          .addOnGroups[i]
-                                          .addOnItemPrice);
-                                  element.selected = false;
-                                });
-                              }
-                            });
-                            AddOnGroup selectedAddon = addOnGroups[index]
-                                .addOnGroups
-                                .where((element) => element == value)
-                                .first;
-                            state(() {
-                              addOnGroups[index].addOnGroup = selectedAddon;
-                              selectedAddon.selected = true;
-                              price = price +
-                                  double.parse(selectedAddon.addOnItemPrice);
-                            });
-                          })
-              ]);
-            },
-            physics: BouncingScrollPhysics(),
-            itemCount: addOnGroups.length,
-          ),
-        ),
-        Divider(
-          height: 1,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            children: [
-              Expanded(
-                  child: Text(
-                "Total payable : \u20b9${price.toStringAsFixed(2)}",
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
-              )),
-              FlatButton(
-                child: Text(
-                  "ADD TO CART",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () => _addToCart(itemData: item),
-                color: Colors.green,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  _addToCart({@required ItemData itemData}) async {
-    double combinedTotal = 0;
-    for (int i = 0; i < addOnGroups.length; i++) {
-      for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
-        if (addOnGroups[i].addOnGroups[j].selected) {
-          setState(() {
-            combinedTotal +=
-                double.parse(addOnGroups[i].addOnGroups[j].addOnItemPrice);
-          });
-        }
-      }
-    }
-    var id = await db.insert(SQFLiteTables.tableCart, {
-      "item_id": "${itemData.id}",
-      "item_name": "${itemData.name}",
-      "item_price": "${itemData.price}",
-      "combined_price": "$combinedTotal",
-      "qty": "1"
-    });
-    for (int i = 0; i < addOnGroups.length; i++) {
-      for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
-        if (addOnGroups[i].addOnGroups[j].selected) {
-          await db.insert(SQFLiteTables.tableCartAddon, {
-            "cart_id": "$id",
-            "addon_id": addOnGroups[i].addOnGroups[j].addOnItemId
-          });
-        }
-      }
-    }
-    if (itemData.addon.length > 0) Navigator.pop(context);
-    scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(
-        "Added to cart",
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-      ),
-      backgroundColor: primaryColor,
-      action: SnackBarAction(
-        label: "GO TO CART",
-        textColor: Colors.white,
-        onPressed: () =>
-            Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
-      ),
-    ));
-    // Fluttertoast.showToast(msg: "Added to cart");
-  }
-
-  _updateCart({ItemData itemData}) async {
-    await db.rawQuery(
-        "update ${SQFLiteTables.tableCart} set qty = ${itemData.quantity} where item_id = ${itemData.id}");
-  }
-
   Widget incDecButton({@required ItemData item}) {
     return Container(
         decoration: BoxDecoration(
@@ -667,7 +356,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 setState(() {
                   item.quantity = item.quantity + 1;
                 });
-                _updateCart(itemData: item);
+                updateCart(itemData: item);
               },
               child: Icon(
                 Icons.add,
@@ -687,7 +376,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   setState(() {
                     item.quantity = item.quantity - 1;
                   });
-                  _updateCart(itemData: item);
+                  updateCart(itemData: item);
                 } else if (item.quantity == 1) {
                   var status = await db.delete(SQFLiteTables.tableCart,
                       where: 'item_id = ?', whereArgs: [item.id]);

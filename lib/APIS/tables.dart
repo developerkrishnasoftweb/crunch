@@ -87,7 +87,7 @@ class SQFLiteTables {
         await db.rawQuery("delete from `$tableAddons`");
         return null;
       } else {
-        for(var table in tables) {
+        tables.forEach((table) {
           switch(table) {
             case Tables.RESTAURANTS:
               return db.rawQuery("delete from `$tableRestaurants`");
@@ -129,7 +129,7 @@ class SQFLiteTables {
               return null;
               break;
           }
-        }
+        });
       }
     } catch (_) {
       throw (_);
