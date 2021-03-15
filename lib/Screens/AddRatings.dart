@@ -2,12 +2,10 @@ import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:progress_dialog/progress_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Static/Constant.dart' as cnst;
 import 'new_home.dart';
@@ -20,14 +18,9 @@ class AddRatings extends StatefulWidget {
 class _AddRatingsState extends State<AddRatings> {
   double rate;
   TextEditingController ratecomment = TextEditingController();
-  ProgressDialog pr;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    pr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Please wait..");
   }
 
   @override
@@ -76,25 +69,6 @@ class _AddRatingsState extends State<AddRatings> {
                         color: cnst.appPrimaryMaterialColor.withOpacity(0.1),
                       ),
                       child: Center(
-                        child: RatingBar.builder(
-                          initialRating: 0,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            size: size.width,
-                            color: cnst.appPrimaryMaterialColor,
-                          ),
-                          unratedColor: Colors.grey.withOpacity(0.3),
-                          itemPadding: EdgeInsets.symmetric(horizontal: 2.5),
-                          onRatingUpdate: (rating) {
-                            setState(() {
-                              rate = rating;
-                            });
-                            print(rate);
-                          },
-                          updateOnDrag: true,
-                        ),
                       ),
                     ),
                     SizedBox(
@@ -183,21 +157,16 @@ class _AddRatingsState extends State<AddRatings> {
 
   _addrating() async {
     try {
-      pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String id = prefs.getString(cnst.Session.id);
-        print(id + " " + ratecomment.text + " " + rate.toString() + " ");
         FormData d = FormData.fromMap({
           "api_key": API_Key,
-          "customer_id": id,
+          "customer_id": userdata.id,
           "comment": ratecomment.text,
           "rate": rate,
         });
 
         AppServices.addrate(d).then((data) async {
-          pr.hide();
           if (data.value == "y") {
             print(data.data);
             _toastMesssage(data.message);
@@ -207,12 +176,10 @@ class _AddRatingsState extends State<AddRatings> {
                 (route) => false);
           }
         }, onError: (e) {
-          pr.hide();
           _toastMesssage("Something went wrong.");
         });
       }
     } catch (e) {
-      pr.hide();
       _toastMesssage("No Internet Connection.");
     }
   }

@@ -1,21 +1,20 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Screens/new_home.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:progress_dialog/progress_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../APIS/tables.dart';
 import '../Common/TextField.dart';
 import '../Static/Constant.dart' as cnst;
-import 'Login.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -33,15 +32,11 @@ class _SignUpState extends State<SignUp> {
   StreamSubscription iosSubscription;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String fcm = "";
-  ProgressDialog pr;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    pr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Please wait..");
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
       print("onMessage  $message");
@@ -313,7 +308,6 @@ class _SignUpState extends State<SignUp> {
 
   userSignUp() async {
     try {
-      pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         String filename = _image.path.split("/").last;
@@ -343,20 +337,8 @@ class _SignUpState extends State<SignUp> {
         });
 
         AppServices.CustomerSignUp(d).then((data) async {
-          pr.hide();
           if (data.value == "y") {
-            print(data.data);
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setString(cnst.Session.id, data.data[0]["id"]);
-            prefs.setString(cnst.Session.name, data.data[0]["name"]);
-            prefs.setString(cnst.Session.mobile, data.data[0]["mobile"]);
-            prefs.setString(cnst.Session.email, data.data[0]["email"]);
-            prefs.setString(cnst.Session.password, data.data[0]["password"]);
-            prefs.setString(cnst.Session.image, data.data[0]["image"]);
-            prefs.setString(cnst.Session.status, data.data[0]["status"]);
-            prefs.setString(cnst.Session.gender, data.data[0]["gender"]);
-            print(
-                "id: ${prefs.getString(cnst.Session.id)} gender:${prefs.getString(cnst.Session.gender)}");
+            sharedPreferences.setString('userdata', jsonEncode(data.data[0]));
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => Home()),
@@ -365,12 +347,10 @@ class _SignUpState extends State<SignUp> {
             _toastMesssage(data.message);
           }
         }, onError: (e) {
-          pr.hide();
           _toastMesssage("Something went wrong.");
         });
       }
     } catch (e) {
-      pr.hide();
       _toastMesssage("No Internet Connection.");
     }
   }

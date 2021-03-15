@@ -1,9 +1,8 @@
 import 'dart:convert';
 
+import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sqflite/sqflite.dart';
 
 import '../APIS/tables.dart';
 import '../Common/classes.dart';
@@ -21,7 +20,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   List<AddonWithGroup> addOnGroups = [];
   bool isLoading = false, noDataFound = false;
   String addOnGroupName = "", databasePath = "", addOnsIds = "";
-  Database db;
   AnimationController _controller;
   double price;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -37,13 +35,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     _controller = AnimationController(
       vsync: this,
     );
-    setDb();
-  }
-
-  setDb() async {
-    databasePath = await getDatabasesPath();
-    db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
   }
 
   @override
@@ -422,9 +413,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   _addToCart({@required ItemData itemData}) async {
     double combinedTotal = 0;
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     for (int i = 0; i < addOnGroups.length; i++) {
       for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {

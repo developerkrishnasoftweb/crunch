@@ -3,10 +3,9 @@ import 'dart:convert';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sqflite/sqflite.dart';
 
 import '../APIS/tables.dart';
 import '../Common/classes.dart';
@@ -29,7 +28,6 @@ class _CategoryItemsState extends State<CategoryItems>
   String addOnsIds = "", databasePath = "";
   AnimationController _controller;
   double price;
-  Database db;
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
@@ -38,13 +36,6 @@ class _CategoryItemsState extends State<CategoryItems>
       vsync: this,
     );
     _getCategoryData();
-    setDb();
-  }
-
-  setDb() async {
-    databasePath = await getDatabasesPath();
-    db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
   }
 
   _getCategoryData() async {
@@ -384,9 +375,6 @@ class _CategoryItemsState extends State<CategoryItems>
 
   _addToCart({@required ItemData itemData}) async {
     double combinedTotal = 0;
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     for (int i = 0; i < addOnGroups.length; i++) {
       for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {

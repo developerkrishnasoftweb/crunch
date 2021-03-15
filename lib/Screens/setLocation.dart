@@ -2,7 +2,6 @@ import 'package:crunch/Common/CustomButton.dart';
 import 'package:flutter/material.dart';
 
 import '../Static/Constant.dart' as cnst;
-import 'new_home.dart';
 
 class SetLocation extends StatefulWidget {
   @override

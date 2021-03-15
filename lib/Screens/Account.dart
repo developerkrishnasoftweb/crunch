@@ -1,8 +1,8 @@
 import 'package:crunch/LoginScreen/Login.dart';
 import 'package:crunch/Screens/my_orders.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Static/Constant.dart' as cnst;
 import 'Address.dart';
@@ -14,19 +14,10 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
-  bool visiblemood = false;
-  String name, mobile, email;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getData();
-  }
+  bool visibleMood = false;
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: cnst.appPrimaryMaterialColor,
@@ -42,13 +33,11 @@ class _AccountState extends State<Account> {
           children: [
             ListTile(
               title: Text(
-                name ?? "N/A",
+                userdata?.name ?? "N/A",
                 style: TextStyle(fontSize: 20.0),
               ),
               subtitle: Text(
-                mobile != null && email != null
-                    ? mobile + " - " + email
-                    : "N/A",
+                userdata?.email ?? "N/A",
                 style: TextStyle(fontSize: 13.0),
               ),
               trailing: Text("Edit"),
@@ -105,7 +94,7 @@ class _AccountState extends State<Account> {
                       // visiblemood = !visiblemood;
                     });
                   },
-                  child: visiblemood == true
+                  child: visibleMood == true
                       ? Icon(Icons.arrow_upward)
                       : Icon(Icons.arrow_forward)),
             ),
@@ -121,13 +110,14 @@ class _AccountState extends State<Account> {
               title: Text("Logout"),
               trailing: Icon(Icons.power_settings_new),
               onTap: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.clear().then((value) {
+                await sharedPreferences.clear();
+                userdata = null;
+                if (sharedPreferences.getString('userdata') == null) {
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) => Login()),
                       (route) => false);
-                });
+                }
               },
             )
           ],
@@ -140,7 +130,7 @@ class _AccountState extends State<Account> {
     return ListTile(
       onTap: () {
         setState(() {
-          visiblemood = !visiblemood;
+          visibleMood = !visibleMood;
         });
       },
       contentPadding: EdgeInsets.fromLTRB(12.0, 5.0, 12.0, 5.0),
@@ -152,19 +142,9 @@ class _AccountState extends State<Account> {
         subtitle,
         style: TextStyle(fontSize: 13.0),
       ),
-      trailing: visiblemood == true
+      trailing: visibleMood == true
           ? Icon(Icons.arrow_upward)
           : Icon(Icons.arrow_forward),
     );
-  }
-
-  Future<void> getData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      name = prefs.getString(cnst.Session.name);
-      mobile = prefs.getString(cnst.Session.mobile);
-      email = prefs.getString(cnst.Session.email);
-    });
-    return;
   }
 }

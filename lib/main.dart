@@ -1,58 +1,44 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:crunch/Screens/dashboard.dart';
+import 'package:crunch/Static/global.dart';
+import 'package:crunch/models/config_model.dart';
+import 'package:crunch/models/userdata_models.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'LoginScreen/Login.dart';
 import 'Static/Constant.dart' as cnst;
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  db = await openMyDataBase();
+  sharedPreferences = await SharedPreferences.getInstance();
+  await createTables();
+  bool credential = await getCredentials();
+  runApp(MaterialApp(
+    title: 'Pal Agent',
+    theme: ThemeData(
+      primarySwatch: cnst.appPrimaryMaterialColor,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      fontFamily: "Poppins",
+    ),
+    debugShowCheckedModeBanner: false,
+    home: credential ? Dashboard() : Login(),
+  ));
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  StreamSubscription iosSubscription;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
-  @override
-  void initState() {
-    super.initState();
-    _firebaseMessaging.configure(
-        onMessage: (Map<String, dynamic> message) async {
-      print("onMessage  $message");
-    }, onLaunch: (Map<String, dynamic> message) async {
-      print("onLaunch  $message");
-    }, onResume: (Map<String, dynamic> message) async {
-      print("onResume  $message");
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          accentColor: cnst.appPrimaryMaterialColor,
-          primaryColor: cnst.appPrimaryMaterialColor,
-          appBarTheme:
-              AppBarTheme(iconTheme: IconThemeData(color: Colors.white))),
-      initialRoute: "/",
-      routes: {
-        "/": (context) => Login(),
-        // "/SignUp" : (context) => SignUp(),
-        // "/ForgotPassword" : (context) => Login(),
-        // "/Home" : (context) => Home(),
-        // "/MenuList" : (context) => Menu_list(),
-        // "/Rating" : (context) => Rating(),
-        // "/Category" : (context) => Categorys(),
-        // "/SetLocation" : (context) => SetLocation(),
-        // "/ChangePassword" : (context) => ChangePassword(),
-      },
-    );
+Future<bool> getCredentials() async {
+  final userData = sharedPreferences.getString('userdata');
+  final configData = sharedPreferences.getString('config');
+  if(userData != null) {
+    userdata = Userdata.fromJson(await jsonDecode(userData));
+    if(configData != null) {
+      config = Config.fromJson(jsonDecode(configData));
+    }
+    return true;
+  } else {
+    return false;
   }
 }

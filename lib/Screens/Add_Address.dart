@@ -2,11 +2,10 @@ import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:progress_dialog/progress_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Common/CustomButton.dart';
 import '../Common/TextField.dart';
@@ -25,15 +24,11 @@ class _Add_AddressState extends State<Add_Address> {
   TextEditingController contactPerson = TextEditingController();
   TextEditingController contactNumber = TextEditingController();
   TextEditingController landmark = TextEditingController();
-  ProgressDialog pr;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    pr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Please wait..");
   }
 
   @override
@@ -181,11 +176,8 @@ class _Add_AddressState extends State<Add_Address> {
 
   _addAddress() async {
     try {
-      pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String id = prefs.getString(cnst.Session.id);
         FormData d = FormData.fromMap({
           "api_key": API_Key,
           "address1": address1.text,
@@ -195,25 +187,18 @@ class _Add_AddressState extends State<Add_Address> {
           "contact_person": contactPerson.text,
           "contact_number": contactNumber.text,
           "landmark": landmark.text,
-          "customer_id": id,
+          "customer_id": userdata.id,
         });
         AppServices.AddAddress(d).then((data) async {
-          pr.hide();
           if (data.value == "y") {
-            print(data.data);
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setString("addId", data.data[0]["id"]);
-            print("id: ${prefs.getString(cnst.Session.id)} ");
             _toastMesssage(data.message);
             Navigator.pop(context);
           }
         }, onError: (e) {
-          pr.hide();
           _toastMesssage("Something went wrong.");
         });
       }
     } catch (e) {
-      pr.hide();
       _toastMesssage("No Internet Connection.");
     }
   }

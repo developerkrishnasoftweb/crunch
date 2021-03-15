@@ -6,11 +6,11 @@ import 'package:crunch/Common/carousel.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
+import 'package:crunch/Static/global.dart';
+import 'package:crunch/models/banners_model.dart';
+import 'package:crunch/models/config_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'Category.dart';
 import 'category_items.dart';
@@ -33,7 +33,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    createTables();
+    getBanners();
     _controller = AnimationController(
       vsync: this,
     );
@@ -48,23 +48,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   getBanners() async {
     setLoading(true);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
     await AppServices.getSlider().then((value) async {
-      String databasePath = await getDatabasesPath();
-      Database db = await openDatabase(databasePath + 'myDb.db',
-          version: 1, onCreate: (Database db, int version) async {});
       if (value.value == "y") {
-        await prefs.setString("config", jsonEncode(value.data[0]["config"]));
+        await sharedPreferences.setString("config", jsonEncode(value.data[0]["config"]));
         for (int i = 0; i < value.data[0]["banners"].length; i++) {
           setState(() {
-            banners.add(Banners(
-                title: value.data[0]["banners"][i]["title"],
-                image: Image_URL + value.data[0]["banners"][i]["image"],
-                id: value.data[0]["banners"][i]["id"]));
+            banners.add(Banners.fromJson(value.data[0]["banners"][i]));
           });
         }
-        if (value.data[0]["config"]["sync_status"] == "y") {
-          await SQFLiteTables.insertData(db: db);
+        if (Config.fromJson(value.data[0]["config"]).syncStatus == "y") {
+          await SQFLiteTables.truncate();
+          await SQFLiteTables.insertData();
           setData();
         } else {
           setData();
@@ -76,33 +70,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
-  createTables() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var isTablesCreated = sharedPreferences.getBool("isTablesCreated") ?? false;
-    if (isTablesCreated) {
-      getBanners();
-    } else {
-      String databasePath = await getDatabasesPath();
-      Database db = await openDatabase(databasePath + 'myDb.db',
-          version: 1, onCreate: (Database db, int version) async {});
-      await SQFLiteTables.createTables(db: db).then((value) async {
-        if (value) {
-          setLoading(true);
-          await SQFLiteTables.insertData(db: db);
-          setData();
-          getBanners();
-          setLoading(false);
-        }
-      });
-      sharedPreferences.setBool("isTablesCreated", true);
-    }
-  }
-
   setData() async {
-    setState(() {
-      items = [];
-      categories = [];
-    });
+    items.clear();
+    categories.clear();
     await SQFLiteTables.getData(table: Tables.CATEGORY).then((value) {
       for (int i = 0; i < value.length; i++) {
         setState(() {
@@ -168,7 +138,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       child: Carousel(
                         items: banners.map((e) {
                           return CarouselItems(
-                            image: e.image,
+                            image: Image_URL + e.image,
                           );
                         }).toList(),
                         width: size.width,
@@ -606,9 +576,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   _addToCart({@required ItemData itemData}) async {
     double combinedTotal = 0;
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     for (int i = 0; i < addOnGroups.length; i++) {
       for (int j = 0; j < addOnGroups[i].addOnGroups.length; j++) {
         if (addOnGroups[i].addOnGroups[j].selected) {
@@ -654,9 +621,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   _updateCart({ItemData itemData}) async {
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     await db.rawQuery(
         "update ${SQFLiteTables.tableCart} set qty = ${itemData.quantity} where item_id = ${itemData.id}");
   }
@@ -691,9 +655,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             ),
             GestureDetector(
               onTap: () async {
-                String databasePath = await getDatabasesPath();
-                Database db = await openDatabase(databasePath + 'myDb.db',
-                    version: 1, onCreate: (Database db, int version) async {});
                 if (item.quantity != 1) {
                   setState(() {
                     item.quantity = item.quantity - 1;

@@ -1,17 +1,14 @@
-import 'dart:convert';
-
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/my_orders.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
+import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'Add_Address.dart';
 
@@ -36,9 +33,7 @@ class _CheckoutState extends State<Checkout> {
   Addresses address;
   // static const platform = const MethodChannel("razorpay_flutter");
   Razorpay _razorpay;
-  String mobile = "", email = "";
   double sgst = 0, cgst = 0, taxTotal = 0, total = 0, grandTotal = 0.0;
-  var config;
   @override
   void initState() {
     super.initState();
@@ -58,13 +53,13 @@ class _CheckoutState extends State<Checkout> {
 
   void openCheckout() async {
     var options = {
-      'key': config['razorpay_key'],
+      'key': config.razorpayKey,
       'amount': grandTotal.ceil() * 100,
       'name': 'Crunch',
       'description': 'Fresh Foods',
       'image':
           'https://firebasestorage.googleapis.com/v0/b/mytestApp.appspot.com/o/images%2FpZm8daajsIS4LvqBYTiWiuLIgmE2?alt=media&token=3kuli4cd-dc45-7845-b87d-5c4acc7da3c2',
-      'prefill': {'contact': mobile, 'email': email},
+      'prefill': {'contact': userdata.mobile, 'email': userdata.email},
       'external': {
         'wallets': ['paytm']
       }
@@ -78,9 +73,6 @@ class _CheckoutState extends State<Checkout> {
   }
 
   clearCart() async {
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     await db.rawQuery("delete from ${SQFLiteTables.tableCart}");
     Navigator.pop(context);
     Navigator.push(
@@ -88,13 +80,11 @@ class _CheckoutState extends State<Checkout> {
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String customerId = prefs.getString(cnst.Session.id);
     FormData formData = FormData.fromMap({
       "address_id": address.id,
-      "customer_id": customerId,
-      "delivery_charges": config["delivery_charge"],
-      "packing_charges": config["packing_charge"],
+      "customer_id": userdata.id,
+      "delivery_charges": config.deliveryCharge,
+      "packing_charges": config.packingCharge,
       "discount_total": "0",
       "description": "",
       "tax_total": taxTotal,
@@ -125,20 +115,17 @@ class _CheckoutState extends State<Checkout> {
   }
 
   void getUserData() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     setState(() {
-      config = jsonDecode(sharedPreferences.getString("config"));
-      mobile = sharedPreferences.getString(cnst.Session.mobile);
-      email = sharedPreferences.getString(cnst.Session.email);
-      sgst = double.parse(config["sgst"]);
-      cgst = double.parse(config["cgst"]);
+      sgst = double.parse(config.sgst);
+      cgst = double.parse(config.cgst);
       taxTotal = widget.grandTotal * (sgst + cgst) / 100;
       total = taxTotal + widget.grandTotal;
       grandTotal =
           (((widget.grandTotal + (widget.grandTotal * (cgst + sgst)) / 100) -
                   widget.couponAmount) +
-              (double.parse(config["packing_charge"].toString() ?? "0") +
-                  double.parse(config["delivery_charge"].toString() ?? "0")));
+              (double.parse(config.packingCharge ?? "0") +
+                  double.parse(config.deliveryCharge ?? "0")));
     });
   }
 
@@ -157,8 +144,8 @@ class _CheckoutState extends State<Checkout> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildRow("CART VALUE", widget.grandTotal.toStringAsFixed(2)),
-          buildRow("PACKING CHARGES", "+ " + config["packing_charge"] ?? "0"),
-          buildRow("DELIVERY CHARGES", "+ " + config["delivery_charge"] ?? "0"),
+          buildRow("PACKING CHARGES", "+ " + config.packingCharge ?? "0"),
+          buildRow("DELIVERY CHARGES", "+ " + config.deliveryCharge ?? "0"),
           buildRow("SGST($sgst%)",
               "+${((widget.grandTotal * sgst) / 100).toStringAsFixed(2)}"),
           buildRow("CGST($cgst%)",
@@ -297,11 +284,9 @@ class _CheckoutState extends State<Checkout> {
   }
 
   getAddresses() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String id = prefs.getString(cnst.Session.id);
     FormData d = FormData.fromMap({
       "api_key": "0imfnc8mVLWwsAawjYr4Rx",
-      "customer_id": id,
+      "customer_id": userdata.id,
     });
     setState(() {
       isLoading = true;
@@ -342,8 +327,6 @@ class _CheckoutState extends State<Checkout> {
     setState(() {
       items = [];
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String customerId = prefs.getString(cnst.Session.id);
     String addOnIds = "";
     for (int i = 0; i < widget.cartItems.length; i++) {
       var cartData = await SQFLiteTables.where(
@@ -377,9 +360,9 @@ class _CheckoutState extends State<Checkout> {
     } else {
       FormData formData = FormData.fromMap({
         "address_id": address.id,
-        "customer_id": customerId,
-        "delivery_charges": config["delivery_charge"],
-        "packing_charges": config["packing_charge"],
+        "customer_id": userdata.id,
+        "delivery_charges": config.deliveryCharge,
+        "packing_charges": config.packingCharge,
         "discount_total": "0",
         "description": "",
         "tax_total": taxTotal,

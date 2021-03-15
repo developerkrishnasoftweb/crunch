@@ -4,10 +4,10 @@ import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'checkout.dart';
 
@@ -333,9 +333,6 @@ class _CartState extends State<Cart> {
   }
 
   _removeFromCart({String cartId, CartData items}) async {
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     var status = await db
         .delete(SQFLiteTables.tableCart, where: 'id = ?', whereArgs: [cartId]);
     if (status == 1) {

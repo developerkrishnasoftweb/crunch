@@ -24,8 +24,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  smooth_star_rating: ^1.1.1
-  flutter_rating_bar: ^3.2.0+1
   carousel_slider: ^2.3.1
   dio: ^3.0.10
   http: ^0.12.2
@@ -33,7 +31,6 @@ dependencies:
   firebase_messaging: ^7.0.3
   fluttertoast: ^7.0.4
   shared_preferences:
-  progress_dialog: ^1.2.4
   sqflite:
   razorpay_flutter: ^1.2.3
   intl: ^0.16.1

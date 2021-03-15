@@ -1,12 +1,12 @@
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Screens/track_order.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
+import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MyOrders extends StatefulWidget {
   @override
@@ -37,11 +37,9 @@ class _MyOrdersState extends State<MyOrders> {
   getOrders() async {
     orderDetails.clear();
     setLoading(true);
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String customerId = sharedPreferences.getString(cnst.Session.id);
     FormData formData = FormData.fromMap({
       "api_key": "0imfnc8mVLWwsAawjYr4Rx",
-      "customer_id": customerId,
+      "customer_id": userdata.id,
     });
     await AppServices.orders(formData).then((value) {
       if (value.value == "true") {

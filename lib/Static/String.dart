@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class AppStringKeys {
 
   static const String access_token = "04fc7877ce7e5f771328b2a1434cb040ad1b2c0f";

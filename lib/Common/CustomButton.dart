@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../Static/Constant.dart' as cnst;
 
 class CustomButton extends StatefulWidget {
   String title;

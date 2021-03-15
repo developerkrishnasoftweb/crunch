@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:crunch/Screens/EditAddress.dart';
 import 'package:crunch/Screens/checkout.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../APIS/AppServices.dart';
 import '../Static/Constant.dart' as cnst;
@@ -141,11 +141,9 @@ class _AddressState extends State<Address> {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String id = prefs.getString(cnst.Session.id);
         FormData d = FormData.fromMap({
           "api_key": "0imfnc8mVLWwsAawjYr4Rx",
-          "customer_id": id,
+          "customer_id": userdata.id,
         });
         setState(() {
           isLoading = true;

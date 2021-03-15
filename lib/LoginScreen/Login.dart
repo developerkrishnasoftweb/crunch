@@ -1,20 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
 import 'package:crunch/LoginScreen/SignUp.dart';
-import 'package:crunch/Screens/ChangePassword.dart';
 import 'package:crunch/Screens/dashboard.dart';
+import 'package:crunch/Static/global.dart';
+import 'package:crunch/main.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:progress_dialog/progress_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../APIS/AppServices.dart';
 import '../APIS/tables.dart';
 import '../Static/Constant.dart' as cnst;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -31,7 +30,6 @@ class _LoginState extends State<Login> {
   StreamSubscription iosSubscription;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String fcm = "";
-  ProgressDialog pr;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       new FlutterLocalNotificationsPlugin();
 
@@ -43,10 +41,6 @@ class _LoginState extends State<Login> {
     var ios = new IOSInitializationSettings();
     var platform = new InitializationSettings(android: android, iOS: ios);
     flutterLocalNotificationsPlugin.initialize(platform);
-
-    pr = ProgressDialog(context,
-        type: ProgressDialogType.Normal, isDismissible: false);
-    pr.style(message: "Please wait..");
     _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
       showNotification(message);
@@ -87,19 +81,6 @@ class _LoginState extends State<Login> {
         fcm = token;
       });
     });
-    getLocal();
-  }
-
-  getLocal() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String id = prefs.getString(cnst.Session.id);
-
-    if (id != null) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
-          (route) => false);
-    }
   }
 
   @override
@@ -186,9 +167,7 @@ class _LoginState extends State<Login> {
                 CustomButton(
                     title: "LOGIN",
                     btncolor: cnst.appPrimaryMaterialColor,
-                    ontap: () {
-                      LoginValidation();
-                    }),
+                    ontap: LoginValidation),
                 SizedBox(
                   height: 30.0,
                 ),
@@ -220,48 +199,35 @@ class _LoginState extends State<Login> {
     } else if (Password.text == "") {
       _toastMesssage("please Enter your Password");
     } else {
-      LoginCustomer();
+      loginCustomer();
     }
   }
 
-  LoginCustomer() async {
+  loginCustomer() async {
     try {
-      pr.show();
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        FormData d = FormData.fromMap({
+        FormData data = FormData.fromMap({
           "api_key": API_Key,
           "username": Email.text,
           "password": Password.text,
           "token": fcm,
         });
-
-        AppServices.CustomerLogin(d).then((data) async {
-          pr.hide();
+        await AppServices.CustomerLogin(data).then((data) async {
           if (data.value == "y") {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setString(cnst.Session.id, data.data[0]["id"]);
-            prefs.setString(cnst.Session.name, data.data[0]["name"]);
-            prefs.setString(cnst.Session.mobile, data.data[0]["mobile"]);
-            prefs.setString(cnst.Session.email, data.data[0]["email"]);
-            prefs.setString(cnst.Session.password, data.data[0]["password"]);
-            prefs.setString(cnst.Session.image, data.data[0]["image"]);
-            prefs.setString(cnst.Session.status, data.data[0]["status"]);
-            prefs.setString(cnst.Session.gender, data.data[0]["gender"]);
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => Dashboard()),
-                (route) => false);
+            await sharedPreferences.setString(
+                'userdata', jsonEncode(data.data[0]));
+            await getCredentials();
+            if (userdata != null) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => Dashboard()));
+            }
           } else {
             _toastMesssage("Invalid username or password");
           }
-        }, onError: (e) {
-          pr.hide();
         });
       }
-    } catch (e) {
-      pr.hide();
-    }
+    } catch (e) {}
   }
 
   _toastMesssage(String message) {

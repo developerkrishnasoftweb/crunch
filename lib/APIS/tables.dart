@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-import 'package:sqflite/sqflite.dart';
+import 'package:crunch/Static/global.dart';
 
 import 'AppServices.dart';
 
@@ -31,7 +30,8 @@ class SQFLiteTables {
       tableCartAddon = "cart_addon",
       tableAddons = "addons",
       tableTaxes = "taxes";
-  static Future<bool> createTables({Database db}) async {
+
+  static Future<bool> createTables() async {
     await db.execute("drop table if exists `$tableRestaurants`");
     await db.execute("drop table if exists `$tableOrderType`");
     await db.execute("drop table if exists `$tableCategory`");
@@ -70,7 +70,73 @@ class SQFLiteTables {
     return true;
   }
 
-  static Future<void> insertData({Database db}) async {
+  static Future<List<Map<String, dynamic>>> truncate({List<Tables> tables}) async {
+    try {
+      if (tables == null) {
+        await db.rawQuery("delete from `$tableRestaurants`");
+        await db.rawQuery("delete from `$tableAddOnGroups`");
+        await db.rawQuery("delete from `$tableAttributes`");
+        await db.rawQuery("delete from `$tableCategory`");
+        await db.rawQuery("delete from `$tableDiscounts`");
+        await db.rawQuery("delete from `$tableItems`");
+        await db.rawQuery("delete from `$tableOrderType`");
+        await db.rawQuery("delete from `$tableTaxes`");
+        await db.rawQuery("delete from `$tableVariations`");
+        await db.rawQuery("delete from `$tableCart`");
+        await db.rawQuery("delete from `$tableCartAddon`");
+        await db.rawQuery("delete from `$tableAddons`");
+        return null;
+      } else {
+        for(var table in tables) {
+          switch(table) {
+            case Tables.RESTAURANTS:
+              return db.rawQuery("delete from `$tableRestaurants`");
+              break;
+            case Tables.ADD_ON_GROUPS:
+              return db.rawQuery("delete from `$tableAddOnGroups`");
+              break;
+            case Tables.ATTRIBUTES:
+              return db.rawQuery("delete from `$tableAttributes`");
+              break;
+            case Tables.CATEGORY:
+              return db.rawQuery("delete from `$tableCategory`");
+              break;
+            case Tables.DISCOUNTS:
+              return db.rawQuery("delete from `$tableDiscounts`");
+              break;
+            case Tables.ITEMS:
+              return db.rawQuery("delete from `$tableItems`");
+              break;
+            case Tables.ORDER_TYPE:
+              return db.rawQuery("delete from `$tableOrderType`");
+              break;
+            case Tables.TAXES:
+              return db.rawQuery("delete from `$tableTaxes`");
+              break;
+            case Tables.VARIATIONS:
+              return db.rawQuery("delete from `$tableVariations`");
+              break;
+            case Tables.CART:
+              return db.rawQuery("delete from `$tableCart`");
+              break;
+            case Tables.CART_ADDON:
+              return db.rawQuery("delete from `$tableCartAddon`");
+              break;
+            case Tables.ADDONS:
+              return db.rawQuery("delete from `$tableAddons`");
+              break;
+            default:
+              return null;
+              break;
+          }
+        }
+      }
+    } catch (_) {
+      throw (_);
+    }
+  }
+
+  static Future<void> insertData() async {
     await AppServices.fetchMenu().then((menuList) async {
       try {
         if (menuList.response == "1") {
@@ -124,9 +190,6 @@ class SQFLiteTables {
   }
 
   static Future<List<Map<String, dynamic>>> getData({Tables table}) async {
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     switch (table) {
       case Tables.RESTAURANTS:
         return db.rawQuery("select * from `$tableRestaurants`");
@@ -172,45 +235,42 @@ class SQFLiteTables {
 
   static Future<List<Map<String, dynamic>>> where(
       {Tables table, String column, String value}) async {
-    String databasePath = await getDatabasesPath();
-    Database db = await openDatabase(databasePath + 'myDb.db',
-        version: 1, onCreate: (Database db, int version) async {});
     try {
       switch (table) {
         case Tables.RESTAURANTS:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableRestaurants` where $column in ($value)");
           break;
         case Tables.ADD_ON_GROUPS:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableAddOnGroups` where $column in ($value)");
           break;
         case Tables.ATTRIBUTES:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableAttributes` where $column in ($value)");
           break;
         case Tables.CATEGORY:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableCategory` where $column in ($value)");
           break;
         case Tables.DISCOUNTS:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableDiscounts` where $column in ($value)");
           break;
         case Tables.ITEMS:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableItems` where $column in ($value)");
           break;
         case Tables.ORDER_TYPE:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableOrderType` where $column in ($value)");
           break;
         case Tables.TAXES:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableTaxes` where $column in ($value)");
           break;
         case Tables.VARIATIONS:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableVariations` where $column in ($value)");
           break;
         case Tables.CART_ADDON:
@@ -218,11 +278,11 @@ class SQFLiteTables {
               "select * from `$tableCartAddon` where $column in ($value)");
           break;
         case Tables.CART:
-          return db
+          return await db
               .rawQuery("select * from `$tableCart` where $column in ($value)");
           break;
         case Tables.ADDONS:
-          return db.rawQuery(
+          return await db.rawQuery(
               "select * from `$tableAddons` where $column in ($value)");
           break;
         default:

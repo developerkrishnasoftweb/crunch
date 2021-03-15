@@ -27,11 +27,6 @@ class ItemData {
       this.variation});
 }
 
-class Banners {
-  final String id, title, image;
-  Banners({this.image, this.id, this.title});
-}
-
 class Category {
   final String id, name, image, active, rank, parentCategoryId, timings;
   Category(

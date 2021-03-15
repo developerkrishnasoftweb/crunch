@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Screens/my_orders.dart';
 import 'package:crunch/Static/Constant.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class TrackOrder extends StatefulWidget {
   final OrderDetails orderDetails;
@@ -52,11 +51,9 @@ class _TrackOrderState extends State<TrackOrder> {
         setLoading(false);
       }
     });
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var config = await jsonDecode(sharedPreferences.getString("config"));
     setState(() {
-      deliveryTime = double.parse(config["delivery_time"] != null
-              ? config["delivery_time"].toString()
+      deliveryTime = double.parse(config.deliveryTime != null
+              ? config.deliveryTime.toString()
               : "0")
           .round();
       created = DateTime.parse(widget.orderDetails.created)
