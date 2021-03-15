@@ -1,0 +1,217 @@
+import 'dart:convert';
+
+import 'package:crunch/APIS/tables.dart';
+import 'package:crunch/Screens/new_home.dart';
+import 'package:crunch/Static/Constant.dart';
+import 'package:flutter/material.dart';
+
+import 'classes.dart';
+
+bottomSheet({ItemData itemData, BuildContext context, AnimationController animationController}) async {
+  List<AddonWithGroup> addonWithGroups = [];
+  String addOnIds = "";
+  double price = 0;
+  for (int i = 0; i < itemData.addon.length; i++) {
+    (i == (itemData.addon.length - 1))
+        ? addOnIds += itemData.addon[i]["addon_group_id"] + ""
+        : addOnIds += itemData.addon[i]["addon_group_id"] + ", ";
+  }
+  var addOns = await SQFLiteTables.where(
+      table: Tables.ADD_ON_GROUPS, column: "addongroupid", value: addOnIds);
+  for (int i = 0; i < addOns.length; i++) {
+    var addOnsList = jsonDecode(addOns[i]["addongroupitems"]);
+    List<AddOnGroup> tempAddOnGroup = [];
+    for (int j = 0; j < addOnsList.length; j++) {
+      tempAddOnGroup.add(AddOnGroup(
+          active: addOnsList[j]["active"],
+          addOnItemId: addOnsList[j]["addonitemid"],
+          addOnItemPrice: addOnsList[j]["addonitem_price"],
+          addOnName: addOnsList[j]["addonitem_name"],
+          attributes: addOnsList[j]["attributes"],
+          selected: false));
+    }
+    for (int k = 0; k < itemData.addon.length; k++) {
+      if (itemData.addon[k]['addon_group_id'] == addOns[i]['addongroupid']) {
+        addonWithGroups.add(AddonWithGroup(
+            addOnGroups: tempAddOnGroup,
+            addOnGroupName: addOns[i]['addongroupname'],
+            addOnGroupId: addOns[i]['addongroupid'],
+            addOnMaxItemSelection:
+            itemData.addon[k]['addon_item_selection_max'].toString(),
+            addOnMinItemSelection:
+            itemData.addon[k]['addon_item_selection_min'].toString()));
+      }
+    }
+  }
+  showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return StatefulBuilder(
+            builder: (BuildContext
+            context,
+                StateSetter
+                state) {
+              return BottomSheet(
+                  onClosing:
+                      () {},
+                  animationController:
+                  animationController,
+                  builder:
+                      (BuildContext
+                  context) {
+                    return Container(
+                        color: Colors
+                            .white,
+                        alignment:
+                        Alignment
+                            .center,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "ADD ONS",
+                                    style: TextStyle(color: Colors.grey, fontSize: 20),
+                                  )),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                              child: Text("Variations",
+                                  style: TextStyle(fontSize: 17, color: primaryColor)),
+                            ),
+                            Container(
+                              height: 60,
+                              child: ListView.builder(
+                                  itemBuilder: (_, index) {
+                                    return Container(
+                                      child: Text("Hello", style: TextStyle(color: Colors.black)),
+                                      margin: EdgeInsets.only(right: 10, left: index == 0 ? 10 : 0),
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(color: Colors.grey)
+                                      ),
+                                    );
+                                  },
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  itemCount: 10),
+                            ),
+                            Divider(),
+                            Expanded(
+                              child: ListView.builder(
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Column(children: [
+                                    Container(
+                                      child: Text(addonWithGroups[index].addOnGroupName,
+                                          style: TextStyle(fontSize: 17, color: primaryColor)),
+                                      alignment: Alignment.centerLeft,
+                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                                    ),
+                                    Divider(
+                                      indent: 20,
+                                      endIndent: 20,
+                                      height: 0,
+                                      thickness: 1,
+                                    ),
+                                    for (int i = 0; i < addonWithGroups[index].addOnGroups.length; i++)
+                                      addonWithGroups[index].addOnMaxItemSelection != "1"
+                                          ? CheckboxListTile(
+                                          value: addonWithGroups[index].addOnGroups[i].selected,
+                                          onChanged: (value) {
+                                            if (addonWithGroups[index].addOnGroups[i].selected) {
+                                              state(() {
+                                                addonWithGroups[index].addOnGroups[i].selected =
+                                                false;
+                                                price = price -
+                                                    double.parse(addonWithGroups[index]
+                                                        .addOnGroups[i]
+                                                        .addOnItemPrice);
+                                              });
+                                            } else {
+                                              state(() {
+                                                addonWithGroups[index].addOnGroups[i].selected =
+                                                true;
+                                                price = price +
+                                                    double.parse(addonWithGroups[index]
+                                                        .addOnGroups[i]
+                                                        .addOnItemPrice);
+                                              });
+                                            }
+                                          },
+                                          subtitle: Text("\u20b9" +
+                                              addonWithGroups[index].addOnGroups[i].addOnItemPrice),
+                                          title:
+                                          Text(addonWithGroups[index].addOnGroups[i].addOnName))
+                                          : RadioListTile<AddOnGroup>(
+                                          value: addonWithGroups[index].addOnGroups[i],
+                                          groupValue: addonWithGroups[index].addOnGroup,
+                                          controlAffinity: ListTileControlAffinity.trailing,
+                                          title:
+                                          Text(addonWithGroups[index].addOnGroups[i].addOnName),
+                                          subtitle: Text("\u20b9" +
+                                              addonWithGroups[index].addOnGroups[i].addOnItemPrice),
+                                          onChanged: (value) {
+                                            addonWithGroups[index].addOnGroups.forEach((element) {
+                                              if (element.selected) {
+                                                state(() {
+                                                  price = price -
+                                                      double.parse(addonWithGroups[index]
+                                                          .addOnGroups[i]
+                                                          .addOnItemPrice);
+                                                  element.selected = false;
+                                                });
+                                              }
+                                            });
+                                            AddOnGroup selectedAddon = addonWithGroups[index]
+                                                .addOnGroups
+                                                .where((element) => element == value)
+                                                .first;
+                                            state(() {
+                                              addonWithGroups[index].addOnGroup = selectedAddon;
+                                              selectedAddon.selected = true;
+                                              price = price +
+                                                  double.parse(selectedAddon.addOnItemPrice);
+                                            });
+                                          })
+                                  ]);
+                                },
+                                physics: BouncingScrollPhysics(),
+                                itemCount: addonWithGroups.length,
+                              ),
+                            ),
+                            Divider(
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: Text(
+                                        "Total payable : \u20b9${price.toStringAsFixed(2)}",
+                                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                                        overflow: TextOverflow.ellipsis,
+                                      )),
+                                  FlatButton(
+                                    child: Text(
+                                      "ADD TO CART",
+                                      style: TextStyle(
+                                          color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                    // onPressed: () => _addToCart(itemData: itemData),
+                                    color: Colors.green,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ));
+                  });
+            });
+      });
+}

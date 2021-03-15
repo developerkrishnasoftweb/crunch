@@ -63,6 +63,11 @@ class _CategoryItemsState extends State<CategoryItems>
 
   @override
   Widget build(BuildContext context) {
+    // items.forEach((element) {
+    //   element.variation.forEach((element) {
+    //     print(element);
+    //   });
+    // });
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       key: scaffoldKey,

@@ -50,7 +50,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     setLoading(true);
     await AppServices.getSlider().then((value) async {
       if (value.value == "y") {
-        await sharedPreferences.setString("config", jsonEncode(value.data[0]["config"]));
+        await sharedPreferences.setString(
+            "config", jsonEncode(value.data[0]["config"]));
         for (int i = 0; i < value.data[0]["banners"].length; i++) {
           setState(() {
             banners.add(Banners.fromJson(value.data[0]["banners"][i]));
@@ -327,13 +328,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                                             });
                                                           });
                                                     } else {
-                                                      setState(() {
-                                                        items[index]
-                                                            .addedToCart = true;
-                                                      });
-                                                      _addToCart(
-                                                          itemData:
-                                                              items[index]);
+                                                      if(items[index].variation.length == 0) {
+                                                        setState(() {
+                                                          items[index]
+                                                              .addedToCart = true;
+                                                        });
+                                                        _addToCart(
+                                                            itemData:
+                                                            items[index]);
+                                                      } else {
+
+                                                      }
                                                     }
                                                   })
                                           ],
@@ -358,8 +363,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       height: 30,
                       width: 30,
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation(
-                            primaryColor),
+                        valueColor: AlwaysStoppedAnimation(primaryColor),
                       )),
                   SizedBox(height: 10),
                   Text(
@@ -451,6 +455,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   Widget addOnItems({ItemData item, StateSetter state}) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.all(10),
@@ -461,6 +466,30 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.grey, fontSize: 20),
               )),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          child: Text("Variations",
+              style: TextStyle(fontSize: 17, color: primaryColor)),
+        ),
+        Container(
+          height: 60,
+          child: ListView.builder(
+              itemBuilder: (_, index) {
+                return Container(
+                  child: Text("Hello", style: TextStyle(color: Colors.black)),
+                  margin: EdgeInsets.only(right: 10, left: index == 0 ? 10 : 0),
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: Colors.grey)
+                  ),
+                );
+              },
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: 10),
+        ),
         Divider(),
         Expanded(
           child: ListView.builder(
@@ -468,8 +497,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               return Column(children: [
                 Container(
                   child: Text(addOnGroups[index].addOnGroupName,
-                      style: TextStyle(
-                          fontSize: 17, color: primaryColor)),
+                      style: TextStyle(fontSize: 17, color: primaryColor)),
                   alignment: Alignment.centerLeft,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 ),
