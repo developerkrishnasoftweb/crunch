@@ -4,8 +4,6 @@ import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/carousel.dart';
 import 'package:crunch/Common/classes.dart';
-import 'package:crunch/Common/items_addons.dart';
-import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Screens/widgets/item_card.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
@@ -83,8 +85,8 @@ class _CheckoutState extends State<Checkout> {
     FormData formData = FormData.fromMap({
       "address_id": address.id,
       "customer_id": userdata.id,
-      "delivery_charges": config.deliveryCharge,
-      "packing_charges": config.packingCharge,
+      "delivery_charges": config.deliveryCharge ?? "0",
+      "packing_charges": config.packingCharge ?? "0",
       "discount_total": "0",
       "description": "",
       "tax_total": taxTotal,
@@ -117,8 +119,8 @@ class _CheckoutState extends State<Checkout> {
   void getUserData() async {
 
     setState(() {
-      sgst = double.parse(config.sgst);
-      cgst = double.parse(config.cgst);
+      sgst = double.parse(config.sgst ?? "0");
+      cgst = double.parse(config.cgst ?? "0");
       taxTotal = widget.grandTotal * (sgst + cgst) / 100;
       total = taxTotal + widget.grandTotal;
       grandTotal =

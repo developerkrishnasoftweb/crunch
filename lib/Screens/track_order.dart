@@ -6,10 +6,13 @@ import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class TrackOrder extends StatefulWidget {
   final OrderDetails orderDetails;
+
   TrackOrder({@required this.orderDetails});
+
   @override
   _TrackOrderState createState() => _TrackOrderState();
 }
@@ -20,6 +23,8 @@ class _TrackOrderState extends State<TrackOrder> {
   int deliveryTime = 0;
   DateTime created;
   Duration diff = Duration();
+  Timer timer;
+
   setLoading(bool status) {
     setState(() {
       isLoading = status;
@@ -30,6 +35,9 @@ class _TrackOrderState extends State<TrackOrder> {
   void initState() {
     super.initState();
     trackOrder();
+    timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      trackOrder();
+    });
   }
 
   trackOrder() async {
@@ -39,26 +47,38 @@ class _TrackOrderState extends State<TrackOrder> {
       "order_id": widget.orderDetails.id
     })).then((value) {
       if (value.value == "true") {
-        setState(() {
-          statusCode =
-              getStatusCode(value.data[0]["orders"]["detail"]["order_status"]);
-        });
+        if (getStatusCode(value.data[0]["orders"]["detail"]["order_status"]) ==
+            null) {
+          Fluttertoast.showToast(
+              msg: "Unfortunately, your order has been cancelled");
+          Navigator.pop(context);
+        }
+        if(this.mounted) {
+          setState(() {
+            statusCode =
+                getStatusCode(value.data[0]["orders"]["detail"]["order_status"]);
+          });
+        }
         setLoading(false);
       } else {
-        setState(() {
-          statusCode = null;
-        });
+        if(this.mounted) {
+          setState(() {
+            statusCode = null;
+          });
+        }
         setLoading(false);
       }
     });
-    setState(() {
-      deliveryTime = double.parse(config.deliveryTime != null
-              ? config.deliveryTime.toString()
-              : "0")
-          .round();
-      created = DateTime.parse(widget.orderDetails.created)
-          .add(Duration(minutes: deliveryTime));
-    });
+    if(this.mounted) {
+      setState(() {
+        deliveryTime = double.parse(config.deliveryTime != null
+            ? config.deliveryTime.toString()
+            : "0")
+            .round();
+        created = DateTime.parse(widget.orderDetails.created)
+            .add(Duration(minutes: deliveryTime));
+      });
+    }
     getDiff();
   }
 
@@ -80,7 +100,7 @@ class _TrackOrderState extends State<TrackOrder> {
         return 5;
         break;
       default:
-        return 1;
+        return null;
         break;
     }
   }
@@ -94,6 +114,12 @@ class _TrackOrderState extends State<TrackOrder> {
         timer.cancel();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
   }
 
   @override
@@ -196,8 +222,7 @@ class _TrackOrderState extends State<TrackOrder> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(150),
                                     border: Border.all(
-                                        color: primaryColor,
-                                        width: 2),
+                                        color: primaryColor, width: 2),
                                   ),
                                 ),
                                 SizedBox(

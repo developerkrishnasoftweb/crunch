@@ -255,7 +255,9 @@ class _MyOrdersState extends State<MyOrders> {
                                                         TrackOrder(
                                                             orderDetails:
                                                                 orderDetails[
-                                                                    index])));
+                                                                    index]))).then((value) {
+                                                                      getOrders();
+                                            });
                                           },
                                           child: Text(
                                             "TRACK",
