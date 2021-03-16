@@ -1,5 +1,5 @@
+import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
-import 'package:crunch/Common/items_addons.dart';
 import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/models/variation_model.dart';
@@ -64,7 +64,7 @@ itemVariation({BuildContext context, ItemData itemData}) async {
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                         onPressed: () async {
-                          if(await addToCart(variation: selectedVariation) != null) {
+                          if(await SQFLiteTables.addToCart(variation: selectedVariation) != null) {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(

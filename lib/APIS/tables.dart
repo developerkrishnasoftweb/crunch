@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/global.dart';
+import 'package:crunch/models/variation_model.dart';
 
 import 'AppServices.dart';
 
@@ -292,6 +294,33 @@ class SQFLiteTables {
     } catch (_) {
       throw (_);
     }
+  }
+
+  static Future<int> addToCart({ItemData itemData, Variation variation}) async {
+    if(itemData != null) {
+      return await db.insert(SQFLiteTables.tableCart, {
+        "item_id": "${itemData.id}",
+        "item_name": "${itemData.name}",
+        "item_price": "${itemData.price}",
+        "combined_price": "0",
+        "qty": "${itemData.quantity}"
+      });
+    } else if (variation != null) {
+      return await db.insert(SQFLiteTables.tableCart, {
+        "item_id": "${variation.id}",
+        "item_name": "${variation.name}",
+        "item_price": "${variation.price}",
+        "combined_price": "0",
+        "qty": "1"
+      });
+    } else {
+      return null;
+    }
+  }
+
+  static Future<List<Map<String,dynamic>>> updateCart({ItemData itemData}) async {
+    await db.rawQuery(
+        "update ${SQFLiteTables.tableCart} set qty = ${itemData.quantity} where item_id = ${itemData.id}");
   }
 }
 

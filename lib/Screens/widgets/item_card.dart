@@ -3,6 +3,7 @@ import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Common/item_variations.dart';
 import 'package:crunch/Common/items_addons.dart';
 import 'package:crunch/Static/global.dart';
+import 'package:crunch/models/variation_model.dart';
 import 'package:flutter/material.dart';
 
 Widget itemCard (BuildContext context, ItemData itemData, AnimationController animationController) {
@@ -77,7 +78,7 @@ Widget itemCard (BuildContext context, ItemData itemData, AnimationController an
                               fontSize: 21),
                         ),
                         itemData.addedToCart
-                            ? incDecButton(item: itemData)
+                            ? incDecButton(item: itemData, state: state)
                             : addToCartButton(
                             onPressed: () async {
                               if (itemData
@@ -90,7 +91,7 @@ Widget itemCard (BuildContext context, ItemData itemData, AnimationController an
                                   state(() {
                                     itemData.addedToCart = true;
                                   });
-                                  addToCart(itemData: itemData);
+                                  await SQFLiteTables.addToCart(itemData: itemData);
                                 } else {
                                   itemVariation(context: context, itemData: itemData);
                                 }
@@ -117,11 +118,11 @@ Widget incDecButton({@required ItemData item, StateSetter state}) {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               state(() {
                 item.quantity = item.quantity + 1;
               });
-              updateCart(itemData: item);
+              await SQFLiteTables.updateCart(itemData: item);
             },
             child: Icon(
               Icons.add,
@@ -141,7 +142,7 @@ Widget incDecButton({@required ItemData item, StateSetter state}) {
                 state(() {
                   item.quantity = item.quantity - 1;
                 });
-                updateCart(itemData: item);
+                await SQFLiteTables.updateCart(itemData: item);
               } else if (item.quantity == 1) {
                 var status = await db.delete(SQFLiteTables.tableCart,
                     where: 'item_id = ?', whereArgs: [item.id]);
@@ -158,5 +159,21 @@ Widget incDecButton({@required ItemData item, StateSetter state}) {
             ),
           )
         ],
+      ));
+}
+
+Widget addToCartButton({@required VoidCallback onPressed}) {
+  return SizedBox(
+      width: 73,
+      height: 33,
+      child: FlatButton(
+        child: Text(
+          "ADD",
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+        ),
+        onPressed: onPressed,
+        color: Colors.green[500],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ));
 }
