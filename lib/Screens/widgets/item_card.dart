@@ -2,9 +2,11 @@ import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Common/item_variations.dart';
 import 'package:crunch/Common/items_addons.dart';
+import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
-import 'package:crunch/models/variation_model.dart';
 import 'package:flutter/material.dart';
+
+import '../cart.dart';
 
 Widget itemCard (BuildContext context, ItemData itemData, AnimationController animationController) {
   return StatefulBuilder(
@@ -91,7 +93,21 @@ Widget itemCard (BuildContext context, ItemData itemData, AnimationController an
                                   state(() {
                                     itemData.addedToCart = true;
                                   });
-                                  await SQFLiteTables.addToCart(itemData: itemData);
+                                  if(await SQFLiteTables.addToCart(itemData: itemData) != null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                      content: Text(
+                                        "Added to cart",
+                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                      ),
+                                      backgroundColor: primaryColor,
+                                      action: SnackBarAction(
+                                        label: "GO TO CART",
+                                        textColor: Colors.white,
+                                        onPressed: () =>
+                                            Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
+                                      ),
+                                    ));
+                                  }
                                 } else {
                                   itemVariation(context: context, itemData: itemData);
                                 }
