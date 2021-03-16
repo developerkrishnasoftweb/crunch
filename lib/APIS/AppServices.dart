@@ -1,41 +1,15 @@
 import 'dart:convert';
 
+import 'package:crunch/models/menu_model.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
 import 'Class.dart';
-import 'ClassList.dart';
 import 'tables.dart';
 
 Dio dio = new Dio();
 
 class AppServices {
-  static Future<DataClass> getCategories(body) async {
-    String url = API_BASE_URL;
-    try {
-      final http.Response response = await http.post(
-        url,
-        body: jsonEncode(body),
-      );
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        DataClass dataClass = new DataClass(message: 'No Data', data: "1");
-        dataClass.message = jsonResponse['message'];
-        dataClass.data = jsonResponse['success'].toString();
-        dataClass.Categories = jsonResponse['categories'];
-        dataClass.Restaurant = jsonResponse['restaurants'];
-        dataClass.addongroups = jsonResponse['addongroups'];
-        dataClass.Items = jsonResponse['items'];
-        // print("workiing "+dataClass.Restaurant.toString());
-        return dataClass;
-      } else {
-        throw Exception('Failed to load');
-      }
-    } catch (e) {
-      // print("Categories Error : " + e.toString());
-      throw Exception("Something went wrong");
-    }
-  }
 
   static Future<SaveDataClass> getSlider() async {
     String url = Base_URL + "sliders";
