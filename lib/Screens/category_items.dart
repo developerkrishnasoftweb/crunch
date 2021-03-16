@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 
 import '../APIS/tables.dart';
 import '../Common/classes.dart';
+import 'cart.dart';
 
 class CategoryItems extends StatefulWidget {
   final String categoryId;
@@ -141,7 +142,21 @@ class _CategoryItemsState extends State<CategoryItems>
                                         setState(() {
                                           items[index].addedToCart = true;
                                         });
-                                        addToCart(itemData: items[index]);
+                                        if(await addToCart(itemData: items[index]) != null) {
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                            content: Text(
+                                              "Added to cart",
+                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                            ),
+                                            backgroundColor: primaryColor,
+                                            action: SnackBarAction(
+                                              label: "GO TO CART",
+                                              textColor: Colors.white,
+                                              onPressed: () =>
+                                                  Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
+                                            ),
+                                          ));
+                                        }
                                       } else {
                                         itemVariation(itemData: items[index], context: context);
                                       }

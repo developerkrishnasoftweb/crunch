@@ -21,17 +21,6 @@ class _DashboardState extends State<Dashboard> {
         icon: Icon(Icons.shopping_cart_outlined), label: "Cart"),
     BottomNavigationBarItem(icon: Icon(Icons.person), label: "Account"),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

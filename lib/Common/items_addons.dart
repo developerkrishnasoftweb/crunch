@@ -5,6 +5,7 @@ import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Screens/new_home.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
+import 'package:crunch/models/variation_model.dart';
 import 'package:flutter/material.dart';
 
 import 'classes.dart';
@@ -261,14 +262,26 @@ showItemAddons({ItemData itemData, BuildContext context, AnimationController ani
       });
 }
 
-addToCart({@required ItemData itemData}) async {
-  await db.insert(SQFLiteTables.tableCart, {
-    "item_id": "${itemData.id}",
-    "item_name": "${itemData.name}",
-    "item_price": "${itemData.price}",
-    "combined_price": "${itemData.price}",
-    "qty": "1"
-  });
+Future<int> addToCart({ItemData itemData, Variation variation}) async {
+  if(itemData != null) {
+    return await db.insert(SQFLiteTables.tableCart, {
+      "item_id": "${itemData.id}",
+      "item_name": "${itemData.name}",
+      "item_price": "${itemData.price}",
+      "combined_price": "${itemData.price}",
+      "qty": "${itemData.quantity}"
+    });
+  } else if (variation != null) {
+    return await db.insert(SQFLiteTables.tableCart, {
+      "item_id": "${variation.id}",
+      "item_name": "${variation.name}",
+      "item_price": "${variation.price}",
+      "combined_price": "${variation.price}",
+      "qty": "1"
+    });
+  } else {
+    return null;
+  }
 }
 
 Widget addToCartButton({@required VoidCallback onPressed}) {
