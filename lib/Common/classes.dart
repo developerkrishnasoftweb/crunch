@@ -1,3 +1,5 @@
+import 'package:crunch/models/cart_addon_model.dart';
+
 class ItemData {
   final String name,
       description,
@@ -11,6 +13,7 @@ class ItemData {
   bool addedToCart;
   int quantity;
   final List variation, addon;
+
   ItemData(
       {this.id,
       this.name,
@@ -29,6 +32,7 @@ class ItemData {
 
 class Category {
   final String id, name, image, active, rank, parentCategoryId, timings;
+
   Category(
       {this.id,
       this.image,
@@ -41,11 +45,14 @@ class Category {
 
 class CartData {
   final String cartId, itemId, itemName, itemPrice, combinedPrice, qty;
+  final List<CartAddOn> cartAddOns;
+
   CartData(
       {this.cartId,
       this.combinedPrice,
       this.itemId,
       this.itemName,
       this.qty,
-      this.itemPrice});
+      this.itemPrice,
+      this.cartAddOns});
 }

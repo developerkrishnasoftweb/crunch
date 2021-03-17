@@ -5,6 +5,7 @@ import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
+import 'package:crunch/models/cart_addon_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -35,20 +36,48 @@ class _CartState extends State<Cart> {
       grandTotal = 0.0;
     });
     var cartData = await SQFLiteTables.getData(table: Tables.CART);
-    for (int i = 0; i < cartData.length; i++) {
-      setState(() {
-        grandTotal += (double.parse(cartData[i]["item_price"]) *
-                double.parse(cartData[i]["qty"])) +
-            double.parse(cartData[i]["combined_price"]);
-        cartItems.add(CartData(
-            itemPrice: cartData[i]["item_price"].toString(),
-            itemName: cartData[i]["item_name"].toString(),
-            itemId: cartData[i]["item_id"].toString(),
-            qty: cartData[i]["qty"].toString(),
-            cartId: cartData[i]["id"].toString(),
-            combinedPrice: cartData[i]["combined_price"].toString()));
+    List<CartAddOn> cartAddOns = [];
+    double combinedPrice = 0;
+    cartData.forEach((cartItem) async {
+
+      var cartAddOn = await SQFLiteTables.where(
+          value: cartItem["id"].toString(),
+          table: Tables.CART_ADDON,
+          column: 'cart_id');
+
+      cartAddOn.forEach((addOn) async {
+        var addOnList = await SQFLiteTables.where(
+            table: Tables.ADDONS,
+            value: addOn['addon_id'],
+            column: 'addon_item_id');
+
+        addOnList.forEach((element) {
+          setState(() {
+            cartAddOns.add(CartAddOn.fromJson(element));
+          });
+        });
+
+        cartAddOns.forEach((element) {
+          setState(() {
+            combinedPrice += double.parse(element.price);
+          });
+        });
       });
-    }
+      print(combinedPrice);
+      setState(() {
+        grandTotal += (double.parse(cartItem["item_price"]) *
+            double.parse(cartItem["qty"])) +
+            combinedPrice;
+        cartItems.add(CartData(
+            itemPrice: cartItem["item_price"].toString(),
+            itemName: cartItem["item_name"].toString(),
+            itemId: cartItem["item_id"].toString(),
+            qty: cartItem["qty"].toString(),
+            cartId: cartItem["id"].toString(),
+            combinedPrice: combinedPrice.toString(),
+            cartAddOns: cartAddOns));
+      });
+    });
   }
 
   @override
@@ -294,40 +323,40 @@ class _CartState extends State<Cart> {
         });
       }
     });
-    if(coupons.length > 0) {
+    if (coupons.length > 0) {
       showModalBottomSheet(
           context: context,
           builder: (context) {
             return StatefulBuilder(
                 builder: (BuildContext context, StateSetter state) {
-                  return DraggableScrollableSheet(
-                    builder: (context, scrollController) {
-                      return ListView.builder(
-                        controller: scrollController,
-                        itemBuilder: (_, index) {
-                          return ListTile(
-                            title: Text(coupons[index].title,
-                                style: TextStyle(color: Colors.black)),
-                            onTap: () {
-                              state(() {
-                                couponCode.text = coupons[index].code;
-                              });
-                              Navigator.pop(context);
-                            },
-                            subtitle: coupons[index].description != null
-                                ? Text(coupons[index].description)
-                                : null,
-                          );
+              return DraggableScrollableSheet(
+                builder: (context, scrollController) {
+                  return ListView.builder(
+                    controller: scrollController,
+                    itemBuilder: (_, index) {
+                      return ListTile(
+                        title: Text(coupons[index].title,
+                            style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          state(() {
+                            couponCode.text = coupons[index].code;
+                          });
+                          Navigator.pop(context);
                         },
-                        itemCount: coupons.length,
+                        subtitle: coupons[index].description != null
+                            ? Text(coupons[index].description)
+                            : null,
                       );
                     },
-                    expand: false,
-                    initialChildSize: 0.4,
-                    maxChildSize: 1,
-                    minChildSize: 0.2,
+                    itemCount: coupons.length,
                   );
-                });
+                },
+                expand: false,
+                initialChildSize: 0.4,
+                maxChildSize: 1,
+                minChildSize: 0.2,
+              );
+            });
           });
     }
   }
@@ -379,6 +408,7 @@ class Coupon {
       minimum,
       maximum,
       firstTime;
+
   Coupon(
       {this.id,
       this.title,
