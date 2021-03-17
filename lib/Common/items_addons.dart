@@ -90,7 +90,7 @@ showItemAddons({ItemData itemData, BuildContext context, AnimationController ani
                               child: ListView.builder(
                                   itemBuilder: (_, index) {
                                     return Container(
-                                      child: Text("Hello", style: TextStyle(color: Colors.black)),
+                                      child: Text("$index", style: TextStyle(color: Colors.black)),
                                       margin: EdgeInsets.only(right: 10, left: index == 0 ? 10 : 0),
                                       alignment: Alignment.center,
                                       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -163,9 +163,7 @@ showItemAddons({ItemData itemData, BuildContext context, AnimationController ani
                                               if (element.selected) {
                                                 state(() {
                                                   price = price -
-                                                      double.parse(addonWithGroups[index]
-                                                          .addOnGroups[i]
-                                                          .addOnItemPrice);
+                                                      double.parse(element.addOnItemPrice);
                                                   element.selected = false;
                                                 });
                                               }
@@ -180,6 +178,7 @@ showItemAddons({ItemData itemData, BuildContext context, AnimationController ani
                                               price = price +
                                                   double.parse(selectedAddon.addOnItemPrice);
                                             });
+                                            print(price);
                                           })
                                   ]);
                                 },
