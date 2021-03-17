@@ -243,20 +243,3 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               )));
   }
 }
-
-class AddonWithGroup {
-  final List<AddOnGroup> addOnGroups;
-  final String addOnGroupName,
-      addOnGroupId,
-      addOnMaxItemSelection,
-      addOnMinItemSelection;
-  AddOnGroup addOnGroup;
-
-  AddonWithGroup(
-      {this.addOnGroups,
-      this.addOnGroupName,
-      this.addOnGroupId,
-      this.addOnGroup,
-      this.addOnMaxItemSelection,
-      this.addOnMinItemSelection});
-}

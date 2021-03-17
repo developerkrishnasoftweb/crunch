@@ -12,6 +12,9 @@ itemVariation({BuildContext context, ItemData itemData}) async {
   });
   int selectedIndex = 0;
   Variation selectedVariation = variation[selectedIndex];
+  selectedVariation.addon.forEach((element) async {
+    // print((await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: element.addonGroupId))[0]);
+  });
   return showModalBottomSheet(
       context: context,
       isDismissible: true,
@@ -45,6 +48,7 @@ itemVariation({BuildContext context, ItemData itemData}) async {
                                   selectedVariation = variation[index];
                                   selectedIndex = index;
                                 });
+
                               },
                               style: ButtonStyle(
                                   backgroundColor:

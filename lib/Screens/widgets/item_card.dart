@@ -94,6 +94,7 @@ Widget itemCard (BuildContext context, ItemData itemData, AnimationController an
                                     itemData.addedToCart = true;
                                   });
                                   if(await SQFLiteTables.addToCart(itemData: itemData) != null) {
+                                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                       content: Text(
                                         "Added to cart",

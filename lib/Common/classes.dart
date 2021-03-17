@@ -39,18 +39,6 @@ class Category {
       this.timings});
 }
 
-class AddOnGroup {
-  final String addOnItemId, addOnName, addOnItemPrice, active, attributes;
-  bool selected;
-  AddOnGroup(
-      {this.active,
-      this.addOnItemId,
-      this.addOnItemPrice,
-      this.addOnName,
-      this.selected,
-      this.attributes});
-}
-
 class CartData {
   final String cartId, itemId, itemName, itemPrice, combinedPrice, qty;
   CartData(
