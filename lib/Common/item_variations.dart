@@ -15,17 +15,32 @@ itemVariation({BuildContext context, ItemData itemData}) async {
   double price = 0;
   Variation selectedVariation = variation[selectedIndex];
   List<AddOnGroup> addonWithGroups = [];
-  getAddons({StateSetter state}) {
-    addonWithGroups.clear();
-    selectedVariation.addon.forEach((variationAddon) async {
-      var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
-      addOns.forEach((element) {
-        addonWithGroups.add(AddOnGroup.fromJson(element)
-          ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
-          ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
+  getAddons({StateSetter state}) async {
+    if(state != null) {
+      state(() {
+        addonWithGroups.clear();
+        selectedVariation.addon.forEach((variationAddon) async {
+          var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
+          addOns.forEach((element) {
+            addonWithGroups.add(AddOnGroup.fromJson(element)
+              ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
+              ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
+          });
+        });
+        price = double.parse(selectedVariation.price);
       });
-    });
-    price = double.parse(selectedVariation.price);
+    } else {
+      addonWithGroups.clear();
+      selectedVariation.addon.forEach((variationAddon) async {
+        var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
+        addOns.forEach((element) {
+          addonWithGroups.add(AddOnGroup.fromJson(element)
+            ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
+            ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
+        });
+      });
+      price = double.parse(selectedVariation.price);
+    }
   }
   getAddons();
   return showModalBottomSheet(
@@ -56,13 +71,12 @@ itemVariation({BuildContext context, ItemData itemData}) async {
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (_, index) {
                             return TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 state(() {
                                   selectedVariation = variation[index];
                                   selectedIndex = index;
-                                  getAddons();
                                 });
-                                state(() {});
+                                await getAddons(state: state);
                               },
                               style: ButtonStyle(
                                   backgroundColor:
