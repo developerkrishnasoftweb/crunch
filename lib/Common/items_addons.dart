@@ -212,14 +212,8 @@ showItemAddons(
                                       }
                                     }
                                   }
-                                  var id =
-                                      await db.insert(SQFLiteTables.tableCart, {
-                                    "item_id": "${itemData.id}",
-                                    "item_name": "${itemData.name}",
-                                    "item_price": "${itemData.price}",
-                                    "combined_price": "$combinedTotal",
-                                    "qty": "1"
-                                  });
+                                  var id = await SQFLiteTables.addToCart(
+                                      itemData: itemData);
                                   for (int i = 0;
                                       i < addonWithGroups.length;
                                       i++) {
@@ -242,28 +236,29 @@ showItemAddons(
                                       }
                                     }
                                   }
-                                  if (itemData.addon.length > 0)
+                                  if (id != 0) {
                                     Navigator.pop(context);
-                                  ScaffoldMessenger.of(context)
-                                      .removeCurrentSnackBar();
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
-                                      "Added to cart",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    backgroundColor: primaryColor,
-                                    action: SnackBarAction(
-                                      label: "GO TO CART",
-                                      textColor: Colors.white,
-                                      onPressed: () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) => Cart())),
-                                    ),
-                                  ));
+                                    ScaffoldMessenger.of(context)
+                                        .removeCurrentSnackBar();
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(
+                                        "Added to cart",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      backgroundColor: primaryColor,
+                                      action: SnackBarAction(
+                                        label: "GO TO CART",
+                                        textColor: Colors.white,
+                                        onPressed: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (_) => Cart())),
+                                      ),
+                                    ));
+                                  }
                                 },
                                 color: Colors.green,
                               ),

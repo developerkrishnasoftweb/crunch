@@ -250,29 +250,31 @@ itemVariation({BuildContext context, ItemData itemData}) async {
                                   fontWeight: FontWeight.bold),
                             ),
                             onPressed: () async {
-                              // if (await SQFLiteTables.addToCart(
-                              //         variation: selectedVariation) !=
-                              //     null) {
-                              //   Navigator.pop(context);
-                              //   ScaffoldMessenger.of(context)
-                              //       .showSnackBar(SnackBar(
-                              //     content: Text(
-                              //       "Added to cart",
-                              //       style: TextStyle(
-                              //           color: Colors.white,
-                              //           fontWeight: FontWeight.bold),
-                              //     ),
-                              //     backgroundColor: primaryColor,
-                              //     action: SnackBarAction(
-                              //       label: "GO TO CART",
-                              //       textColor: Colors.white,
-                              //       onPressed: () => Navigator.push(
-                              //           context,
-                              //           MaterialPageRoute(
-                              //               builder: (_) => Cart())),
-                              //     ),
-                              //   ));
-                              // }
+                              int id = await SQFLiteTables.addToCart(
+                                  variation: selectedVariation);
+                              if (id != null) {
+
+
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(
+                                    "Added to cart",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  backgroundColor: primaryColor,
+                                  action: SnackBarAction(
+                                    label: "GO TO CART",
+                                    textColor: Colors.white,
+                                    onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => Cart())),
+                                  ),
+                                ));
+                              }
                             },
                             color: Colors.green,
                           ),
