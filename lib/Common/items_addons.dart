@@ -178,7 +178,6 @@ showItemAddons({ItemData itemData, BuildContext context, AnimationController ani
                                               price = price +
                                                   double.parse(selectedAddon.addOnItemPrice);
                                             });
-                                            print(price);
                                           })
                                   ]);
                                 },
