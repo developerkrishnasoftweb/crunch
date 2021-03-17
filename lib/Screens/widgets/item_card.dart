@@ -88,30 +88,28 @@ Widget itemCard (BuildContext context, ItemData itemData, AnimationController an
                                   .length >
                                   0) {
                                 showItemAddons(itemData: itemData, animationController: animationController, context: context);
-                              } else {
-                                if(itemData.variation.length == 0) {
-                                  state(() {
-                                    itemData.addedToCart = true;
-                                  });
-                                  if(await SQFLiteTables.addToCart(itemData: itemData) != null) {
-                                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                      content: Text(
-                                        "Added to cart",
-                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                      ),
-                                      backgroundColor: primaryColor,
-                                      action: SnackBarAction(
-                                        label: "GO TO CART",
-                                        textColor: Colors.white,
-                                        onPressed: () =>
-                                            Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
-                                      ),
-                                    ));
-                                  }
-                                } else {
-                                  itemVariation(context: context, itemData: itemData);
+                              } else if (itemData.variation.length == 0) {
+                                state(() {
+                                  itemData.addedToCart = true;
+                                });
+                                if(await SQFLiteTables.addToCart(itemData: itemData) != null) {
+                                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    content: Text(
+                                      "Added to cart",
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                    backgroundColor: primaryColor,
+                                    action: SnackBarAction(
+                                      label: "GO TO CART",
+                                      textColor: Colors.white,
+                                      onPressed: () =>
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
+                                    ),
+                                  ));
                                 }
+                              } else {
+                                itemVariation(context: context, itemData: itemData);
                               }
                             })
                       ],
