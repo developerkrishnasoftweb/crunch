@@ -46,6 +46,12 @@ showItemAddons({ItemData itemData, BuildContext context, AnimationController ani
       }
     }
   }
+  List<Variation> variation = [];
+  itemData.variation.forEach((element) {
+    variation.add(Variation.fromJson(element));
+  });
+  int selectedIndex = 0;
+  Variation selectedVariation = variation.length > 0 ? variation[selectedIndex] : null;
   showModalBottomSheet(
       context: context,
       builder: (_) {
@@ -86,23 +92,59 @@ showItemAddons({ItemData itemData, BuildContext context, AnimationController ani
                                   style: TextStyle(fontSize: 17, color: primaryColor)),
                             ) : SizedBox(),
                             itemData.variation.length > 0 ? Container(
+                              width: MediaQuery.of(context).size.width,
                               height: 60,
-                              child: ListView.builder(
+                              child: ListView.separated(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  separatorBuilder: (_, index) {
+                                    return SizedBox(
+                                        width: index == variation.length ? 0 : 10);
+                                  },
+                                  scrollDirection: Axis.horizontal,
                                   itemBuilder: (_, index) {
-                                    return Container(
-                                      child: Text("$index", style: TextStyle(color: Colors.black)),
-                                      margin: EdgeInsets.only(right: 10, left: index == 0 ? 10 : 0),
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(6),
-                                          border: Border.all(color: Colors.grey)
+                                    return TextButton(
+                                      onPressed: () {
+                                        state(() {
+                                          selectedVariation = variation[index];
+                                          selectedIndex = index;
+                                          price = double.parse(selectedVariation.price);
+                                        });
+                                      },
+                                      style: ButtonStyle(
+                                          backgroundColor:
+                                          MaterialStateColor.resolveWith((states) =>
+                                          index == selectedIndex
+                                              ? primaryColor
+                                              : primaryColor[200]),
+                                          padding: MaterialStateProperty.all(
+                                              EdgeInsets.symmetric(horizontal: 20))),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Text(variation[index].name,
+                                              style: TextStyle(
+                                                  color: index == selectedIndex
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis),
+                                          Text("\u20b9" + variation[index].price,
+                                              style: TextStyle(
+                                                  color: index == selectedIndex
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis)
+                                        ],
                                       ),
                                     );
                                   },
-                                  scrollDirection: Axis.horizontal,
-                                  shrinkWrap: true,
-                                  itemCount: 10),
+                                  itemCount: variation.length),
                             ) : SizedBox(),
                             Divider(),
                             Expanded(
@@ -234,6 +276,7 @@ showItemAddons({ItemData itemData, BuildContext context, AnimationController ani
                                         }
                                       }
                                       if (itemData.addon.length > 0) Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                         content: Text(
                                           "Added to cart",
