@@ -17,6 +17,7 @@ class MyOrders extends StatefulWidget {
 class _MyOrdersState extends State<MyOrders> {
   bool isLoading = false, isDeleting = false;
   List<OrderDetails> orderDetails = [];
+
   setLoading(bool status) {
     setState(() {
       isLoading = status;
@@ -45,7 +46,7 @@ class _MyOrdersState extends State<MyOrders> {
     await AppServices.orders(formData).then((value) {
       if (value.value == "true") {
         final orders = value.data[0]['orders'];
-        for(int i = 0; i < orders.length; i++) {
+        for (int i = 0; i < orders.length; i++) {
           setState(() {
             orderDetails.add(OrderDetails.fromJson(orders[i]));
           });
@@ -132,19 +133,41 @@ class _MyOrdersState extends State<MyOrders> {
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 5,),
-                        Text(
-                          "TOTAL",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold),
+                        SizedBox(
+                          height: 5,
                         ),
-                        Text(
-                          "\u20b9${orderDetails[index].total}",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "TOTAL",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "\u20b9${orderDetails[index].total}",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              orderDetails[index].orderStatus.toLowerCase() ==
+                                          "pending" &&
+                                      orderDetails[index]
+                                              .orderType
+                                              .toLowerCase() ==
+                                          "p"
+                                  ? TextButton(
+                                      onPressed: makeOnlinePayment,
+                                      child: Text("MAKE ONLINE PAYMENT"))
+                                  : SizedBox()
+                            ]),
                         Divider(
                           thickness: 2,
                         ),
@@ -202,21 +225,21 @@ class _MyOrdersState extends State<MyOrders> {
                                       FlatButton(
                                           onPressed: () {
                                             Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        TrackOrder(
-                                                            orderDetails:
-                                                                orderDetails[
-                                                                    index]))).then((value) {
-                                                                      getOrders();
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TrackOrder(
+                                                                orderDetails:
+                                                                    orderDetails[
+                                                                        index])))
+                                                .then((value) {
+                                              getOrders();
                                             });
                                           },
                                           child: Text(
                                             "TRACK",
                                             style: TextStyle(
-                                                color: cnst
-                                                    .primaryColor,
+                                                color: cnst.primaryColor,
                                                 fontWeight: FontWeight.bold),
                                           )),
                                     ],
@@ -251,5 +274,9 @@ class _MyOrdersState extends State<MyOrders> {
         setDelete(false);
       }
     });
+  }
+
+  void makeOnlinePayment() async {
+
   }
 }
