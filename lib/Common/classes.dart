@@ -50,7 +50,7 @@ class CartData {
       itemPrice,
       combinedPrice,
       qty,
-      variationId;
+      variationId, variationName, total;
   final List<CartAddOn> cartAddOns;
 
   CartData(
@@ -61,5 +61,5 @@ class CartData {
       this.qty,
       this.itemPrice,
       this.cartAddOns,
-      this.variationId});
+      this.variationId, this.variationName, this.total});
 }

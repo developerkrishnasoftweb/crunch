@@ -1,6 +1,9 @@
+import 'package:crunch/Common/classes.dart';
+
 class Variation {
-  String id, variationid, name, groupname, price, active, itemPackingcharges, variationrank, itemId, variationallowaddon;
+  String id, variationid, name, groupname, price, active, itemPackingcharges, variationrank, variationallowaddon;
   List<Addon> addon;
+  ItemData itemData;
 
   Variation(
       {this.id,
@@ -12,7 +15,7 @@ class Variation {
         this.itemPackingcharges,
         this.variationrank,
         this.addon,
-        this.variationallowaddon, this.itemId});
+        this.variationallowaddon, this.itemData});
 
   Variation.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();

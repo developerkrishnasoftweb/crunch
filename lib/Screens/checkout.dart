@@ -96,7 +96,8 @@ class _CheckoutState extends State<Checkout> {
       "payment_id": response.paymentId,
       "items": items,
       "coupon_applied": widget.couponCode,
-      "coupon_amount": widget.couponAmount
+      "coupon_amount": widget.couponAmount,
+      "order_type": "H"
     });
     AppServices.saveOrder(formData).then((value) {
       if (value.value == "true") {
@@ -361,14 +362,41 @@ class _CheckoutState extends State<Checkout> {
         items += [
           {
             "item":
-                "${widget.cartItems[i].itemId}^${widget.cartItems[i].variationId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].itemPrice}^${widget.cartItems[i].qty}^desc^",
+                "${widget.cartItems[i].itemId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].variationId}^${widget.cartItems[i].variationName}^${widget.cartItems[i].total}^${widget.cartItems[i].qty}^desc^",
             "addon": addOns ?? []
           }
         ];
       });
+      print("${widget.cartItems[i].itemId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].variationId}^${widget.cartItems[i].variationName}^${widget.cartItems[i].total}^${widget.cartItems[i].qty}^desc^");
     }
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
+    } else if (_paymentMethod == PAYMENTMETHOD.CASHONDELIVERY){
+      FormData formData = FormData.fromMap({
+        "address_id": address.id,
+        "customer_id": userdata.id,
+        "delivery_charges": config.deliveryCharge,
+        "packing_charges": config.packingCharge,
+        "discount_total": "0",
+        "description": "",
+        "tax_total": taxTotal,
+        "total": grandTotal,
+        "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+        "payment_type": "COD",
+        "payment_id": "",
+        "items": items,
+        "coupon_applied": widget.couponCode,
+        "coupon_amount": widget.couponAmount,
+        "order_type": "H"
+      });
+      AppServices.saveOrder(formData).then((value) {
+        if (value.value == "true") {
+          clearCart();
+          Fluttertoast.showToast(msg: value.message);
+        } else {
+          Fluttertoast.showToast(msg: value.message);
+        }
+      });
     } else {
       FormData formData = FormData.fromMap({
         "address_id": address.id,
@@ -384,15 +412,8 @@ class _CheckoutState extends State<Checkout> {
         "payment_id": "",
         "items": items,
         "coupon_applied": widget.couponCode,
-        "coupon_amount": widget.couponAmount
-      });
-      AppServices.saveOrder(formData).then((value) {
-        if (value.value == "true") {
-          clearCart();
-          Fluttertoast.showToast(msg: value.message);
-        } else {
-          Fluttertoast.showToast(msg: value.message);
-        }
+        "coupon_amount": widget.couponAmount,
+        "order_type": "P"
       });
     }
   }

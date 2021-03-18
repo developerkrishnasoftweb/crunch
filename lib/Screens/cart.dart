@@ -38,13 +38,13 @@ class _CartState extends State<Cart> {
     var cartData = await SQFLiteTables.getData(table: Tables.CART);
     cartData.forEach((item) async {
       List<CartAddOn> cartAdds = [];
-      double combinedPrice = 0;
+      double combinedPrice = 0, total = 0;
 
       var cartAddOn = await SQFLiteTables.where(
           value: item["id"].toString(),
           table: Tables.CART_ADDON,
           column: 'cart_id');
-      for(int i = 0; i < cartAddOn.length; i++) {
+      for (int i = 0; i < cartAddOn.length; i++) {
         var addOnList = await SQFLiteTables.where(
             table: Tables.ADDONS,
             value: cartAddOn[i]['addon_id'],
@@ -54,18 +54,23 @@ class _CartState extends State<Cart> {
       }
 
       setState(() {
-        grandTotal += (double.parse(item["item_price"]) *
+        grandTotal +=
+            (double.parse(item["item_price"]) * double.parse(item["qty"])) +
+                combinedPrice;
+        total = ((double.parse(item["item_price"]) *
             double.parse(item["qty"])) +
-            combinedPrice;
+            combinedPrice);
         cartItems.add(CartData(
             itemPrice: item["item_price"].toString(),
             itemName: item["item_name"].toString(),
             itemId: item["item_id"].toString(),
             qty: item["qty"].toString(),
             cartId: item["id"].toString(),
-            variationId: item["variation_id"],
+            variationId: item["variation_id"].toString(),
+            variationName: item["variation_name"].toString(),
             combinedPrice: combinedPrice.toString(),
-            cartAddOns: cartAdds));
+            cartAddOns: cartAdds,
+            total: total.toString()));
       });
     });
   }
@@ -118,7 +123,8 @@ class _CartState extends State<Cart> {
                               title: "Qty", val: cartItems[index].qty),
                           buildTitledRow(
                               title: "Add on price",
-                              val: cartItems[index].combinedPrice),
+                              val:
+                                  "${double.parse(cartItems[index].combinedPrice).toStringAsFixed(2)}"),
                           Divider(),
                           buildTitledRow(
                               title: "Total", val: total.toStringAsFixed(2)),

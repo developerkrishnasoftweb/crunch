@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 itemVariation({BuildContext context, ItemData itemData, StateSetter state}) async {
   List<Variation> variation = [];
   itemData.variation.forEach((element) {
-    variation.add(Variation.fromJson(element)..itemId = itemData.id);
+    variation.add(Variation.fromJson(element)..itemData = itemData);
   });
   int selectedIndex = 0;
   double price = 0;
