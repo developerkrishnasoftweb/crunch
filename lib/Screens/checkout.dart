@@ -182,8 +182,18 @@ class _CheckoutState extends State<Checkout> {
             },
           ),
           RadioListTile<PAYMENTMETHOD>(
-            title: Text("Razor pay"),
+            title: Text("Online Payment"),
             value: PAYMENTMETHOD.RAZORPAY,
+            groupValue: _paymentMethod,
+            onChanged: (value) {
+              setState(() {
+                _paymentMethod = value;
+              });
+            },
+          ),
+          RadioListTile<PAYMENTMETHOD>(
+            title: Text("Store Pickup"),
+            value: PAYMENTMETHOD.STORE_PICKUP,
             groupValue: _paymentMethod,
             onChanged: (value) {
               setState(() {
@@ -355,7 +365,6 @@ class _CheckoutState extends State<Checkout> {
             "addon": addOns ?? []
           }
         ];
-        // print("${widget.cartItems[i].itemId}^${widget.cartItems[i].variationId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].itemPrice}^${widget.cartItems[i].qty}^desc^");
       });
     }
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
@@ -408,7 +417,7 @@ class _CheckoutState extends State<Checkout> {
   }
 }
 
-enum PAYMENTMETHOD { CASHONDELIVERY, RAZORPAY }
+enum PAYMENTMETHOD { CASHONDELIVERY, RAZORPAY, STORE_PICKUP}
 
 class Addresses {
   final String id,
