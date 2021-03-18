@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:crunch/APIS/AppServices.dart';
-import 'package:crunch/Screens/my_orders.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
+import 'package:crunch/models/orders_details_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -26,15 +26,16 @@ class _TrackOrderState extends State<TrackOrder> {
   Timer timer;
 
   setLoading(bool status) {
-    setState(() {
-      isLoading = status;
-    });
+    if(this.mounted) {
+      setState(() {
+        isLoading = status;
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    trackOrder();
     timer = Timer.periodic(Duration(seconds: 5), (timer) {
       trackOrder();
     });
@@ -107,9 +108,11 @@ class _TrackOrderState extends State<TrackOrder> {
 
   getDiff() async {
     Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        diff = created.difference(DateTime.now());
-      });
+      if(this.mounted) {
+        setState(() {
+          diff = created.difference(DateTime.now());
+        });
+      }
       if (diff.isNegative) {
         timer.cancel();
       }
@@ -194,10 +197,10 @@ class _TrackOrderState extends State<TrackOrder> {
                   buildIconStatus(
                       title: "Order received",
                       status: statusCode > 4 ? true : false),
-                  created != null
-                      ? Expanded(
+
+                      Expanded(
                           child: Center(
-                            child: Column(
+                            child: created != null ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -237,10 +240,13 @@ class _TrackOrderState extends State<TrackOrder> {
                                         fontWeight: FontWeight.bold,
                                         color: primaryColor)),
                               ],
-                            ),
+                            ) : Text("Please wait, we are getting done everything for you", style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 17,
+                              color: primaryColor
+                            ), textAlign: TextAlign.center),
                           ),
                         )
-                      : SizedBox()
                 ],
               ),
             ),

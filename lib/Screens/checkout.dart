@@ -66,7 +66,6 @@ class _CheckoutState extends State<Checkout> {
         'wallets': ['paytm']
       }
     };
-    print(options);
     try {
       _razorpay.open(options);
     } catch (e) {
@@ -367,7 +366,6 @@ class _CheckoutState extends State<Checkout> {
           }
         ];
       });
-      print("${widget.cartItems[i].itemId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].variationId}^${widget.cartItems[i].variationName}^${widget.cartItems[i].total}^${widget.cartItems[i].qty}^desc^");
     }
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
