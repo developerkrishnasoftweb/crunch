@@ -62,7 +62,6 @@ class _MyOrdersState extends State<MyOrders> {
     });
     AppServices.saveOrder(formData).then((value) {
       if (value.value == "true") {
-
         Fluttertoast.showToast(msg: value.message);
       } else {
         Fluttertoast.showToast(msg: value.message);
@@ -199,15 +198,19 @@ class _MyOrdersState extends State<MyOrders> {
                                   ),
                                 ],
                               ),
-                              orderDetails[index].orderStatus.toLowerCase() ==
-                                          "pending" &&
+                              orderDetails[index].orderStatus.toLowerCase() !=
+                                          "cancelled" &&
                                       orderDetails[index]
-                                              .orderType
-                                              .toLowerCase() ==
-                                          "p"
+                                              .orderStatus
+                                              .toLowerCase() !=
+                                          "delivered" &&
+                                      orderDetails[index]
+                                              .paymentType
+                                              .toLowerCase() !=
+                                          "ppd"
                                   ? TextButton(
-                                      onPressed:  openCheckout,
-                                      child: Text("MAKE ONLINE PAYMENT"))
+                                      onPressed: openCheckout,
+                                      child: Text("PAY NOW", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)))
                                   : SizedBox()
                             ]),
                         Divider(
@@ -325,7 +328,7 @@ class _MyOrdersState extends State<MyOrders> {
       'name': 'Crunch',
       'description': 'Fresh Foods',
       'image':
-      'https://firebasestorage.googleapis.com/v0/b/mytestApp.appspot.com/o/images%2FpZm8daajsIS4LvqBYTiWiuLIgmE2?alt=media&token=3kuli4cd-dc45-7845-b87d-5c4acc7da3c2',
+          'https://firebasestorage.googleapis.com/v0/b/mytestApp.appspot.com/o/images%2FpZm8daajsIS4LvqBYTiWiuLIgmE2?alt=media&token=3kuli4cd-dc45-7845-b87d-5c4acc7da3c2',
       'prefill': {'contact': userdata.mobile, 'email': userdata.email},
       'external': {
         'wallets': ['paytm']

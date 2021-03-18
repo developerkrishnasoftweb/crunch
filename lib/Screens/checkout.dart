@@ -200,97 +200,114 @@ class _CheckoutState extends State<Checkout> {
               });
             },
           ),
-          ListTile(
-            title: Text(
-              "Select Address",
-              style: TextStyle(fontSize: 18),
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.add),
-              splashRadius: 25,
-              color: cnst.primaryColor,
-              onPressed: () {
-                Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Add_Address()))
-                    .then((value) {
-                  getAddresses();
-                });
-              },
-            ),
-          ),
           Expanded(
-              child: _address != null
+              child: _paymentMethod != PAYMENTMETHOD.STORE_PICKUP ? _address != null
                   ? _address.length > 0
-                      ? ListView.builder(
-                          itemCount: _address.length,
-                          padding: EdgeInsets.only(bottom: 70),
-                          physics: BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return RadioListTile<Addresses>(
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _address[index].contactPerson,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      _address[index].address1 +
-                                          ", " +
-                                          _address[index].address2 +
-                                          "\n" +
-                                          _address[index].landmark +
-                                          "\n" +
-                                          _address[index].city +
-                                          " - " +
-                                          _address[index].pinCode,
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.grey),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      _address[index].contactNumber,
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                                value: _address[index],
-                                groupValue: address,
-                                onChanged: (value) {
-                                  setState(() {
-                                    address = value;
-                                  });
+                      ? Column(
+                        children: [
+                          ListTile(
+                            title: Text(
+                              "Select Address",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.add),
+                              splashRadius: 25,
+                              color: cnst.primaryColor,
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => Add_Address()))
+                                    .then((value) {
+                                  getAddresses();
                                 });
-                          })
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                                itemCount: _address.length,
+                                padding: EdgeInsets.only(bottom: 70),
+                                physics: BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return RadioListTile<Addresses>(
+                                      title: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            _address[index].contactPerson,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            _address[index].address1 +
+                                                ", " +
+                                                _address[index].address2 +
+                                                "\n" +
+                                                _address[index].landmark +
+                                                "\n" +
+                                                _address[index].city +
+                                                " - " +
+                                                _address[index].pinCode,
+                                            style: TextStyle(
+                                                fontSize: 14, color: Colors.grey),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            _address[index].contactNumber,
+                                            style: TextStyle(
+                                                fontSize: 14, color: Colors.grey),
+                                          ),
+                                        ],
+                                      ),
+                                      value: _address[index],
+                                      groupValue: address,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          address = value;
+                                        });
+                                      });
+                                }),
+                          ),
+                        ],
+                      )
                       : Center(
                           child: CircularProgressIndicator(),
                         )
                   : Center(
                       child: Text("No address available"),
-                    )),
-        ],
-      ),
-      floatingActionButton: address != null
-          ? Container(
-              width: size.width * 0.9,
+                    ) : Center(child: Text(config.address, style: TextStyle(fontSize: 16, color: Colors.black)))),
+          Container(
+              width: size.width,
               height: 50,
               child: FlatButton(
                 child: Text(
-                  "Make Payment",
+                  "ORDER NOW",
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: makePayment,
                 color: cnst.primaryColor,
               ))
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        ],
+      ),
+      // floatingActionButton: address != null
+      //     ? Container(
+      //         width: size.width * 0.9,
+      //         height: 50,
+      //         child: FlatButton(
+      //           child: Text(
+      //             "ORDER NOW",
+      //             style: TextStyle(color: Colors.white),
+      //           ),
+      //           onPressed: makePayment,
+      //           color: cnst.primaryColor,
+      //         ))
+      //     : null,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
