@@ -36,46 +36,35 @@ class _CartState extends State<Cart> {
       grandTotal = 0.0;
     });
     var cartData = await SQFLiteTables.getData(table: Tables.CART);
-    List<CartAddOn> cartAddOns = [];
-    double combinedPrice = 0;
-    cartData.forEach((cartItem) async {
+    cartData.forEach((item) async {
+      List<CartAddOn> cartAdds = [];
+      double combinedPrice = 0;
 
       var cartAddOn = await SQFLiteTables.where(
-          value: cartItem["id"].toString(),
+          value: item["id"].toString(),
           table: Tables.CART_ADDON,
           column: 'cart_id');
-
-      cartAddOn.forEach((addOn) async {
+      for(int i = 0; i < cartAddOn.length; i++) {
         var addOnList = await SQFLiteTables.where(
             table: Tables.ADDONS,
-            value: addOn['addon_id'],
+            value: cartAddOn[i]['addon_id'],
             column: 'addon_item_id');
+        cartAdds.add(CartAddOn.fromJson(addOnList[0]));
+        combinedPrice += double.parse(addOnList[0]['price']);
+      }
 
-        addOnList.forEach((element) {
-          setState(() {
-            cartAddOns.add(CartAddOn.fromJson(element));
-          });
-        });
-
-        cartAddOns.forEach((element) {
-          setState(() {
-            combinedPrice += double.parse(element.price);
-          });
-        });
-      });
-      print(combinedPrice);
       setState(() {
-        grandTotal += (double.parse(cartItem["item_price"]) *
-            double.parse(cartItem["qty"])) +
+        grandTotal += (double.parse(item["item_price"]) *
+            double.parse(item["qty"])) +
             combinedPrice;
         cartItems.add(CartData(
-            itemPrice: cartItem["item_price"].toString(),
-            itemName: cartItem["item_name"].toString(),
-            itemId: cartItem["item_id"].toString(),
-            qty: cartItem["qty"].toString(),
-            cartId: cartItem["id"].toString(),
+            itemPrice: item["item_price"].toString(),
+            itemName: item["item_name"].toString(),
+            itemId: item["item_id"].toString(),
+            qty: item["qty"].toString(),
+            cartId: item["id"].toString(),
             combinedPrice: combinedPrice.toString(),
-            cartAddOns: cartAddOns));
+            cartAddOns: cartAdds));
       });
     });
   }

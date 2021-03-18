@@ -7,6 +7,7 @@ import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/widgets/item_card.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
+import 'package:crunch/main.dart';
 import 'package:crunch/models/banners_model.dart';
 import 'package:crunch/models/config_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -48,6 +49,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       if (value.value == "y") {
         await sharedPreferences.setString(
             "config", jsonEncode(value.data[0]["config"]));
+        await getCredentials();
         for (int i = 0; i < value.data[0]["banners"].length; i++) {
           setState(() {
             banners.add(Banners.fromJson(value.data[0]["banners"][i]));
