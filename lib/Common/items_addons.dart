@@ -10,20 +10,25 @@ import 'classes.dart';
 showItemAddons(
     {ItemData itemData,
     BuildContext context,
-    AnimationController animationController}) async {
+    AnimationController animationController,
+    StateSetter state}) async {
   List<AddOnGroup> addonWithGroups = [];
   double price = double.parse(itemData.price);
-  itemData.addon.forEach((addon) async {
+  for (int i = 0; i < itemData.addon.length; i++) {
     var addOns = await SQFLiteTables.where(
         table: Tables.ADD_ON_GROUPS,
         column: "addongroupid",
-        value: addon['addon_group_id']);
-    addOns.forEach((element) {
-      addonWithGroups.add(AddOnGroup.fromJson(element)
-        ..addOnMinItemSelection = addon['addon_item_selection_min'].toString()
-        ..addOnMaxItemSelection = addon['addon_item_selection_max']);
-    });
-  });
+        value: itemData.addon[i]['addon_group_id']);
+    for (int j = 0; j < addOns.length; j++) {
+      state(() {
+        addonWithGroups.add(AddOnGroup.fromJson(addOns[j])
+          ..addOnMinItemSelection =
+              addOns[j]['addon_item_selection_min'].toString()
+          ..addOnMaxItemSelection =
+              addOns[j]['addon_item_selection_max'].toString());
+      });
+    }
+  }
   showModalBottomSheet(
       context: context,
       builder: (_) {

@@ -8,20 +8,16 @@ import 'package:flutter/material.dart';
 
 import '../cart.dart';
 
-Widget itemCard (BuildContext context, ItemData itemData, AnimationController animationController) {
+Widget itemCard(BuildContext context, ItemData itemData,
+    AnimationController animationController) {
   return StatefulBuilder(
     builder: (_, state) => Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: 15, vertical: 10),
-      margin: EdgeInsets.symmetric(
-          vertical: 10, horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-                color: Colors.grey[200], blurRadius: 5)
-          ]),
+          boxShadow: [BoxShadow(color: Colors.grey[200], blurRadius: 5)]),
       child: Row(
         children: [
           ClipRRect(
@@ -29,94 +25,92 @@ Widget itemCard (BuildContext context, ItemData itemData, AnimationController an
             child: Image(
               height: 90,
               width: 100,
-              image: itemData.image != null &&
-                  itemData.image != ""
+              image: itemData.image != null && itemData.image != ""
                   ? NetworkImage(itemData.image)
-                  : AssetImage(
-                  "assets/images/CrunchTM.png"),
+                  : AssetImage("assets/images/CrunchTM.png"),
               fit: BoxFit.fill,
             ),
           ),
           Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 10),
-                child: Column(
-                  crossAxisAlignment:
-                  CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  itemData.name != null && itemData.name != ""
+                      ? itemData.name
+                      : "N/A",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  itemData.description != null && itemData.description != ""
+                      ? itemData.description
+                      : "N/A",
+                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      itemData.name != null &&
-                          itemData.name != ""
-                          ? itemData.name
-                          : "N/A",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold),
+                      "\u20b9${itemData.price != null && itemData.price != "" ? double.parse(itemData.price).toStringAsFixed(2) : "N/A"}",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      itemData.description != null &&
-                          itemData.description != ""
-                          ? itemData.description
-                          : "N/A",
-                      style: TextStyle(
-                          fontSize: 13, color: Colors.grey),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "\u20b9${itemData.price != null && itemData.price != "" ? double.parse(itemData.price).toStringAsFixed(2) : "N/A"}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 21),
-                        ),
-                        itemData.addedToCart
-                            ? incDecButton(item: itemData, state: state)
-                            : addToCartButton(
-                            onPressed: () async {
-                              if (itemData
-                                  .addon
-                                  .length >
-                                  0) {
-                                showItemAddons(itemData: itemData, animationController: animationController, context: context);
-                              } else if (itemData.variation.length == 0) {
-                                state(() {
-                                  itemData.addedToCart = true;
-                                });
-                                if(await SQFLiteTables.addToCart(itemData: itemData) != null) {
-                                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text(
-                                      "Added to cart",
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                    ),
-                                    backgroundColor: primaryColor,
-                                    action: SnackBarAction(
-                                      label: "GO TO CART",
-                                      textColor: Colors.white,
-                                      onPressed: () =>
-                                          Navigator.push(context, MaterialPageRoute(builder: (_) => Cart())),
-                                    ),
-                                  ));
-                                }
-                              } else {
-                                itemVariation(context: context, itemData: itemData);
+                    itemData.addedToCart
+                        ? incDecButton(item: itemData, state: state)
+                        : addToCartButton(onPressed: () async {
+                            if (itemData.addon.length > 0) {
+                              showItemAddons(
+                                  itemData: itemData,
+                                  animationController: animationController,
+                                  context: context,
+                                  state: state);
+                            } else if (itemData.variation.length == 0) {
+                              state(() {
+                                itemData.addedToCart = true;
+                              });
+                              if (await SQFLiteTables.addToCart(
+                                      itemData: itemData) !=
+                                  null) {
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(
+                                    "Added to cart",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  backgroundColor: primaryColor,
+                                  action: SnackBarAction(
+                                    label: "GO TO CART",
+                                    textColor: Colors.white,
+                                    onPressed: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => Cart())),
+                                  ),
+                                ));
                               }
-                            })
-                      ],
-                    )
+                            } else {
+                              itemVariation(
+                                  context: context, itemData: itemData, state: state);
+                            }
+                          })
                   ],
-                ),
-              )),
+                )
+              ],
+            ),
+          )),
         ],
       ),
     ),

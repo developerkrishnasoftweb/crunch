@@ -6,7 +6,7 @@ import 'package:crunch/models/add_on_group_model.dart';
 import 'package:crunch/models/variation_model.dart';
 import 'package:flutter/material.dart';
 
-itemVariation({BuildContext context, ItemData itemData}) async {
+itemVariation({BuildContext context, ItemData itemData, StateSetter state}) async {
   List<Variation> variation = [];
   itemData.variation.forEach((element) {
     variation.add(Variation.fromJson(element));
@@ -15,32 +15,45 @@ itemVariation({BuildContext context, ItemData itemData}) async {
   double price = 0;
   Variation selectedVariation = variation[selectedIndex];
   List<AddOnGroup> addonWithGroups = [];
-  getAddons({StateSetter state}) async {
-    if(state != null) {
-      state(() {
-        addonWithGroups.clear();
-        selectedVariation.addon.forEach((variationAddon) async {
-          var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
-          addOns.forEach((element) {
-            addonWithGroups.add(AddOnGroup.fromJson(element)
-              ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
-              ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
-          });
-        });
-        price = double.parse(selectedVariation.price);
-      });
-    } else {
+  getAddons() async {
+    state(() {
       addonWithGroups.clear();
-      selectedVariation.addon.forEach((variationAddon) async {
-        var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
-        addOns.forEach((element) {
-          addonWithGroups.add(AddOnGroup.fromJson(element)
-            ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
-            ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
+    });
+    for(int i = 0; i < selectedVariation.addon.length; i++) {
+      var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: selectedVariation.addon[i].addonGroupId);
+      for(int j = 0; j < addOns.length; j++) {
+        state(() {
+          addonWithGroups.add(AddOnGroup.fromJson(addOns[j])
+            ..addOnMinItemSelection = selectedVariation.addon[i].addonItemSelectionMin
+            ..addOnMaxItemSelection = selectedVariation.addon[i].addonItemSelectionMax);
         });
-      });
-      price = double.parse(selectedVariation.price);
+      }
     }
+    // if(state != null) {
+    //   state(() {
+    //     addonWithGroups.clear();
+    //     selectedVariation.addon.forEach((variationAddon) async {
+    //       var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
+    //       addOns.forEach((element) {
+    //         addonWithGroups.add(AddOnGroup.fromJson(element)
+    //           ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
+    //           ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
+    //       });
+    //     });
+    //     price = double.parse(selectedVariation.price);
+    //   });
+    // } else {
+    //   addonWithGroups.clear();
+    //   selectedVariation.addon.forEach((variationAddon) async {
+    //     var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
+    //     addOns.forEach((element) {
+    //       addonWithGroups.add(AddOnGroup.fromJson(element)
+    //         ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
+    //         ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
+    //     });
+    //   });
+    //   price = double.parse(selectedVariation.price);
+    // }
   }
   getAddons();
   return showModalBottomSheet(
@@ -76,7 +89,7 @@ itemVariation({BuildContext context, ItemData itemData}) async {
                                   selectedVariation = variation[index];
                                   selectedIndex = index;
                                 });
-                                await getAddons(state: state);
+                                await getAddons();
                               },
                               style: ButtonStyle(
                                   backgroundColor:
