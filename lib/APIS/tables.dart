@@ -64,7 +64,7 @@ class SQFLiteTables {
     await db.execute(
         "create table if not exists `$tableTaxes` (`taxid` varchar(100),`taxname` varchar(100),`tax` varchar(100),`taxtype` varchar(100),`tax_ordertype` varchar(100),`active` varchar(1),`tax_coreortotal` varchar(100),`tax_taxtype` varchar(100),`rank` varchar(100),`description` varchar(100))");
     await db.execute(
-        "create table if not exists `$tableCart` (`id` integer primary key autoincrement, `item_id` varchar(10), `item_name` varchar(10), `item_price` varchar(10), `combined_price` varchar(10), `qty` varchar(10))");
+        "create table if not exists `$tableCart` (`id` integer primary key autoincrement, `item_id` varchar(20), `variation_id` varchar(20), `item_name` varchar(50), `item_price` varchar(10), `combined_price` varchar(10), `qty` varchar(10))");
     await db.execute(
         "create table if not exists `$tableCartAddon` (`id` integer primary key autoincrement, `cart_id` varchar(10), `addon_id` varchar(10))");
     await db.execute(
@@ -307,7 +307,8 @@ class SQFLiteTables {
       });
     } else if (variation != null) {
       return await db.insert(SQFLiteTables.tableCart, {
-        "item_id": "${variation.id}",
+        "item_id": "${variation.itemId}",
+        "variation_id" : "${variation.variationid}",
         "item_name": "${variation.name}",
         "item_price": "${variation.price}",
         "combined_price": "0",

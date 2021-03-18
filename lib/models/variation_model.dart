@@ -1,14 +1,6 @@
 class Variation {
-  String id;
-  String variationid;
-  String name;
-  String groupname;
-  String price;
-  String active;
-  String itemPackingcharges;
-  String variationrank;
+  String id, variationid, name, groupname, price, active, itemPackingcharges, variationrank, itemId, variationallowaddon;
   List<Addon> addon;
-  String variationallowaddon;
 
   Variation(
       {this.id,
@@ -20,7 +12,7 @@ class Variation {
         this.itemPackingcharges,
         this.variationrank,
         this.addon,
-        this.variationallowaddon});
+        this.variationallowaddon, this.itemId});
 
   Variation.fromJson(Map<String, dynamic> json) {
     id = json['id'].toString();

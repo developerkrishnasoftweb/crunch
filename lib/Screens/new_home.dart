@@ -56,20 +56,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           });
         }
         if (Config.fromJson(value.data[0]["config"]).syncStatus == "y") {
-          await SQFLiteTables.truncate(tables: [
-            Tables.RESTAURANTS,
-            Tables.ORDER_TYPE,
-            Tables.CATEGORY,
-            Tables.ITEMS,
-            Tables.VARIATIONS,
-            Tables.ADD_ON_GROUPS,
-            Tables.ATTRIBUTES,
-            Tables.DISCOUNTS,
-            Tables.TAXES,
-            Tables.ADDONS
-          ]).then((value) async {
-            await SQFLiteTables.insertData();
-          });
+          // await SQFLiteTables.truncate(tables: [
+          //   Tables.RESTAURANTS,
+          //   Tables.ORDER_TYPE,
+          //   Tables.CATEGORY,
+          //   Tables.ITEMS,
+          //   Tables.VARIATIONS,
+          //   Tables.ADD_ON_GROUPS,
+          //   Tables.ATTRIBUTES,
+          //   Tables.DISCOUNTS,
+          //   Tables.TAXES,
+          //   Tables.ADDONS
+          // ]).then((value) async {
+          //   await SQFLiteTables.insertData();
+          // });
+          await SQFLiteTables.truncate()
+              .then((value) async => SQFLiteTables.insertData());
           setData();
         } else {
           setData();

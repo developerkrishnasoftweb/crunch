@@ -63,6 +63,7 @@ class _CartState extends State<Cart> {
             itemId: item["item_id"].toString(),
             qty: item["qty"].toString(),
             cartId: item["id"].toString(),
+            variationId: item["variation_id"],
             combinedPrice: combinedPrice.toString(),
             cartAddOns: cartAdds));
       });

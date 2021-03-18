@@ -2,6 +2,7 @@ import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/cart.dart';
 import 'package:crunch/Static/Constant.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:crunch/models/add_on_group_model.dart';
 import 'package:crunch/models/variation_model.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:flutter/material.dart';
 itemVariation({BuildContext context, ItemData itemData, StateSetter state}) async {
   List<Variation> variation = [];
   itemData.variation.forEach((element) {
-    variation.add(Variation.fromJson(element));
+    variation.add(Variation.fromJson(element)..itemId = itemData.id);
   });
   int selectedIndex = 0;
   double price = 0;
@@ -28,6 +29,7 @@ itemVariation({BuildContext context, ItemData itemData, StateSetter state}) asyn
             ..addOnMaxItemSelection = selectedVariation.addon[i].addonItemSelectionMax);
         });
       }
+      price = double.parse(selectedVariation.price);
     }
     // if(state != null) {
     //   state(() {
@@ -265,9 +267,29 @@ itemVariation({BuildContext context, ItemData itemData, StateSetter state}) asyn
                             onPressed: () async {
                               int id = await SQFLiteTables.addToCart(
                                   variation: selectedVariation);
-                              if (id != null) {
-
-
+                              for (int i = 0;
+                              i < addonWithGroups.length;
+                              i++) {
+                                for (int j = 0;
+                                j <
+                                    addonWithGroups[i]
+                                        .addOnGroupItems
+                                        .length;
+                                j++) {
+                                  if (addonWithGroups[i]
+                                      .addOnGroupItems[j]
+                                      .selected) {
+                                    await db.insert(
+                                        SQFLiteTables.tableCartAddon, {
+                                      "cart_id": "$id",
+                                      "addon_id": addonWithGroups[i]
+                                          .addOnGroupItems[j]
+                                          .addOnItemId
+                                    });
+                                  }
+                                }
+                              }
+                              if (id != 0) {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(

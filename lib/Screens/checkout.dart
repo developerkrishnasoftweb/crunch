@@ -376,6 +376,7 @@ class _CheckoutState extends State<Checkout> {
         "coupon_applied": widget.couponCode,
         "coupon_amount": widget.couponAmount
       });
+      print(formData.fields);
       AppServices.saveOrder(formData).then((value) {
         if (value.value == "true") {
           clearCart();

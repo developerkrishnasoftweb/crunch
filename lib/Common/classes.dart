@@ -44,7 +44,13 @@ class Category {
 }
 
 class CartData {
-  final String cartId, itemId, itemName, itemPrice, combinedPrice, qty;
+  final String cartId,
+      itemId,
+      itemName,
+      itemPrice,
+      combinedPrice,
+      qty,
+      variationId;
   final List<CartAddOn> cartAddOns;
 
   CartData(
@@ -54,5 +60,6 @@ class CartData {
       this.itemName,
       this.qty,
       this.itemPrice,
-      this.cartAddOns});
+      this.cartAddOns,
+      this.variationId});
 }
