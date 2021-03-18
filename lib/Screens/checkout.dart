@@ -117,7 +117,6 @@ class _CheckoutState extends State<Checkout> {
   }
 
   void getUserData() async {
-
     setState(() {
       sgst = double.parse(config.sgst ?? "0");
       cgst = double.parse(config.cgst ?? "0");

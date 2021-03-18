@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class MyOrders extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class MyOrders extends StatefulWidget {
 class _MyOrdersState extends State<MyOrders> {
   bool isLoading = false, isDeleting = false;
   List<OrderDetails> orderDetails = [];
+  Razorpay _razorpay;
 
   setLoading(bool status) {
     setState(() {
@@ -34,6 +36,46 @@ class _MyOrdersState extends State<MyOrders> {
   void initState() {
     super.initState();
     getOrders();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    FormData formData = FormData.fromMap({
+      "address_id": "",
+      "customer_id": userdata.id,
+      "delivery_charges": config.deliveryCharge ?? "0",
+      "packing_charges": config.packingCharge ?? "0",
+      "discount_total": "0",
+      "description": "",
+      "tax_total": "",
+      "total": "",
+      "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+      "payment_type": "PPD",
+      "payment_id": response.paymentId,
+      "items": "",
+      "coupon_applied": "",
+      "coupon_amount": "",
+      "order_type": ""
+    });
+    AppServices.saveOrder(formData).then((value) {
+      if (value.value == "true") {
+
+        Fluttertoast.showToast(msg: value.message);
+      } else {
+        Fluttertoast.showToast(msg: value.message);
+      }
+    });
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(msg: "Payment Failed");
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(msg: "Something went wrong");
   }
 
   getOrders() async {
@@ -164,7 +206,7 @@ class _MyOrdersState extends State<MyOrders> {
                                               .toLowerCase() ==
                                           "p"
                                   ? TextButton(
-                                      onPressed: makeOnlinePayment,
+                                      onPressed:  openCheckout,
                                       child: Text("MAKE ONLINE PAYMENT"))
                                   : SizedBox()
                             ]),
@@ -276,7 +318,23 @@ class _MyOrdersState extends State<MyOrders> {
     });
   }
 
-  void makeOnlinePayment() async {
-
+  void openCheckout() async {
+    var options = {
+      'key': config.razorpayKey,
+      'amount': 0,
+      'name': 'Crunch',
+      'description': 'Fresh Foods',
+      'image':
+      'https://firebasestorage.googleapis.com/v0/b/mytestApp.appspot.com/o/images%2FpZm8daajsIS4LvqBYTiWiuLIgmE2?alt=media&token=3kuli4cd-dc45-7845-b87d-5c4acc7da3c2',
+      'prefill': {'contact': userdata.mobile, 'email': userdata.email},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint(e);
+    }
   }
 }
