@@ -415,6 +415,14 @@ class _CheckoutState extends State<Checkout> {
         "coupon_amount": widget.couponAmount,
         "order_type": "P"
       });
+      AppServices.saveOrder(formData).then((value) {
+        if (value.value == "true") {
+          clearCart();
+          Fluttertoast.showToast(msg: value.message);
+        } else {
+          Fluttertoast.showToast(msg: value.message);
+        }
+      });
     }
   }
 
