@@ -351,10 +351,11 @@ class _CheckoutState extends State<Checkout> {
         items += [
           {
             "item":
-                "${widget.cartItems[i].itemId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].itemPrice}^${widget.cartItems[i].qty}^desc^",
+                "${widget.cartItems[i].itemId}^${widget.cartItems[i].variationId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].itemPrice}^${widget.cartItems[i].qty}^desc^",
             "addon": addOns ?? []
           }
         ];
+        // print("${widget.cartItems[i].itemId}^${widget.cartItems[i].variationId}^${widget.cartItems[i].itemName}^${widget.cartItems[i].itemPrice}^${widget.cartItems[i].qty}^desc^");
       });
     }
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
@@ -376,7 +377,6 @@ class _CheckoutState extends State<Checkout> {
         "coupon_applied": widget.couponCode,
         "coupon_amount": widget.couponAmount
       });
-      print(formData.fields);
       AppServices.saveOrder(formData).then((value) {
         if (value.value == "true") {
           clearCart();
