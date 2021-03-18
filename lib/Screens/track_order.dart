@@ -197,7 +197,6 @@ class _TrackOrderState extends State<TrackOrder> {
                   buildIconStatus(
                       title: "Order received",
                       status: statusCode > 4 ? true : false),
-
                       Expanded(
                           child: Center(
                             child: created != null ? Column(
