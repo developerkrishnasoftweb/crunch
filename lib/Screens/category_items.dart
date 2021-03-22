@@ -4,6 +4,7 @@ import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/widgets/item_card.dart';
 import 'package:crunch/Static/Constant.dart';
+import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,9 @@ import '../Common/classes.dart';
 
 class CategoryItems extends StatefulWidget {
   final String categoryId;
+
   CategoryItems({@required this.categoryId});
+
   @override
   _CategoryItemsState createState() => _CategoryItemsState();
 }
@@ -23,6 +26,7 @@ class _CategoryItemsState extends State<CategoryItems>
   bool isLoading = false;
   AnimationController _controller;
   var variation;
+
   @override
   void initState() {
     super.initState();
@@ -33,10 +37,12 @@ class _CategoryItemsState extends State<CategoryItems>
   }
 
   _getCategoryData() async {
-    var value = await SQFLiteTables.where(
-        table: Tables.ITEMS,
-        column: "item_categoryid",
-        value: widget.categoryId);
+    // var value = (await SQFLiteTables.where(
+    //     table: Tables.ITEMS,
+    //     column: "item_categoryid",
+    //     value: widget.categoryId));
+    var value = await db.rawQuery(
+        "select * from `${SQFLiteTables.tableItems}` where `active` = '1' and `item_categoryid` = ${widget.categoryId}");
     for (int i = 0; i < value.length; i++) {
       setState(() {
         items.add(ItemData(
@@ -66,7 +72,7 @@ class _CategoryItemsState extends State<CategoryItems>
         backgroundColor: primaryColor,
       ),
       body: ListView.builder(
-          itemCount: items.length > 10 ? 10 : items.length,
+          itemCount: items.length,
           shrinkWrap: true,
           physics: BouncingScrollPhysics(),
           scrollDirection: Axis.vertical,

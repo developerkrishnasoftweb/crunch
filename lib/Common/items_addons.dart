@@ -23,9 +23,9 @@ showItemAddons(
       state(() {
         addonWithGroups.add(AddOnGroup.fromJson(addOns[j])
           ..addOnMinItemSelection =
-              addOns[j]['addon_item_selection_min'].toString()
+              itemData.addon[i]['addon_item_selection_min'].toString()
           ..addOnMaxItemSelection =
-              addOns[j]['addon_item_selection_max'].toString());
+          itemData.addon[i]['addon_item_selection_max'].toString());
       });
     }
   }
