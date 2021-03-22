@@ -25,7 +25,7 @@ showItemAddons(
           ..addOnMinItemSelection =
               itemData.addon[i]['addon_item_selection_min'].toString()
           ..addOnMaxItemSelection =
-          itemData.addon[i]['addon_item_selection_max'].toString());
+              itemData.addon[i]['addon_item_selection_max'].toString());
       });
     }
   }

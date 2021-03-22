@@ -44,28 +44,6 @@ class _MyOrdersState extends State<MyOrders> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     FormData formData = FormData.fromMap({
-      "address_id": "",
-      "customer_id": userdata.id,
-      "delivery_charges": config.deliveryCharge ?? "0",
-      "packing_charges": config.packingCharge ?? "0",
-      "discount_total": "0",
-      "description": "",
-      "tax_total": "",
-      "total": "",
-      "api_key": "0imfnc8mVLWwsAawjYr4Rx",
-      "payment_type": "PPD",
-      "payment_id": response.paymentId,
-      "items": "",
-      "coupon_applied": "",
-      "coupon_amount": "",
-      "order_type": ""
-    });
-    AppServices.saveOrder(formData).then((value) {
-      if (value.value == "true") {
-        Fluttertoast.showToast(msg: value.message);
-      } else {
-        Fluttertoast.showToast(msg: value.message);
-      }
     });
   }
 
@@ -209,8 +187,12 @@ class _MyOrdersState extends State<MyOrders> {
                                               .toLowerCase() !=
                                           "ppd"
                                   ? TextButton(
-                                      onPressed: openCheckout,
-                                      child: Text("PAY NOW", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)))
+                                      onPressed: () =>
+                                          openCheckout(orderDetails[index]),
+                                      child: Text("PAY NOW",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold)))
                                   : SizedBox()
                             ]),
                         Divider(
@@ -321,23 +303,26 @@ class _MyOrdersState extends State<MyOrders> {
     });
   }
 
-  void openCheckout() async {
-    var options = {
-      'key': config.razorpayKey,
-      'amount': 0,
-      'name': 'Crunch',
-      'description': 'Fresh Foods',
-      'image':
-          'https://firebasestorage.googleapis.com/v0/b/mytestApp.appspot.com/o/images%2FpZm8daajsIS4LvqBYTiWiuLIgmE2?alt=media&token=3kuli4cd-dc45-7845-b87d-5c4acc7da3c2',
-      'prefill': {'contact': userdata.mobile, 'email': userdata.email},
-      'external': {
-        'wallets': ['paytm']
+  void openCheckout(OrderDetails orderDetails) async {
+    if (orderDetails?.total != null) {
+      var options = {
+        'key': config.razorpayKey,
+        'amount': double.parse(orderDetails.total).ceil() * 100,
+        'name': 'Crunch',
+        'description': 'Fresh Foods',
+        'image':
+            'https://firebasestorage.googleapis.com/v0/b/mytestApp.appspot.com/o/images%2FpZm8daajsIS4LvqBYTiWiuLIgmE2?alt=media&token=3kuli4cd-dc45-7845-b87d-5c4acc7da3c2',
+        'prefill': {'contact': userdata.mobile, 'email': userdata.email},
+        'external': {
+          'wallets': ['paytm']
+        }
+      };
+      try {
+        _razorpay.open(options);
+      } catch (e) {
+        debugPrint(e);
       }
-    };
-    try {
-      _razorpay.open(options);
-    } catch (e) {
-      debugPrint(e);
-    }
+    } else
+      Fluttertoast.showToast(msg: "Something went wrong, please try later");
   }
 }
