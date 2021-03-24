@@ -38,11 +38,35 @@ Widget itemCard(BuildContext context, ItemData itemData,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  itemData.name != null && itemData.name != ""
-                      ? itemData.name
-                      : "N/A",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        itemData.name != null && itemData.name != ""
+                            ? itemData.name
+                            : "N/A",
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: itemData.itemAttributeId == '1' ? Colors.green : Colors.red, width: 2)
+                      ),
+                      height: 20,
+                      width: 20,
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 11,
+                        width: 11,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: itemData.itemAttributeId == '1' ? Colors.green : Colors.red
+                        ),
+                      ),
+                    )
+                  ],
                 ),
                 SizedBox(
                   height: 5,

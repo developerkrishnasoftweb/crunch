@@ -126,6 +126,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               itemCategoryId: value[i]["item_categoryid"],
               itemOrderType: value[i]["item_ordertype"],
               price: value[i]["price"],
+              itemAttributeId: value[i]["item_attributeid"],
               variation: jsonDecode(value[i]["variation"])));
         });
       }

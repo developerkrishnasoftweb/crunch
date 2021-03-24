@@ -9,7 +9,8 @@ class ItemData {
       itemAllowAddOn,
       inStock,
       price,
-      image;
+      image,
+      itemAttributeId;
   bool addedToCart;
   int quantity;
   final List variation, addon;
@@ -27,6 +28,7 @@ class ItemData {
       this.price,
       this.addedToCart: false,
       this.quantity: 1,
+      this.itemAttributeId,
       this.variation});
 }
 
@@ -50,7 +52,9 @@ class CartData {
       itemPrice,
       combinedPrice,
       qty,
-      variationId, variationName, total;
+      variationId,
+      variationName,
+      total;
   final List<CartAddOn> cartAddOns;
 
   CartData(
@@ -61,5 +65,7 @@ class CartData {
       this.qty,
       this.itemPrice,
       this.cartAddOns,
-      this.variationId, this.variationName, this.total});
+      this.variationId,
+      this.variationName,
+      this.total});
 }
