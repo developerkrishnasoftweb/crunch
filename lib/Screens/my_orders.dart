@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/Screens/track_order.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
@@ -19,11 +21,14 @@ class _MyOrdersState extends State<MyOrders> {
   bool isLoading = false, isDeleting = false;
   List<OrderDetails> orderDetails = [];
   Razorpay _razorpay;
+  Timer timer;
 
   setLoading(bool status) {
-    setState(() {
-      isLoading = status;
-    });
+    if(this.mounted) {
+      setState(() {
+        isLoading = status;
+      });
+    }
   }
 
   setDelete(bool status) {
@@ -40,6 +45,9 @@ class _MyOrdersState extends State<MyOrders> {
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    timer = Timer.periodic(Duration(seconds: 10), (timer) {
+      getOrders();
+    });
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
@@ -66,18 +74,29 @@ class _MyOrdersState extends State<MyOrders> {
       if (value.value == "true") {
         final orders = value.data[0]['orders'];
         for (int i = 0; i < orders.length; i++) {
-          setState(() {
-            orderDetails.add(OrderDetails.fromJson(orders[i]));
-          });
+          if(this.mounted) {
+            setState(() {
+              orderDetails.add(OrderDetails.fromJson(orders[i]));
+            });
+          }
         }
         setLoading(false);
       } else {
-        setState(() {
-          orderDetails = null;
-        });
+        if(this.mounted) {
+          setState(() {
+            orderDetails = null;
+          });
+        }
         setLoading(false);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+    timer.cancel();
   }
 
   @override
