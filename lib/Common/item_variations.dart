@@ -7,7 +7,8 @@ import 'package:crunch/models/add_on_group_model.dart';
 import 'package:crunch/models/variation_model.dart';
 import 'package:flutter/material.dart';
 
-itemVariation({BuildContext context, ItemData itemData, StateSetter state}) async {
+itemVariation(
+    {BuildContext context, ItemData itemData, StateSetter state}) async {
   List<Variation> variation = [];
   itemData.variation.forEach((element) {
     variation.add(Variation.fromJson(element)..itemData = itemData);
@@ -20,13 +21,18 @@ itemVariation({BuildContext context, ItemData itemData, StateSetter state}) asyn
     state(() {
       addonWithGroups.clear();
     });
-    for(int i = 0; i < selectedVariation.addon.length; i++) {
-      var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: selectedVariation.addon[i].addonGroupId);
-      for(int j = 0; j < addOns.length; j++) {
+    for (int i = 0; i < selectedVariation.addon.length; i++) {
+      var addOns = await SQFLiteTables.where(
+          column: 'addongroupid',
+          table: Tables.ADD_ON_GROUPS,
+          value: selectedVariation.addon[i].addonGroupId);
+      for (int j = 0; j < addOns.length; j++) {
         state(() {
           addonWithGroups.add(AddOnGroup.fromJson(addOns[j])
-            ..addOnMinItemSelection = selectedVariation.addon[i].addonItemSelectionMin
-            ..addOnMaxItemSelection = selectedVariation.addon[i].addonItemSelectionMax);
+            ..addOnMinItemSelection =
+                selectedVariation.addon[i].addonItemSelectionMin
+            ..addOnMaxItemSelection =
+                selectedVariation.addon[i].addonItemSelectionMax);
         });
       }
       price = double.parse(selectedVariation.price);
@@ -57,6 +63,7 @@ itemVariation({BuildContext context, ItemData itemData, StateSetter state}) asyn
     //   price = double.parse(selectedVariation.price);
     // }
   }
+
   getAddons();
   return showModalBottomSheet(
       context: context,
@@ -78,7 +85,8 @@ itemVariation({BuildContext context, ItemData itemData, StateSetter state}) asyn
                       width: MediaQuery.of(context).size.width,
                       height: 60,
                       child: ListView.separated(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           separatorBuilder: (_, index) {
                             return SizedBox(
                                 width: index == variation.length ? 0 : 10);
@@ -129,119 +137,129 @@ itemVariation({BuildContext context, ItemData itemData, StateSetter state}) asyn
                           },
                           itemCount: variation.length),
                     ),
-                    Expanded(child: addonWithGroups.length > 0 ? ListView.builder(
-                      itemBuilder: (BuildContext context, int index) {
-                        return Column(children: [
-                          Container(
-                            child: Text(
-                                addonWithGroups[index].addOnGroupName,
-                                style: TextStyle(
-                                    fontSize: 17, color: primaryColor)),
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 15),
-                          ),
-                          Divider(
-                            indent: 20,
-                            endIndent: 20,
-                            height: 0,
-                            thickness: 1,
-                          ),
-                          for (int i = 0;
-                          i <
-                              addonWithGroups[index]
-                                  .addOnGroupItems
-                                  .length;
-                          i++)
-                            addonWithGroups[index]
-                                .addOnMaxItemSelection !=
-                                "1"
-                                ? CheckboxListTile(
-                                value: addonWithGroups[index]
-                                    .addOnGroupItems[i]
-                                    .selected,
-                                onChanged: (value) {
-                                  if (addonWithGroups[index]
-                                      .addOnGroupItems[i]
-                                      .selected) {
-                                    state(() {
+                    Expanded(
+                        child: addonWithGroups.length > 0
+                            ? ListView.builder(
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Column(children: [
+                                    Container(
+                                      child: Text(
+                                          addonWithGroups[index].addOnGroupName,
+                                          style: TextStyle(
+                                              fontSize: 17,
+                                              color: primaryColor)),
+                                      alignment: Alignment.centerLeft,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 15),
+                                    ),
+                                    Divider(
+                                      indent: 20,
+                                      endIndent: 20,
+                                      height: 0,
+                                      thickness: 1,
+                                    ),
+                                    for (int i = 0;
+                                        i <
+                                            addonWithGroups[index]
+                                                .addOnGroupItems
+                                                .length;
+                                        i++)
                                       addonWithGroups[index]
-                                          .addOnGroupItems[i]
-                                          .selected = false;
-                                      price = price -
-                                          double.parse(
-                                              addonWithGroups[index]
+                                                  .addOnMaxItemSelection !=
+                                              "1"
+                                          ? CheckboxListTile(
+                                              value: addonWithGroups[index]
                                                   .addOnGroupItems[i]
-                                                  .addOnItemPrice);
-                                    });
-                                  } else {
-                                    state(() {
-                                      addonWithGroups[index]
-                                          .addOnGroupItems[i]
-                                          .selected = true;
-                                      price = price +
-                                          double.parse(
-                                              addonWithGroups[index]
+                                                  .selected,
+                                              onChanged: (value) {
+                                                if (addonWithGroups[index]
+                                                    .addOnGroupItems[i]
+                                                    .selected) {
+                                                  state(() {
+                                                    addonWithGroups[index]
+                                                        .addOnGroupItems[i]
+                                                        .selected = false;
+                                                    price = price -
+                                                        double.parse(
+                                                            addonWithGroups[
+                                                                    index]
+                                                                .addOnGroupItems[
+                                                                    i]
+                                                                .addOnItemPrice);
+                                                  });
+                                                } else {
+                                                  state(() {
+                                                    addonWithGroups[index]
+                                                        .addOnGroupItems[i]
+                                                        .selected = true;
+                                                    price = price +
+                                                        double.parse(
+                                                            addonWithGroups[
+                                                                    index]
+                                                                .addOnGroupItems[
+                                                                    i]
+                                                                .addOnItemPrice);
+                                                  });
+                                                }
+                                              },
+                                              subtitle: Text("\u20b9" +
+                                                  addonWithGroups[index]
+                                                      .addOnGroupItems[i]
+                                                      .addOnItemPrice),
+                                              title: Text(addonWithGroups[index]
                                                   .addOnGroupItems[i]
-                                                  .addOnItemPrice);
-                                    });
-                                  }
+                                                  .addOnItemName))
+                                          : RadioListTile<AddOnGroupItems>(
+                                              value: addonWithGroups[index]
+                                                  .addOnGroupItems[i],
+                                              toggleable: true,
+                                              groupValue: addonWithGroups[index]
+                                                  .addOnGroupItem,
+                                              controlAffinity:
+                                                  ListTileControlAffinity
+                                                      .trailing,
+                                              title: Text(addonWithGroups[index]
+                                                  .addOnGroupItems[i]
+                                                  .addOnItemName),
+                                              subtitle: Text("\u20b9" +
+                                                  addonWithGroups[index]
+                                                      .addOnGroupItems[i]
+                                                      .addOnItemPrice),
+                                              onChanged: (value) {
+                                                addonWithGroups[index]
+                                                    .addOnGroupItems
+                                                    .forEach((element) {
+                                                  if (element.selected) {
+                                                    state(() {
+                                                      price = price -
+                                                          double.parse(element
+                                                              .addOnItemPrice);
+                                                      element.selected = false;
+                                                    });
+                                                  }
+                                                });
+                                                AddOnGroupItems selectedAddon =
+                                                    addonWithGroups[index]
+                                                        .addOnGroupItems
+                                                        .where((element) =>
+                                                            element == value)
+                                                        .first;
+                                                state(() {
+                                                  addonWithGroups[index]
+                                                          .addOnGroupItem =
+                                                      selectedAddon;
+                                                  selectedAddon.selected = true;
+                                                  price = price +
+                                                      double.parse(selectedAddon
+                                                          .addOnItemPrice);
+                                                });
+                                              })
+                                  ]);
                                 },
-                                subtitle: Text("\u20b9" +
-                                    addonWithGroups[index]
-                                        .addOnGroupItems[i]
-                                        .addOnItemPrice),
-                                title: Text(addonWithGroups[index]
-                                    .addOnGroupItems[i]
-                                    .addOnItemName))
-                                : RadioListTile<AddOnGroupItems>(
-                                value: addonWithGroups[index]
-                                    .addOnGroupItems[i],
-                                groupValue: addonWithGroups[index]
-                                    .addOnGroupItem,
-                                controlAffinity:
-                                ListTileControlAffinity.trailing,
-                                title: Text(addonWithGroups[index]
-                                    .addOnGroupItems[i]
-                                    .addOnItemName),
-                                subtitle: Text("\u20b9" +
-                                    addonWithGroups[index]
-                                        .addOnGroupItems[i]
-                                        .addOnItemPrice),
-                                onChanged: (value) {
-                                  addonWithGroups[index]
-                                      .addOnGroupItems
-                                      .forEach((element) {
-                                    if (element.selected) {
-                                      state(() {
-                                        price = price -
-                                            double.parse(element
-                                                .addOnItemPrice);
-                                        element.selected = false;
-                                      });
-                                    }
-                                  });
-                                  AddOnGroupItems selectedAddon =
-                                      addonWithGroups[index]
-                                          .addOnGroupItems
-                                          .where((element) =>
-                                      element == value)
-                                          .first;
-                                  state(() {
-                                    addonWithGroups[index]
-                                        .addOnGroupItem =
-                                        selectedAddon;
-                                    selectedAddon.selected = true;
-                                    price = price +
-                                        double.parse(selectedAddon
-                                            .addOnItemPrice);
-                                  });
-                                })
-                        ]);
-                      },
-                      physics: BouncingScrollPhysics(),
-                      itemCount: addonWithGroups.length,
-                    ) : SizedBox()),
+                                physics: BouncingScrollPhysics(),
+                                itemCount: addonWithGroups.length,
+                              )
+                            : SizedBox()),
                     Divider(
                       height: 2,
                       color: Colors.black,
@@ -267,15 +285,13 @@ itemVariation({BuildContext context, ItemData itemData, StateSetter state}) asyn
                             onPressed: () async {
                               int id = await SQFLiteTables.addToCart(
                                   variation: selectedVariation);
-                              for (int i = 0;
-                              i < addonWithGroups.length;
-                              i++) {
+                              for (int i = 0; i < addonWithGroups.length; i++) {
                                 for (int j = 0;
-                                j <
-                                    addonWithGroups[i]
-                                        .addOnGroupItems
-                                        .length;
-                                j++) {
+                                    j <
+                                        addonWithGroups[i]
+                                            .addOnGroupItems
+                                            .length;
+                                    j++) {
                                   if (addonWithGroups[i]
                                       .addOnGroupItems[j]
                                       .selected) {

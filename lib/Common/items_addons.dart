@@ -138,7 +138,8 @@ showItemAddons(
                                               addonWithGroups[index]
                                                   .addOnGroupItems[i]
                                                   .addOnItemPrice),
-                                          onChanged: (value) {
+                                          toggleable: true,
+                                          onChanged: (AddOnGroupItems value) {
                                             addonWithGroups[index]
                                                 .addOnGroupItems
                                                 .forEach((element) {
