@@ -37,31 +37,6 @@ itemVariation(
       }
       price = double.parse(selectedVariation.price);
     }
-    // if(state != null) {
-    //   state(() {
-    //     addonWithGroups.clear();
-    //     selectedVariation.addon.forEach((variationAddon) async {
-    //       var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
-    //       addOns.forEach((element) {
-    //         addonWithGroups.add(AddOnGroup.fromJson(element)
-    //           ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
-    //           ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
-    //       });
-    //     });
-    //     price = double.parse(selectedVariation.price);
-    //   });
-    // } else {
-    //   addonWithGroups.clear();
-    //   selectedVariation.addon.forEach((variationAddon) async {
-    //     var addOns = await SQFLiteTables.where(column: 'addongroupid', table: Tables.ADD_ON_GROUPS, value: variationAddon.addonGroupId);
-    //     addOns.forEach((element) {
-    //       addonWithGroups.add(AddOnGroup.fromJson(element)
-    //         ..addOnMinItemSelection = variationAddon.addonItemSelectionMin
-    //         ..addOnMaxItemSelection = variationAddon.addonItemSelectionMax);
-    //     });
-    //   });
-    //   price = double.parse(selectedVariation.price);
-    // }
   }
 
   getAddons();
@@ -209,12 +184,10 @@ itemVariation(
                                               title: Text(addonWithGroups[index]
                                                   .addOnGroupItems[i]
                                                   .addOnItemName))
-                                          : RadioListTile<AddOnGroupItems>(
+                                          : CheckboxListTile(
                                               value: addonWithGroups[index]
-                                                  .addOnGroupItems[i],
-                                              toggleable: true,
-                                              groupValue: addonWithGroups[index]
-                                                  .addOnGroupItem,
+                                                  .addOnGroupItems[i]
+                                                  .selected,
                                               controlAffinity:
                                                   ListTileControlAffinity
                                                       .trailing,
@@ -226,6 +199,10 @@ itemVariation(
                                                       .addOnGroupItems[i]
                                                       .addOnItemPrice),
                                               onChanged: (value) {
+                                                bool isSelected =
+                                                    addonWithGroups[index]
+                                                        .addOnGroupItems[i]
+                                                        .selected;
                                                 addonWithGroups[index]
                                                     .addOnGroupItems
                                                     .forEach((element) {
@@ -238,20 +215,19 @@ itemVariation(
                                                     });
                                                   }
                                                 });
-                                                AddOnGroupItems selectedAddon =
-                                                    addonWithGroups[index]
-                                                        .addOnGroupItems
-                                                        .where((element) =>
-                                                            element == value)
-                                                        .first;
+                                                if (isSelected) {
+                                                  return;
+                                                }
                                                 state(() {
                                                   addonWithGroups[index]
-                                                          .addOnGroupItem =
-                                                      selectedAddon;
-                                                  selectedAddon.selected = true;
+                                                      .addOnGroupItems[i]
+                                                      .selected = true;
                                                   price = price +
-                                                      double.parse(selectedAddon
-                                                          .addOnItemPrice);
+                                                      double.parse(
+                                                          addonWithGroups[index]
+                                                              .addOnGroupItems[
+                                                                  i]
+                                                              .addOnItemPrice);
                                                 });
                                               })
                                   ]);
@@ -285,28 +261,29 @@ itemVariation(
                             onPressed: () async {
                               int id = await SQFLiteTables.addToCart(
                                   variation: selectedVariation);
-                              for (int i = 0; i < addonWithGroups.length; i++) {
-                                for (int j = 0;
-                                    j <
-                                        addonWithGroups[i]
-                                            .addOnGroupItems
-                                            .length;
-                                    j++) {
-                                  if (addonWithGroups[i]
-                                      .addOnGroupItems[j]
-                                      .selected) {
-                                    await db.insert(
-                                        SQFLiteTables.tableCartAddon, {
-                                      "cart_id": "$id",
-                                      "addon_id": addonWithGroups[i]
-                                          .addOnGroupItems[j]
-                                          .addOnItemId
-                                    });
+                              if (id != 0) {
+                                for (int i = 0;
+                                    i < addonWithGroups.length;
+                                    i++) {
+                                  for (int j = 0;
+                                      j <
+                                          addonWithGroups[i]
+                                              .addOnGroupItems
+                                              .length;
+                                      j++) {
+                                    if (addonWithGroups[i]
+                                        .addOnGroupItems[j]
+                                        .selected) {
+                                      await db.insert(
+                                          SQFLiteTables.tableCartAddon, {
+                                        "cart_id": "$id",
+                                        "addon_id": addonWithGroups[i]
+                                            .addOnGroupItems[j]
+                                            .addOnItemId
+                                      });
+                                    }
                                   }
                                 }
-                              }
-                              if (id != 0) {
-                                Navigator.pop(context);
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
                                   content: Text(
@@ -325,6 +302,7 @@ itemVariation(
                                             builder: (_) => Cart())),
                                   ),
                                 ));
+                                Navigator.pop(context);
                               }
                             },
                             color: Colors.green,

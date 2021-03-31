@@ -37,10 +37,6 @@ class _CategoryItemsState extends State<CategoryItems>
   }
 
   _getCategoryData() async {
-    // var value = (await SQFLiteTables.where(
-    //     table: Tables.ITEMS,
-    //     column: "item_categoryid",
-    //     value: widget.categoryId));
     var value = await db.rawQuery(
         "select * from `${SQFLiteTables.tableItems}` where `active` = '1' and `item_categoryid` = ${widget.categoryId}");
     for (int i = 0; i < value.length; i++) {

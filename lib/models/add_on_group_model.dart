@@ -1,12 +1,22 @@
 import 'dart:convert';
 
 class AddOnGroup {
-  String addOnGroupId, addOnGroupRank, active, addOnGroupName, addOnMaxItemSelection, addOnMinItemSelection;
+  String addOnGroupId,
+      addOnGroupRank,
+      active,
+      addOnGroupName,
+      addOnMaxItemSelection,
+      addOnMinItemSelection;
   List<AddOnGroupItems> addOnGroupItems;
-  AddOnGroupItems addOnGroupItem;
 
-  AddOnGroup(this.addOnGroupId, this.addOnGroupRank, this.active,
-      this.addOnGroupName, this.addOnGroupItems, this.addOnMaxItemSelection, this.addOnMinItemSelection, this.addOnGroupItem);
+  AddOnGroup(
+      this.addOnGroupId,
+      this.addOnGroupRank,
+      this.active,
+      this.addOnGroupName,
+      this.addOnGroupItems,
+      this.addOnMaxItemSelection,
+      this.addOnMinItemSelection);
 
   AddOnGroup.fromJson(Map<String, dynamic> json) {
     addOnGroupId = json['addongroupid'].toString();
@@ -37,7 +47,8 @@ class AddOnGroupItems {
       this.addOnItemPrice,
       this.active,
       this.attributes,
-      this.addOnItemRank, this.selected});
+      this.addOnItemRank,
+      this.selected});
 
   AddOnGroupItems.fromJson(Map<String, dynamic> json) {
     addOnItemId = json['addonitemid'].toString();
