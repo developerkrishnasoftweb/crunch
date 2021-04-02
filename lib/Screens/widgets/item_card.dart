@@ -46,14 +46,18 @@ Widget itemCard(BuildContext context, ItemData itemData,
                         itemData.name != null && itemData.name != ""
                             ? itemData.name
                             : "N/A",
-                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: itemData.itemAttributeId == '1' ? Colors.green : Colors.red, width: 2)
-                      ),
+                          color: Colors.white,
+                          border: Border.all(
+                              color: itemData.itemAttributeId == '1'
+                                  ? Colors.green
+                                  : Colors.red,
+                              width: 2)),
                       height: 20,
                       width: 20,
                       alignment: Alignment.center,
@@ -61,9 +65,10 @@ Widget itemCard(BuildContext context, ItemData itemData,
                         height: 11,
                         width: 11,
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: itemData.itemAttributeId == '1' ? Colors.green : Colors.red
-                        ),
+                            shape: BoxShape.circle,
+                            color: itemData.itemAttributeId == '1'
+                                ? Colors.green
+                                : Colors.red),
                       ),
                     )
                   ],
@@ -87,8 +92,8 @@ Widget itemCard(BuildContext context, ItemData itemData,
                       flex: 2,
                       child: Text(
                         "\u20b9${itemData.price != null && itemData.price != "" ? double.parse(itemData.price).toStringAsFixed(2) : "N/A"}",
-                        style:
-                            TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 21),
                       ),
                     ),
                     Expanded(
@@ -132,7 +137,9 @@ Widget itemCard(BuildContext context, ItemData itemData,
                                 }
                               } else {
                                 itemVariation(
-                                    context: context, itemData: itemData, state: state);
+                                    context: context,
+                                    itemData: itemData,
+                                    state: state);
                               }
                             }),
                     )
