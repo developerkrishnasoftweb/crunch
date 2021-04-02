@@ -83,53 +83,59 @@ Widget itemCard(BuildContext context, ItemData itemData,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "\u20b9${itemData.price != null && itemData.price != "" ? double.parse(itemData.price).toStringAsFixed(2) : "N/A"}",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        "\u20b9${itemData.price != null && itemData.price != "" ? double.parse(itemData.price).toStringAsFixed(2) : "N/A"}",
+                        style:
+                            TextStyle(fontWeight: FontWeight.bold, fontSize: 21),
+                      ),
                     ),
-                    itemData.addedToCart
-                        ? incDecButton(item: itemData, state: state)
-                        : addToCartButton(onPressed: () async {
-                            if (itemData.addon.length > 0) {
-                              showItemAddons(
-                                  itemData: itemData,
-                                  animationController: animationController,
-                                  context: context,
-                                  state: state);
-                            } else if (itemData.variation.length == 0) {
-                              state(() {
-                                itemData.addedToCart = true;
-                              });
-                              if (await SQFLiteTables.addToCart(
-                                      itemData: itemData) !=
-                                  null) {
-                                ScaffoldMessenger.of(context)
-                                    .removeCurrentSnackBar();
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text(
-                                    "Added to cart",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  backgroundColor: primaryColor,
-                                  action: SnackBarAction(
-                                    label: "GO TO CART",
-                                    textColor: Colors.white,
-                                    onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (_) => Cart())),
-                                  ),
-                                ));
+                    Expanded(
+                      flex: 1,
+                      child: itemData.addedToCart
+                          ? incDecButton(item: itemData, state: state)
+                          : addToCartButton(onPressed: () async {
+                              if (itemData.addon.length > 0) {
+                                showItemAddons(
+                                    itemData: itemData,
+                                    animationController: animationController,
+                                    context: context,
+                                    state: state);
+                              } else if (itemData.variation.length == 0) {
+                                state(() {
+                                  itemData.addedToCart = true;
+                                });
+                                if (await SQFLiteTables.addToCart(
+                                        itemData: itemData) !=
+                                    null) {
+                                  ScaffoldMessenger.of(context)
+                                      .removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(
+                                      "Added to cart",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    backgroundColor: primaryColor,
+                                    action: SnackBarAction(
+                                      label: "GO TO CART",
+                                      textColor: Colors.white,
+                                      onPressed: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => Cart())),
+                                    ),
+                                  ));
+                                }
+                              } else {
+                                itemVariation(
+                                    context: context, itemData: itemData, state: state);
                               }
-                            } else {
-                              itemVariation(
-                                  context: context, itemData: itemData, state: state);
-                            }
-                          })
+                            }),
+                    )
                   ],
                 )
               ],
@@ -204,6 +210,7 @@ Widget addToCartButton({@required VoidCallback onPressed}) {
           "ADD",
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+          overflow: TextOverflow.ellipsis,
         ),
         onPressed: onPressed,
         color: Colors.green[500],
