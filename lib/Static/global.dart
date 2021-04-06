@@ -1,6 +1,7 @@
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/models/config_model.dart';
 import 'package:crunch/models/userdata_models.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -26,3 +27,4 @@ SharedPreferences sharedPreferences;
 Database db;
 Userdata userdata;
 Config config;
+Position position;

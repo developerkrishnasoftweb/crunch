@@ -6,6 +6,7 @@ import 'package:crunch/Static/global.dart';
 import 'package:crunch/models/config_model.dart';
 import 'package:crunch/models/userdata_models.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'LoginScreen/Login.dart';
@@ -27,18 +28,40 @@ Future<void> main() async {
     debugShowCheckedModeBanner: false,
     home: credential ? Dashboard() : Login(),
   ));
+  position = await determinePosition();
 }
 
 Future<bool> getCredentials() async {
   final userData = sharedPreferences.getString('userdata');
   final configData = sharedPreferences.getString('config');
-  if(userData != null) {
+  if (userData != null) {
     userdata = Userdata.fromJson(await jsonDecode(userData));
-    if(configData != null) {
+    if (configData != null) {
       config = Config.fromJson(jsonDecode(configData));
     }
     return true;
   } else {
     return false;
   }
+}
+
+Future<Position> determinePosition() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    return Future.value(null);
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.deniedForever) {
+      return Future.value(null);
+    }
+    if (permission == LocationPermission.denied) {
+      return Future.value(null);
+    }
+  }
+  return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
 }

@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import 'Add_Address.dart';
@@ -18,11 +19,13 @@ class Checkout extends StatefulWidget {
   final double grandTotal, couponAmount;
   final List<CartData> cartItems;
   final String couponCode;
+
   Checkout(
       {@required this.grandTotal,
       @required this.cartItems,
       this.couponAmount: 0.0,
       this.couponCode: ""});
+
   @override
   _CheckoutState createState() => _CheckoutState();
 }
@@ -33,9 +36,11 @@ class _CheckoutState extends State<Checkout> {
   List<Map<String, dynamic>> items = [];
   PAYMENTMETHOD _paymentMethod = PAYMENTMETHOD.CASHONDELIVERY;
   Addresses address;
+
   // static const platform = const MethodChannel("razorpay_flutter");
   Razorpay _razorpay;
   double sgst = 0, cgst = 0, taxTotal = 0, total = 0, grandTotal = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -141,159 +146,183 @@ class _CheckoutState extends State<Checkout> {
         ),
         backgroundColor: cnst.primaryColor,
       ),
-      body: isLoading ? Center(child: CircularProgressIndicator()) : Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildRow("CART VALUE", widget.grandTotal.toStringAsFixed(2)),
-          buildRow("PACKING CHARGES", "+ " + config.packingCharge ?? "0"),
-          buildRow("DELIVERY CHARGES", "+ " + config.deliveryCharge ?? "0"),
-          buildRow("SGST($sgst%)",
-              "+${((widget.grandTotal * sgst) / 100).toStringAsFixed(2)}"),
-          buildRow("CGST($cgst%)",
-              "+${((widget.grandTotal * cgst) / 100).toStringAsFixed(2)}"),
-          buildRow("COUPONS", "-" + widget.couponAmount.toString()),
-          Divider(
-            indent: 8,
-            endIndent: 8,
-            height: 2,
-            thickness: 2,
-            color: cnst.primaryColor,
-          ),
-          buildRow(
-            "Total",
-            grandTotal.toStringAsFixed(2),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Select Payment Mode",
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-          RadioListTile<PAYMENTMETHOD>(
-            title: Text("Cash on delivery"),
-            value: PAYMENTMETHOD.CASHONDELIVERY,
-            groupValue: _paymentMethod,
-            onChanged: (value) {
-              setState(() {
-                _paymentMethod = value;
-              });
-            },
-          ),
-          RadioListTile<PAYMENTMETHOD>(
-            title: Text("Online Payment"),
-            value: PAYMENTMETHOD.RAZORPAY,
-            groupValue: _paymentMethod,
-            onChanged: (value) {
-              setState(() {
-                _paymentMethod = value;
-              });
-            },
-          ),
-          RadioListTile<PAYMENTMETHOD>(
-            title: Text("Store Pickup"),
-            value: PAYMENTMETHOD.STORE_PICKUP,
-            groupValue: _paymentMethod,
-            onChanged: (value) {
-              setState(() {
-                _paymentMethod = value;
-              });
-            },
-          ),
-          Expanded(
-              child: _paymentMethod != PAYMENTMETHOD.STORE_PICKUP ? _address != null
-                  ? _address.length > 0
-                      ? Column(
-                        children: [
-                          ListTile(
-                            title: Text(
-                              "Select Address",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.add),
-                              splashRadius: 25,
-                              color: cnst.primaryColor,
-                              onPressed: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => Add_Address()))
-                                    .then((value) {
-                                  getAddresses();
-                                });
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: _address.length,
-                                padding: EdgeInsets.only(bottom: 70),
-                                physics: BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return RadioListTile<Addresses>(
-                                      title: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            _address[index].contactPerson,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            _address[index].address1 +
-                                                ", " +
-                                                _address[index].address2 +
-                                                "\n" +
-                                                _address[index].landmark +
-                                                "\n" +
-                                                _address[index].city +
-                                                " - " +
-                                                _address[index].pinCode,
-                                            style: TextStyle(
-                                                fontSize: 14, color: Colors.grey),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            _address[index].contactNumber,
-                                            style: TextStyle(
-                                                fontSize: 14, color: Colors.grey),
-                                          ),
-                                        ],
-                                      ),
-                                      value: _address[index],
-                                      groupValue: address,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          address = value;
-                                        });
-                                      });
-                                }),
-                          ),
-                        ],
-                      )
-                      : Center(
-                          child: CircularProgressIndicator(),
-                        )
-                  : Center(
-                      child: Text("No address available"),
-                    ) : Center(child: Text(config.address, style: TextStyle(fontSize: 16, color: Colors.black)))),
-          Container(
-              width: size.width,
-              height: 50,
-              child: FlatButton(
-                child: Text(
-                  "ORDER NOW",
-                  style: TextStyle(color: Colors.white),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildRow("CART VALUE", widget.grandTotal.toStringAsFixed(2)),
+                buildRow("PACKING CHARGES", "+ " + config.packingCharge ?? "0"),
+                buildRow(
+                    "DELIVERY CHARGES", "+ " + config.deliveryCharge ?? "0"),
+                buildRow("SGST($sgst%)",
+                    "+${((widget.grandTotal * sgst) / 100).toStringAsFixed(2)}"),
+                buildRow("CGST($cgst%)",
+                    "+${((widget.grandTotal * cgst) / 100).toStringAsFixed(2)}"),
+                buildRow("COUPONS", "-" + widget.couponAmount.toString()),
+                Divider(
+                  indent: 8,
+                  endIndent: 8,
+                  height: 2,
+                  thickness: 2,
+                  color: cnst.primaryColor,
                 ),
-                onPressed: makePayment,
-                color: cnst.primaryColor,
-              ))
-        ],
-      ),
+                buildRow(
+                  "Total",
+                  grandTotal.toStringAsFixed(2),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Select Payment Mode",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                RadioListTile<PAYMENTMETHOD>(
+                  title: Text("Cash on delivery"),
+                  value: PAYMENTMETHOD.CASHONDELIVERY,
+                  groupValue: _paymentMethod,
+                  onChanged: (value) {
+                    setState(() {
+                      _paymentMethod = value;
+                    });
+                  },
+                ),
+                RadioListTile<PAYMENTMETHOD>(
+                  title: Text("Online Payment"),
+                  value: PAYMENTMETHOD.RAZORPAY,
+                  groupValue: _paymentMethod,
+                  onChanged: (value) {
+                    setState(() {
+                      _paymentMethod = value;
+                    });
+                  },
+                ),
+                RadioListTile<PAYMENTMETHOD>(
+                  title: Text("Store Pickup"),
+                  value: PAYMENTMETHOD.STORE_PICKUP,
+                  groupValue: _paymentMethod,
+                  onChanged: (value) {
+                    setState(() {
+                      _paymentMethod = value;
+                    });
+                  },
+                ),
+                Expanded(
+                    child: _paymentMethod != PAYMENTMETHOD.STORE_PICKUP
+                        ? _address != null
+                            ? _address.length > 0
+                                ? Column(
+                                    children: [
+                                      ListTile(
+                                        title: Text(
+                                          "Select Address",
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                        trailing: IconButton(
+                                          icon: Icon(Icons.add),
+                                          splashRadius: 25,
+                                          color: cnst.primaryColor,
+                                          onPressed: () {
+                                            Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Add_Address()))
+                                                .then((value) {
+                                              getAddresses();
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: ListView.builder(
+                                            itemCount: _address.length,
+                                            padding:
+                                                EdgeInsets.only(bottom: 70),
+                                            physics: BouncingScrollPhysics(),
+                                            itemBuilder: (context, index) {
+                                              return RadioListTile<Addresses>(
+                                                  title: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        _address[index]
+                                                            .contactPerson,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Text(
+                                                        _address[index].address1 +
+                                                            ", " +
+                                                            _address[index]
+                                                                .address2 +
+                                                            "\n" +
+                                                            _address[index]
+                                                                .landmark +
+                                                            "\n" +
+                                                            _address[index]
+                                                                .city +
+                                                            " - " +
+                                                            _address[index]
+                                                                .pinCode,
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.grey),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Text(
+                                                        _address[index]
+                                                            .contactNumber,
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.grey),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  value: _address[index],
+                                                  groupValue: address,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      address = value;
+                                                    });
+                                                  });
+                                            }),
+                                      ),
+                                    ],
+                                  )
+                                : Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                            : Center(
+                                child: Text("No address available"),
+                              )
+                        : Center(
+                            child: Text(config.address,
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black)))),
+                Container(
+                    width: size.width,
+                    height: 50,
+                    child: FlatButton(
+                      child: Text(
+                        "ORDER NOW",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: makePayment,
+                      color: cnst.primaryColor,
+                    ))
+              ],
+            ),
       // floatingActionButton: address != null
       //     ? Container(
       //         width: size.width * 0.9,
@@ -352,6 +381,28 @@ class _CheckoutState extends State<Checkout> {
   }
 
   makePayment() async {
+    if (config?.distanceBetween != null &&
+        config?.latitude != null &&
+        config.longitude != null) {
+      if (config.distanceBetween.isNotEmpty &&
+          config.latitude.isNotEmpty &&
+          config.longitude.isNotEmpty) {
+        if (Geolocator.distanceBetween(position.latitude, position.longitude,
+                double.parse(config.latitude), double.parse(config.longitude)) >
+            (double.parse(config.distanceBetween) / 1000)) {
+          Fluttertoast.showToast(
+              msg:
+                  "Sorry for inconvenience, we are delivering in range of ${double.parse(config.distanceBetween) / 1000}KM");
+          return;
+        }
+      } else {
+        Fluttertoast.showToast(msg: "Unable to fetch delivering range");
+        return;
+      }
+    } else {
+      Fluttertoast.showToast(msg: "Unable to fetch delivering range");
+      return;
+    }
     setState(() {
       items = [];
     });
@@ -385,7 +436,7 @@ class _CheckoutState extends State<Checkout> {
     }
     if (_paymentMethod == PAYMENTMETHOD.RAZORPAY) {
       openCheckout();
-    } else if (_paymentMethod == PAYMENTMETHOD.CASHONDELIVERY){
+    } else if (_paymentMethod == PAYMENTMETHOD.CASHONDELIVERY) {
       FormData formData = FormData.fromMap({
         "address_id": address.id,
         "customer_id": userdata.id,
@@ -460,7 +511,7 @@ class _CheckoutState extends State<Checkout> {
   }
 }
 
-enum PAYMENTMETHOD { CASHONDELIVERY, RAZORPAY, STORE_PICKUP}
+enum PAYMENTMETHOD { CASHONDELIVERY, RAZORPAY, STORE_PICKUP }
 
 class Addresses {
   final String id,
@@ -472,6 +523,7 @@ class Addresses {
       landmark,
       pinCode,
       city;
+
   Addresses(
       {this.customerId,
       this.city,

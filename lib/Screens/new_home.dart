@@ -12,6 +12,7 @@ import 'package:crunch/models/banners_model.dart';
 import 'package:crunch/models/config_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'Category.dart';
 import 'category_items.dart';
