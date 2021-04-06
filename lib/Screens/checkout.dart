@@ -381,18 +381,23 @@ class _CheckoutState extends State<Checkout> {
   }
 
   makePayment() async {
-    if (config?.distanceBetween != null &&
-        config?.latitude != null &&
-        config.longitude != null) {
-      if (config.distanceBetween.isNotEmpty &&
-          config.latitude.isNotEmpty &&
-          config.longitude.isNotEmpty) {
-        if (Geolocator.distanceBetween(position.latitude, position.longitude,
-                double.parse(config.latitude), double.parse(config.longitude)) >
-            (double.parse(config.distanceBetween) / 1000)) {
-          Fluttertoast.showToast(
-              msg:
-                  "Sorry for inconvenience, we are delivering in range of ${double.parse(config.distanceBetween) / 1000}KM");
+    if(position != null) {
+      if (config?.distanceBetween != null &&
+          config?.latitude != null &&
+          config.longitude != null) {
+        if (config.distanceBetween.isNotEmpty &&
+            config.latitude.isNotEmpty &&
+            config.longitude.isNotEmpty) {
+          if (Geolocator.distanceBetween(position.latitude, position.longitude,
+              double.parse(config.latitude), double.parse(config.longitude)) >
+              (double.parse(config.distanceBetween) / 1000)) {
+            Fluttertoast.showToast(
+                msg:
+                "Sorry for inconvenience, we are delivering in range of ${double.parse(config.distanceBetween) / 1000}KM");
+            return;
+          }
+        } else {
+          Fluttertoast.showToast(msg: "Unable to fetch delivering range");
           return;
         }
       } else {
@@ -400,8 +405,7 @@ class _CheckoutState extends State<Checkout> {
         return;
       }
     } else {
-      Fluttertoast.showToast(msg: "Unable to fetch delivering range");
-      return;
+      Fluttertoast.showToast(msg: "Unable to get your current location");
     }
     setState(() {
       items = [];
