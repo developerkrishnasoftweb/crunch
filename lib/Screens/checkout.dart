@@ -390,7 +390,7 @@ class _CheckoutState extends State<Checkout> {
             config.latitude.isNotEmpty &&
             config.longitude.isNotEmpty) {
           if ((Geolocator.distanceBetween(position.latitude, position.longitude,
-              double.parse(config.latitude), double.parse(config.longitude)) / 1000) >
+              double.parse(config.latitude), double.parse(config.longitude)) / 1000) <
               (double.parse(config.distanceBetween) / 1000)) {
             Fluttertoast.showToast(
                 msg:
