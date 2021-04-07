@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
+import '../main.dart';
 import 'Add_Address.dart';
 
 class Checkout extends StatefulWidget {
@@ -388,8 +389,8 @@ class _CheckoutState extends State<Checkout> {
         if (config.distanceBetween.isNotEmpty &&
             config.latitude.isNotEmpty &&
             config.longitude.isNotEmpty) {
-          if (Geolocator.distanceBetween(position.latitude, position.longitude,
-              double.parse(config.latitude), double.parse(config.longitude)) >
+          if ((Geolocator.distanceBetween(position.latitude, position.longitude,
+              double.parse(config.latitude), double.parse(config.longitude)) / 1000) >
               (double.parse(config.distanceBetween) / 1000)) {
             Fluttertoast.showToast(
                 msg:
@@ -405,7 +406,8 @@ class _CheckoutState extends State<Checkout> {
         return;
       }
     } else {
-      Fluttertoast.showToast(msg: "Unable to get your current location");
+      Fluttertoast.showToast(msg: "Unable to get your current location, Please turn on location");
+      determinePosition();
       return;
     }
     setState(() {
