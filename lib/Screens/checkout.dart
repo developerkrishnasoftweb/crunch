@@ -384,7 +384,7 @@ class _CheckoutState extends State<Checkout> {
     if(position != null) {
       if (config?.distanceBetween != null &&
           config?.latitude != null &&
-          config.longitude != null) {
+          config?.longitude != null) {
         if (config.distanceBetween.isNotEmpty &&
             config.latitude.isNotEmpty &&
             config.longitude.isNotEmpty) {
