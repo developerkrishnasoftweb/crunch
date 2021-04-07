@@ -406,6 +406,7 @@ class _CheckoutState extends State<Checkout> {
       }
     } else {
       Fluttertoast.showToast(msg: "Unable to get your current location");
+      return;
     }
     setState(() {
       items = [];
