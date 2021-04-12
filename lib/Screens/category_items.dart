@@ -25,7 +25,7 @@ class _CategoryItemsState extends State<CategoryItems>
   List<ItemData> items = [];
   bool isLoading = false;
   AnimationController _controller;
-  var variation;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -61,6 +61,7 @@ class _CategoryItemsState extends State<CategoryItems>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text(
           "Items",
@@ -74,7 +75,7 @@ class _CategoryItemsState extends State<CategoryItems>
           physics: BouncingScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
-            return itemCard(context, items[index], _controller);
+            return itemCard(scaffoldKey: scaffoldKey, context: context, animationController: _controller, itemData: items[index]);
           }),
     );
   }

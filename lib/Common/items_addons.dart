@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'classes.dart';
 
 showItemAddons(
-    {ItemData itemData,
+{ItemData itemData,
     BuildContext context,
     AnimationController animationController,
-    StateSetter state}) async {
+    StateSetter state, GlobalKey<ScaffoldState> scaffoldKey}) async {
   List<AddOnGroup> addonWithGroups = [];
   double price = double.parse(itemData.price);
   for (int i = 0; i < itemData.addon.length; i++) {
@@ -221,10 +221,8 @@ showItemAddons(
                                         }
                                       }
                                     }
-                                    ScaffoldMessenger.of(context)
-                                        .removeCurrentSnackBar();
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
+                                    scaffoldKey.currentState.removeCurrentSnackBar();
+                                    scaffoldKey.currentState.showSnackBar(SnackBar(
                                       content: Text(
                                         "Added to cart",
                                         style: TextStyle(

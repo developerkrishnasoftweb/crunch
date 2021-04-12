@@ -284,7 +284,7 @@ itemVariation(
                                     }
                                   }
                                 }
-                                ScaffoldMessenger.of(context)
+                                /* ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
                                   content: Text(
                                     "Added to cart",
@@ -301,7 +301,7 @@ itemVariation(
                                         MaterialPageRoute(
                                             builder: (_) => Cart())),
                                   ),
-                                ));
+                                )); */
                                 Navigator.pop(context);
                               }
                             },

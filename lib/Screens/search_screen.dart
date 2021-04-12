@@ -22,6 +22,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   List<ItemData> items = [];
   bool isLoading = false, noDataFound = false;
   AnimationController _controller;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   setLoading(bool status) {
     setState(() {
@@ -40,6 +41,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text(
           "Search",
@@ -88,7 +90,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                         scrollDirection: Axis.vertical,
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         itemBuilder: (BuildContext context, int index) {
-                          return itemCard(context, items[index], _controller);
+                          return itemCard(scaffoldKey: scaffoldKey, context: context, animationController: _controller, itemData: items[index]);
                         }),
           )
         ],

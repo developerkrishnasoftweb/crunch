@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 
 import '../cart.dart';
 
-Widget itemCard(BuildContext context, ItemData itemData,
-    AnimationController animationController) {
+Widget itemCard({BuildContext context, ItemData itemData,
+    AnimationController animationController, GlobalKey<ScaffoldState> scaffoldKey}) {
   return StatefulBuilder(
     builder: (_, state) => Container(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -114,10 +114,8 @@ Widget itemCard(BuildContext context, ItemData itemData,
                                 if (await SQFLiteTables.addToCart(
                                         itemData: itemData) !=
                                     null) {
-                                  ScaffoldMessenger.of(context)
-                                      .removeCurrentSnackBar();
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
+                                  scaffoldKey.currentState.removeCurrentSnackBar();
+                                  scaffoldKey.currentState.showSnackBar(SnackBar(
                                     content: Text(
                                       "Added to cart",
                                       style: TextStyle(

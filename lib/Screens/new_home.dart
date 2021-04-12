@@ -28,6 +28,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   List<Category> categories = [];
   bool isLoading = false;
   AnimationController _controller;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -130,6 +131,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      key: scaffoldKey,
         appBar: AppBar(
           backgroundColor: primaryColor,
           elevation: 2,
@@ -220,7 +222,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
-                            return itemCard(context, items[index], _controller);
+                            return itemCard(scaffoldKey: scaffoldKey, context: context, animationController: _controller, itemData: items[index]);
                           }),
                     )
                   ],
