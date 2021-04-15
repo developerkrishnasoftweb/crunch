@@ -35,7 +35,7 @@ class _CheckoutState extends State<Checkout> {
   bool isLoading = false;
   List<Addresses> _address = [];
   List<Map<String, dynamic>> items = [];
-  PAYMENTMETHOD _paymentMethod = PAYMENTMETHOD.CASHONDELIVERY;
+  PaymentMode _paymentMethod = PaymentMode.SELF_PICKUP;
   Addresses address;
 
   // static const platform = const MethodChannel("razorpay_flutter");
@@ -149,181 +149,189 @@ class _CheckoutState extends State<Checkout> {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildRow("CART VALUE", widget.grandTotal.toStringAsFixed(2)),
-                buildRow("PACKING CHARGES", "+ " + config.packingCharge ?? "0"),
-                buildRow(
-                    "DELIVERY CHARGES", "+ " + config.deliveryCharge ?? "0"),
-                buildRow("SGST($sgst%)",
-                    "+${((widget.grandTotal * sgst) / 100).toStringAsFixed(2)}"),
-                buildRow("CGST($cgst%)",
-                    "+${((widget.grandTotal * cgst) / 100).toStringAsFixed(2)}"),
-                buildRow("COUPONS", "-" + widget.couponAmount.toString()),
-                Divider(
-                  indent: 8,
-                  endIndent: 8,
-                  height: 2,
-                  thickness: 2,
-                  color: cnst.primaryColor,
-                ),
-                buildRow(
-                  "Total",
-                  grandTotal.toStringAsFixed(2),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "Select Payment Mode",
-                    style: TextStyle(fontSize: 18),
+          : SingleChildScrollView(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildRow("CART VALUE", widget.grandTotal.toStringAsFixed(2)),
+                  buildRow("PACKING CHARGES", "+ " + config.packingCharge ?? "0"),
+                  buildRow(
+                      "DELIVERY CHARGES", "+ " + config.deliveryCharge ?? "0"),
+                  buildRow("SGST($sgst%)",
+                      "+${((widget.grandTotal * sgst) / 100).toStringAsFixed(2)}"),
+                  buildRow("CGST($cgst%)",
+                      "+${((widget.grandTotal * cgst) / 100).toStringAsFixed(2)}"),
+                  buildRow("COUPONS", "-" + widget.couponAmount.toString()),
+                  Divider(
+                    indent: 8,
+                    endIndent: 8,
+                    height: 2,
+                    thickness: 2,
+                    color: cnst.primaryColor,
                   ),
-                ),
-                RadioListTile<PAYMENTMETHOD>(
-                  title: Text("Cash on delivery"),
-                  value: PAYMENTMETHOD.CASHONDELIVERY,
-                  groupValue: _paymentMethod,
-                  onChanged: (value) {
-                    setState(() {
-                      _paymentMethod = value;
-                    });
-                  },
-                ),
-                RadioListTile<PAYMENTMETHOD>(
-                  title: Text("Online Payment"),
-                  value: PAYMENTMETHOD.RAZORPAY,
-                  groupValue: _paymentMethod,
-                  onChanged: (value) {
-                    setState(() {
-                      _paymentMethod = value;
-                    });
-                  },
-                ),
-                RadioListTile<PAYMENTMETHOD>(
-                  title: Text("Store Pickup"),
-                  value: PAYMENTMETHOD.STORE_PICKUP,
-                  groupValue: _paymentMethod,
-                  onChanged: (value) {
-                    setState(() {
-                      _paymentMethod = value;
-                    });
-                  },
-                ),
-                Expanded(
-                    child: _paymentMethod != PAYMENTMETHOD.STORE_PICKUP
-                        ? _address != null
-                            ? _address.length > 0
-                                ? Column(
-                                    children: [
-                                      ListTile(
-                                        title: Text(
-                                          "Select Address",
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                        trailing: IconButton(
-                                          icon: Icon(Icons.add),
-                                          splashRadius: 25,
-                                          color: cnst.primaryColor,
-                                          onPressed: () {
-                                            Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            Add_Address()))
-                                                .then((value) {
-                                              getAddresses();
-                                            });
-                                          },
-                                        ),
+                  buildRow(
+                    "Total",
+                    grandTotal.toStringAsFixed(2),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Select Delivery Type",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  RadioListTile<PaymentMode>(
+                    title: Text("Self Pickup",
+                        style: TextStyle(
+                            color: config.selfPickUp != 'y'
+                                ? Colors.grey.shade500
+                                : null)),
+                    value: PaymentMode.SELF_PICKUP,
+                    groupValue: _paymentMethod,
+                    onChanged: (value) {
+                      if (config.selfPickUp == 'y') {
+                        setState(() {
+                          _paymentMethod = value;
+                        });
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "This option is currently not available");
+                      }
+                    },
+                  ),
+                  RadioListTile<PaymentMode>(
+                    title: Text("Home Delivery",
+                        style: TextStyle(
+                            color: config.homeDelivery != 'y'
+                                ? Colors.grey.shade500
+                                : null)),
+                    value: PaymentMode.HOME_DELIVERY,
+                    groupValue: _paymentMethod,
+                    onChanged: (value) {
+                      if (config.homeDelivery == 'y') {
+                        setState(() {
+                          _paymentMethod = value;
+                        });
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "This option is currently not available");
+                      }
+                    },
+                  ),
+                  _paymentMethod != PaymentMode.HOME_DELIVERY
+                      ? _address != null
+                          ? _address.length > 0
+                              ? Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        "Select Address",
+                                        style: TextStyle(fontSize: 18),
                                       ),
-                                      Expanded(
-                                        child: ListView.builder(
-                                            itemCount: _address.length,
-                                            padding:
-                                                EdgeInsets.only(bottom: 70),
-                                            physics: BouncingScrollPhysics(),
-                                            itemBuilder: (context, index) {
-                                              return RadioListTile<Addresses>(
-                                                  title: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        _address[index]
-                                                            .contactPerson,
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Text(
-                                                        _address[index].address1 +
-                                                            ", " +
-                                                            _address[index]
-                                                                .address2 +
-                                                            "\n" +
-                                                            _address[index]
-                                                                .landmark +
-                                                            "\n" +
-                                                            _address[index]
-                                                                .city +
-                                                            " - " +
-                                                            _address[index]
-                                                                .pinCode,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.grey),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Text(
-                                                        _address[index]
-                                                            .contactNumber,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.grey),
-                                                      ),
-                                                    ],
+                                      trailing: IconButton(
+                                        icon: Icon(Icons.add),
+                                        splashRadius: 25,
+                                        color: cnst.primaryColor,
+                                        onPressed: () {
+                                          Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Add_Address()))
+                                              .then((value) {
+                                            getAddresses();
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    ListView.builder(
+                                        itemCount: _address.length,
+                                        padding:
+                                        EdgeInsets.only(bottom: 70),
+                                        physics: NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) {
+                                          return RadioListTile<Addresses>(
+                                              title: Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Text(
+                                                    _address[index]
+                                                        .contactPerson,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                        FontWeight
+                                                            .bold),
                                                   ),
-                                                  value: _address[index],
-                                                  groupValue: address,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      address = value;
-                                                    });
-                                                  });
-                                            }),
-                                      ),
-                                    ],
-                                  )
-                                : Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                            : Center(
-                                child: Text("No address available"),
-                              )
-                        : Center(
-                            child: Text(config.address,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black)))),
-                Container(
-                    width: size.width,
-                    height: 50,
-                    child: FlatButton(
-                      child: Text(
-                        "ORDER NOW",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: makePayment,
-                      color: cnst.primaryColor,
-                    ))
-              ],
-            ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    _address[index].address1 +
+                                                        ", " +
+                                                        _address[index]
+                                                            .address2 +
+                                                        "\n" +
+                                                        _address[index]
+                                                            .landmark +
+                                                        "\n" +
+                                                        _address[index]
+                                                            .city +
+                                                        " - " +
+                                                        _address[index]
+                                                            .pinCode,
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    _address[index]
+                                                        .contactNumber,
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ],
+                                              ),
+                                              value: _address[index],
+                                              groupValue: address,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  address = value;
+                                                });
+                                              });
+                                        })
+                                  ],
+                                )
+                              : Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                          : Center(
+                              child: Text("No address available"),
+                            )
+                      : Center(
+                          child: Text(config.address,
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.black))),
+                  Container(
+                      width: size.width,
+                      height: 50,
+                      child: FlatButton(
+                        child: Text(
+                          "PROCEED",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: makePayment,
+                        color: cnst.primaryColor,
+                      ))
+                ],
+              ),
+          ),
       // floatingActionButton: address != null
       //     ? Container(
       //         width: size.width * 0.9,
@@ -382,19 +390,22 @@ class _CheckoutState extends State<Checkout> {
   }
 
   makePayment() async {
-    if(position != null) {
+    if (position != null) {
       if (config?.distanceBetween != null &&
           config?.latitude != null &&
           config?.longitude != null) {
         if (config.distanceBetween.isNotEmpty &&
             config.latitude.isNotEmpty &&
             config.longitude.isNotEmpty) {
-          if (Geolocator.distanceBetween(position.latitude, position.longitude,
-              double.parse(config.latitude), double.parse(config.longitude)) >
+          if (Geolocator.distanceBetween(
+                  position.latitude,
+                  position.longitude,
+                  double.parse(config.latitude),
+                  double.parse(config.longitude)) >
               double.parse(config.distanceBetween)) {
             Fluttertoast.showToast(
                 msg:
-                "Sorry for inconvenience, we are delivering in range of ${double.parse(config.distanceBetween) / 1000}KM");
+                    "Sorry for inconvenience, we are delivering in range of ${double.parse(config.distanceBetween) / 1000}KM");
             return;
           }
         } else {
@@ -406,7 +417,8 @@ class _CheckoutState extends State<Checkout> {
         return;
       }
     } else {
-      Fluttertoast.showToast(msg: "Unable to get your current location, Please turn on location");
+      Fluttertoast.showToast(
+          msg: "Unable to get your current location, Please turn on location");
       determinePosition();
       return;
     }
@@ -518,6 +530,7 @@ class _CheckoutState extends State<Checkout> {
   }
 }
 
+enum PaymentMode { HOME_DELIVERY, SELF_PICKUP }
 enum PAYMENTMETHOD { CASHONDELIVERY, RAZORPAY, STORE_PICKUP }
 
 class Addresses {

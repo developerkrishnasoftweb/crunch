@@ -8,8 +8,12 @@ import 'package:flutter/material.dart';
 
 import '../cart.dart';
 
-Widget itemCard({BuildContext context, ItemData itemData,
-    AnimationController animationController, GlobalKey<ScaffoldState> scaffoldKey}) {
+Widget itemCard(
+    {BuildContext context,
+    ItemData itemData,
+    AnimationController animationController,
+    GlobalKey<ScaffoldState> scaffoldKey}) {
+  Size size = MediaQuery.of(context).size;
   return StatefulBuilder(
     builder: (_, state) => Container(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -22,13 +26,16 @@ Widget itemCard({BuildContext context, ItemData itemData,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(7),
-            child: Image(
-              height: 90,
-              width: 100,
-              image: itemData.image != null && itemData.image != ""
-                  ? NetworkImage(itemData.image)
-                  : AssetImage("assets/images/CrunchTM.png"),
-              fit: BoxFit.fill,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image(
+                height: size.width * 0.2,
+                width: size.width * 0.2,
+                image: itemData.image != null && itemData.image != ""
+                    ? NetworkImage(itemData.image)
+                    : AssetImage("assets/images/CrunchTM.png"),
+                fit: BoxFit.fill,
+              ),
             ),
           ),
           Expanded(
@@ -93,7 +100,7 @@ Widget itemCard({BuildContext context, ItemData itemData,
                       child: Text(
                         "\u20b9${itemData.price != null && itemData.price != "" ? double.parse(itemData.price).toStringAsFixed(2) : "N/A"}",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 21),
+                            fontWeight: FontWeight.bold, fontSize: 19),
                       ),
                     ),
                     Expanded(
@@ -114,8 +121,8 @@ Widget itemCard({BuildContext context, ItemData itemData,
                                 if (await SQFLiteTables.addToCart(
                                         itemData: itemData) !=
                                     null) {
-                                  scaffoldKey.currentState.removeCurrentSnackBar();
-                                  scaffoldKey.currentState.showSnackBar(SnackBar(
+                                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     content: Text(
                                       "Added to cart",
                                       style: TextStyle(
@@ -129,7 +136,7 @@ Widget itemCard({BuildContext context, ItemData itemData,
                                       onPressed: () => Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (_) => Cart())),
+                                              builder: (context) => Cart())),
                                     ),
                                   ));
                                 }
@@ -214,7 +221,8 @@ Widget addToCartButton({@required VoidCallback onPressed}) {
         child: Text(
           "ADD",
           style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+          textScaleFactor: 0.9,
           overflow: TextOverflow.ellipsis,
         ),
         onPressed: onPressed,

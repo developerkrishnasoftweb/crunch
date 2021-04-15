@@ -46,7 +46,11 @@ class Config {
       deliveryTime,
       latitude,
       longitude,
-      distanceBetween;
+      distanceBetween,
+      startTime,
+      endTime,
+      homeDelivery,
+      selfPickUp;
 
   Config(
       {this.id,
@@ -96,7 +100,11 @@ class Config {
       this.deliveryTime,
       this.latitude,
       this.longitude,
-      this.distanceBetween});
+      this.distanceBetween,
+      this.endTime,
+      this.homeDelivery,
+      this.selfPickUp,
+      this.startTime});
 
   Config.fromJson(Map<String, dynamic> json)
       : id = json['id']?.toString(),
@@ -146,5 +154,9 @@ class Config {
         deliveryTime = json['delivery_time']?.toString(),
         latitude = json['latitude']?.toString(),
         longitude = json['longitude']?.toString(),
-        distanceBetween = json['distance_between']?.toString();
+        distanceBetween = json['distance_between']?.toString(),
+        startTime = json['start_time']?.toString(),
+        endTime = json['end_time']?.toString(),
+        homeDelivery = json['home_delivery']?.toString(),
+        selfPickUp = json['self_pickup']?.toString();
 }

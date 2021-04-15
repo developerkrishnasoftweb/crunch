@@ -3,6 +3,8 @@ import 'package:crunch/Screens/my_orders.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../Static/Constant.dart' as cnst;
 import 'Address.dart';
@@ -106,6 +108,15 @@ class _AccountState extends State<Account> {
               onTap: () => Navigator.push(
                   context, MaterialPageRoute(builder: (context) => MyOrders())),
             ),
+            ListTile(
+                title: Text(
+                  "Contact Support",
+                ),
+                trailing: Icon(Icons.arrow_forward),
+                onTap: () async {
+                  if (await canLaunch('tel:${config.contact}'))
+                    await launch('tel:${config.contact}');
+                }),
             ListTile(
               title: Text("Logout"),
               trailing: Icon(Icons.power_settings_new),

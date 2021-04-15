@@ -221,8 +221,8 @@ showItemAddons(
                                         }
                                       }
                                     }
-                                    scaffoldKey.currentState.removeCurrentSnackBar();
-                                    scaffoldKey.currentState.showSnackBar(SnackBar(
+                                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                       content: Text(
                                         "Added to cart",
                                         style: TextStyle(

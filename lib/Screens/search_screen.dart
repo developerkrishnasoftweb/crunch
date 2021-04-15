@@ -1,7 +1,4 @@
 import 'dart:convert';
-
-import 'package:crunch/Common/item_variations.dart';
-import 'package:crunch/Common/items_addons.dart';
 import 'package:crunch/Screens/widgets/item_card.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,8 +7,6 @@ import 'package:flutter/material.dart';
 import '../APIS/tables.dart';
 import '../Common/classes.dart';
 import '../Static/Constant.dart';
-import 'cart.dart';
-import 'new_home.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -105,7 +100,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         items = [];
       });
       var value = await db.rawQuery(
-          "select * from ${SQFLiteTables.tableItems} where itemname like '$keyword%'");
+          "select * from ${SQFLiteTables.tableItems} where `itemname` like '$keyword%' and `active` = '1'");
       if (value.length == 0)
         setState(() {
           noDataFound = true;
