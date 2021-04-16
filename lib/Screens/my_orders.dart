@@ -195,7 +195,7 @@ class _MyOrdersState extends State<MyOrders> {
                                   ),
                                 ],
                               ),
-                              orderDetails[index].orderStatus.toLowerCase() !=
+                              /* orderDetails[index].orderStatus.toLowerCase() !=
                                           "cancelled" &&
                                       orderDetails[index]
                                               .orderStatus
@@ -212,7 +212,7 @@ class _MyOrdersState extends State<MyOrders> {
                                           style: TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold)))
-                                  : SizedBox()
+                                  : SizedBox() */
                             ]),
                         Divider(
                           thickness: 2,
