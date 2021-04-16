@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -35,22 +36,9 @@ class _Add_AddressState extends State<Add_Address> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            )),
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: Text(
-          "Add New Address",
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
+      appBar: appBar(
+        context: context,
+        title: "Add New Address",
         actions: [
           GestureDetector(
             onTap: () {

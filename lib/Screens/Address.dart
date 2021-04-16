@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:crunch/Screens/EditAddress.dart';
 import 'package:crunch/Screens/checkout.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,15 +34,10 @@ class _AddressState extends State<Address> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
+      appBar: appBar(
         automaticallyImplyLeading: true,
-        backgroundColor: cnst.primaryColor,
-        elevation: 1.0,
-        title: Text(
-          "Address",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: false,
+        title: "Address",
+        context: context
       ),
       body: _address.length != 0
           ? ListView.builder(

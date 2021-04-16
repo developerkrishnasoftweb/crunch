@@ -1,3 +1,4 @@
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -9,22 +10,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            )),
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: Text(
-          "Review & Ratings",
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
+      appBar: appBar(
+        title: "Review & Ratings",
+        context: context
       ),
     );
   }

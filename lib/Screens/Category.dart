@@ -1,5 +1,6 @@
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/category_items.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -19,13 +20,9 @@ class _CategorysState extends State<Categorys> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: cnst.primaryColor,
-        elevation: 0.0,
-        title: Text(
-          "Category",
-          style: TextStyle(color: Colors.white),
-        ),
+      appBar: appBar(
+        context: context,
+        title: "Category",
         actions: [
           IconButton(
               icon: Icon(Icons.location_on_outlined),

@@ -4,6 +4,7 @@ import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
 import 'package:crunch/Screens/my_orders.dart';
+import 'package:crunch/Screens/payment_methods.dart';
 import 'package:crunch/Static/Constant.dart' as cnst;
 import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
@@ -15,6 +16,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../main.dart';
 import 'Add_Address.dart';
+import 'widgets/appbar.dart';
 
 class Checkout extends StatefulWidget {
   final double grandTotal, couponAmount;
@@ -33,7 +35,7 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   bool isLoading = false;
-  List<Addresses> _address = [];
+  List<Addresses> addresses = [];
   List<Map<String, dynamic>> items = [];
   PaymentMode _paymentMethod = PaymentMode.SELF_PICKUP;
   Addresses address;
@@ -140,21 +142,19 @@ class _CheckoutState extends State<Checkout> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Checkout",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: cnst.primaryColor,
+      appBar: appBar(
+        title: "Checkout",
+        context: context
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-            child: Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildRow("CART VALUE", widget.grandTotal.toStringAsFixed(2)),
-                  buildRow("PACKING CHARGES", "+ " + config.packingCharge ?? "0"),
+                  buildRow(
+                      "PACKING CHARGES", "+ " + config.packingCharge ?? "0"),
                   buildRow(
                       "DELIVERY CHARGES", "+ " + config.deliveryCharge ?? "0"),
                   buildRow("SGST($sgst%)",
@@ -218,178 +218,109 @@ class _CheckoutState extends State<Checkout> {
                       }
                     },
                   ),
+                  ListTile(
+                    title: Text(
+                      "Select Address",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.add),
+                      splashRadius: 25,
+                      color: cnst.primaryColor,
+                      onPressed: () {
+                        Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Add_Address()))
+                            .then((value) {
+                          getAddresses();
+                        });
+                      },
+                    ),
+                  ),
                   _paymentMethod != PaymentMode.HOME_DELIVERY
-                      ? _address != null
-                          ? _address.length > 0
-                              ? Column(
-                                  children: [
-                                    ListTile(
-                                      title: Text(
-                                        "Select Address",
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                      trailing: IconButton(
-                                        icon: Icon(Icons.add),
-                                        splashRadius: 25,
-                                        color: cnst.primaryColor,
-                                        onPressed: () {
-                                          Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Add_Address()))
-                                              .then((value) {
-                                            getAddresses();
-                                          });
-                                        },
-                                      ),
+                      ? (addresses?.length ?? 0) > 0
+                          ? ListView.builder(
+                              itemCount: addresses.length,
+                              padding: EdgeInsets.only(bottom: 70),
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return RadioListTile<Addresses>(
+                                    title: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          addresses[index].contactPerson,
+                                          style: TextStyle(
+                                              fontWeight:
+                                                  FontWeight.bold),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          addresses[index].address1 +
+                                              ", " +
+                                              addresses[index].address2 +
+                                              "\n" +
+                                              addresses[index].landmark +
+                                              "\n" +
+                                              addresses[index].city +
+                                              " - " +
+                                              addresses[index].pinCode,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey),
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          addresses[index].contactNumber,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
                                     ),
-                                    ListView.builder(
-                                        itemCount: _address.length,
-                                        padding:
-                                        EdgeInsets.only(bottom: 70),
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        itemBuilder: (context, index) {
-                                          return RadioListTile<Addresses>(
-                                              title: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Text(
-                                                    _address[index]
-                                                        .contactPerson,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Text(
-                                                    _address[index].address1 +
-                                                        ", " +
-                                                        _address[index]
-                                                            .address2 +
-                                                        "\n" +
-                                                        _address[index]
-                                                            .landmark +
-                                                        "\n" +
-                                                        _address[index]
-                                                            .city +
-                                                        " - " +
-                                                        _address[index]
-                                                            .pinCode,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Text(
-                                                    _address[index]
-                                                        .contactNumber,
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.grey),
-                                                  ),
-                                                ],
-                                              ),
-                                              value: _address[index],
-                                              groupValue: address,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  address = value;
-                                                });
-                                              });
-                                        })
-                                  ],
-                                )
-                              : Center(
-                                  child: CircularProgressIndicator(),
-                                )
+                                    value: addresses[index],
+                                    groupValue: address,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        address = value;
+                                      });
+                                    });
+                              })
                           : Center(
                               child: Text("No address available"),
                             )
                       : Center(
-                          child: Text(config.address,
+                          child: Text("Our Store Address : ${config.address}",
                               style: TextStyle(
                                   fontSize: 16, color: Colors.black))),
-                  Container(
-                      width: size.width,
-                      height: 50,
-                      child: FlatButton(
-                        child: Text(
-                          "PROCEED",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: makePayment,
-                        color: cnst.primaryColor,
-                      ))
                 ],
               ),
-          ),
-      // floatingActionButton: address != null
-      //     ? Container(
-      //         width: size.width * 0.9,
-      //         height: 50,
-      //         child: FlatButton(
-      //           child: Text(
-      //             "ORDER NOW",
-      //             style: TextStyle(color: Colors.white),
-      //           ),
-      //           onPressed: makePayment,
-      //           color: cnst.primaryColor,
-      //         ))
-      //     : null,
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            ),
+      floatingActionButton: Container(
+          width: size.width,
+          height: 50,
+          child: FlatButton(
+            child: Text(
+              "PROCEED",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => PaymentMethods()));
+            },
+            color: cnst.primaryColor,
+          )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
-  getAddresses() async {
-    FormData d = FormData.fromMap({
-      "api_key": "0imfnc8mVLWwsAawjYr4Rx",
-      "customer_id": userdata.id,
-    });
-    setState(() {
-      isLoading = true;
-      _address = [];
-    });
-    AppServices.getAddress(d).then((data) async {
-      if (data.value == "y") {
-        setState(() {
-          isLoading = false;
-        });
-        for (int i = 0; i < data.data.length; i++) {
-          setState(() {
-            _address.add(Addresses(
-                address1: data.data[i]["address1"],
-                address2: data.data[i]["address2"],
-                city: data.data[i]["city"],
-                customerId: data.data[i]["customer_id"],
-                id: data.data[i]["id"],
-                contactPerson: data.data[i]["contact_person"],
-                contactNumber: data.data[i]["contact_number"],
-                landmark: data.data[i]["landmark"],
-                pinCode: data.data[i]["pincode"]));
-          });
-        }
-        setState(() {
-          address = _address[0];
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-          _address = null;
-        });
-      }
-    });
-  }
-
-  makePayment() async {
+  /* makePayment() async {
     if (position != null) {
       if (config?.distanceBetween != null &&
           config?.latitude != null &&
@@ -508,6 +439,47 @@ class _CheckoutState extends State<Checkout> {
         }
       });
     }
+  } */
+
+
+  getAddresses() async {
+    FormData d = FormData.fromMap({
+      "api_key": "0imfnc8mVLWwsAawjYr4Rx",
+      "customer_id": userdata.id,
+    });
+    setState(() {
+      isLoading = true;
+      addresses = [];
+    });
+    AppServices.getAddress(d).then((data) async {
+      if (data.value == "y") {
+        setState(() {
+          isLoading = false;
+        });
+        for (int i = 0; i < data.data.length; i++) {
+          setState(() {
+            addresses.add(Addresses(
+                address1: data.data[i]["address1"],
+                address2: data.data[i]["address2"],
+                city: data.data[i]["city"],
+                customerId: data.data[i]["customer_id"],
+                id: data.data[i]["id"],
+                contactPerson: data.data[i]["contact_person"],
+                contactNumber: data.data[i]["contact_number"],
+                landmark: data.data[i]["landmark"],
+                pinCode: data.data[i]["pincode"]));
+          });
+        }
+        setState(() {
+          address = addresses[0];
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          addresses = null;
+        });
+      }
+    });
   }
 
   Widget buildRow(String label, String value) {
@@ -531,7 +503,7 @@ class _CheckoutState extends State<Checkout> {
 }
 
 enum PaymentMode { HOME_DELIVERY, SELF_PICKUP }
-enum PAYMENTMETHOD { CASHONDELIVERY, RAZORPAY, STORE_PICKUP }
+// enum PAYMENTMETHOD { CASHONDELIVERY, RAZORPAY, STORE_PICKUP }
 
 class Addresses {
   final String id,

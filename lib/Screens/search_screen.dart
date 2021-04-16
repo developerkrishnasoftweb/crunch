@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:crunch/Screens/widgets/item_card.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,13 +38,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        title: Text(
-          "Search",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: primaryColor,
-      ),
+      appBar: appBar(
+          title: "Search", context: context, automaticallyImplyLeading: false),
       body: Column(
         children: [
           Container(
@@ -85,7 +81,11 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                         scrollDirection: Axis.vertical,
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         itemBuilder: (BuildContext context, int index) {
-                          return itemCard(scaffoldKey: scaffoldKey, context: context, animationController: _controller, itemData: items[index]);
+                          return itemCard(
+                              scaffoldKey: scaffoldKey,
+                              context: context,
+                              animationController: _controller,
+                              itemData: items[index]);
                         }),
           )
         ],

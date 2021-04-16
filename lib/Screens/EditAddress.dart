@@ -5,6 +5,7 @@ import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
 import 'package:crunch/Screens/checkout.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -52,22 +53,10 @@ class _EditAddressState extends State<EditAddress> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            )),
+      appBar: appBar(
+        context: context,
         backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: Text(
-          "Add New Address",
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
+        title: "Add New Address",
         actions: [
           GestureDetector(
             onTap: () {

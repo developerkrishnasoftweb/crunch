@@ -1,5 +1,6 @@
 import 'package:crunch/LoginScreen/Login.dart';
 import 'package:crunch/Screens/my_orders.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +22,10 @@ class _AccountState extends State<Account> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: cnst.primaryColor,
-        elevation: 2,
+      appBar: appBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          "Account",
-          style: TextStyle(color: Colors.white),
-        ),
+        title: "Account",
+        context: context
       ),
       body: SingleChildScrollView(
         child: Column(

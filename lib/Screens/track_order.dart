@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:crunch/APIS/AppServices.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:crunch/models/orders_details_model.dart';
@@ -128,13 +129,8 @@ class _TrackOrderState extends State<TrackOrder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Track Order",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: primaryColor,
-        elevation: 1,
+      appBar: appBar(
+        title: "Track Order",
         actions: [
           IconButton(
               icon: isLoading

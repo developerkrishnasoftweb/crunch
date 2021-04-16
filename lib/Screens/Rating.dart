@@ -1,4 +1,5 @@
 import 'package:crunch/Screens/AddRatings.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,14 +13,9 @@ class _RatingState extends State<Rating> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: Text(
-          "Review & Ratings",
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
+      appBar: appBar(
+        context: context,
+        title: "Review & Ratings",
         actions: [
           GestureDetector(
               onTap: () {

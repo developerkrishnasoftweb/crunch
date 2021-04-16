@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:crunch/APIS/AppServices.dart';
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
 import 'package:crunch/models/cart_addon_model.dart';
@@ -79,13 +80,10 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Cart",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: primaryColor,
-          elevation: 1,
+        appBar: appBar(
+          title: "Cart",
+          context: context,
+          automaticallyImplyLeading: false
         ),
         body: cartItems.length > 0
             ? Stack(

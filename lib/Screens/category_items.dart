@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crunch/APIS/tables.dart';
 import 'package:crunch/Common/classes.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:crunch/Screens/widgets/item_card.dart';
 import 'package:crunch/Static/Constant.dart';
 import 'package:crunch/Static/global.dart';
@@ -62,12 +63,9 @@ class _CategoryItemsState extends State<CategoryItems>
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        title: Text(
-          "Items",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: primaryColor,
+      appBar: appBar(
+        title: "Items",
+        context: context
       ),
       body: ListView.builder(
           itemCount: items.length,

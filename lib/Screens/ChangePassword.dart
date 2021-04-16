@@ -1,5 +1,6 @@
 import 'package:crunch/Common/CustomButton.dart';
 import 'package:crunch/Common/TextField.dart';
+import 'package:crunch/Screens/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -19,22 +20,9 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.black,
-            )),
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: Text(
-          "Change Password",
-          style: TextStyle(color: Colors.black),
-        ),
-        centerTitle: true,
+      appBar: appBar(
+        context: context,
+        title: "Change Password",
         actions: [
           GestureDetector(
             onTap: () {
