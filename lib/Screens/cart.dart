@@ -58,9 +58,9 @@ class _CartState extends State<Cart> {
         grandTotal +=
             (double.parse(item["item_price"]) * double.parse(item["qty"])) +
                 combinedPrice;
-        total = ((double.parse(item["item_price"]) *
-            double.parse(item["qty"])) +
-            combinedPrice);
+        total =
+            ((double.parse(item["item_price"]) * double.parse(item["qty"])) +
+                combinedPrice);
         cartItems.add(CartData(
             itemPrice: item["item_price"].toString(),
             itemName: item["item_name"].toString(),
@@ -81,10 +81,7 @@ class _CartState extends State<Cart> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: appBar(
-          title: "Cart",
-          context: context,
-          automaticallyImplyLeading: false
-        ),
+            title: "Cart", context: context, automaticallyImplyLeading: false),
         body: cartItems.length > 0
             ? Stack(
                 children: [
@@ -104,7 +101,7 @@ class _CartState extends State<Cart> {
                         subtitle: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(
-                            "Grand total : ${total.toStringAsFixed(2)}",
+                            "Grand total : \u20b9${total.toStringAsFixed(2)}",
                             style: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
@@ -115,29 +112,44 @@ class _CartState extends State<Cart> {
                         children: [
                           buildTitledRow(
                               title: "Price",
-                              val: double.parse(cartItems[index].itemPrice)
-                                  .toStringAsFixed(2)),
+                              val:
+                                  '\u20b9${double.parse(cartItems[index].itemPrice).toStringAsFixed(2)}'),
                           buildTitledRow(
                               title: "Qty", val: cartItems[index].qty),
                           buildTitledRow(
                               title: "Add on price",
                               val:
-                                  "${double.parse(cartItems[index].combinedPrice).toStringAsFixed(2)}"),
+                                  "\u20b9${double.parse(cartItems[index].combinedPrice).toStringAsFixed(2)}"),
                           Divider(),
                           buildTitledRow(
-                              title: "Total", val: total.toStringAsFixed(2)),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: FlatButton(
-                              onPressed: () => _removeFromCart(
-                                  cartId: cartItems[index].cartId,
-                                  items: cartItems[index]),
-                              child: Text(
-                                "REMOVE",
-                                style: TextStyle(color: Colors.red),
+                              title: "Total",
+                              val: '\u20b9${total.toStringAsFixed(2)}'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.remove),
+                                onPressed: () =>
+                                    removeCartQuantity(items: cartItems[index]),
+                                color: primaryColor,
+                                splashRadius: 20,
                               ),
-                            ),
-                          )
+                              Text(
+                                "${cartItems[index].qty}",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.add),
+                                onPressed: () =>
+                                    addCartQuantity(items: cartItems[index]),
+                                color: primaryColor,
+                                splashRadius: 20,
+                              ),
+                            ],
+                          ),
                         ],
                       );
                     },
@@ -221,7 +233,7 @@ class _CartState extends State<Cart> {
                                             child: Align(
                                               alignment: Alignment.centerLeft,
                                               child: Text(
-                                                "CART VALUE : ${double.parse((grandTotal - couponAmount).toString()).toStringAsFixed(2)}",
+                                                "CART VALUE : \u20b9${double.parse((grandTotal - couponAmount).toString()).toStringAsFixed(2)}",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 14),
@@ -355,16 +367,42 @@ class _CartState extends State<Cart> {
     }
   }
 
-  _removeFromCart({String cartId, CartData items}) async {
-    var status = await db
-        .delete(SQFLiteTables.tableCart, where: 'id = ?', whereArgs: [cartId]);
+  addCartQuantity({CartData items}) async {
+    int qty = int.parse(items.qty);
+    double itemPrice = double.parse(items.itemPrice);
+    int status = await db.update(SQFLiteTables.tableCart, {'qty': ++qty},
+        where: 'id = ?', whereArgs: [items.cartId]);
     if (status == 1) {
       setState(() {
-        grandTotal = grandTotal -
-            (double.parse(items.combinedPrice) +
-                (double.parse(items.itemPrice) * double.parse(items.qty)));
-        cartItems.remove(items);
+        grandTotal = grandTotal + itemPrice;
+        items.qty = qty.toString();
       });
+    }
+  }
+
+  removeCartQuantity({CartData items}) async {
+    int qty = int.parse(items.qty);
+    double combinedPrice = double.parse(items.combinedPrice),
+        itemPrice = double.parse(items.itemPrice);
+    int status;
+    if (qty == 1) {
+      status = await db.delete(SQFLiteTables.tableCart,
+          where: 'id = ?', whereArgs: [items.cartId]);
+      if (status == 1) {
+        setState(() {
+          grandTotal = grandTotal - (combinedPrice + (itemPrice * qty));
+          cartItems.remove(items);
+        });
+      }
+    } else {
+      status = await db.update(SQFLiteTables.tableCart, {'qty': --qty},
+          where: 'id = ?', whereArgs: [items.cartId]);
+      if (status == 1) {
+        setState(() {
+          grandTotal = grandTotal - itemPrice;
+          items.qty = qty.toString();
+        });
+      }
     }
   }
 

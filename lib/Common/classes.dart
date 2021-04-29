@@ -46,7 +46,7 @@ class Category {
 }
 
 class CartData {
-  final String cartId,
+  String cartId,
       itemId,
       itemName,
       itemPrice,
@@ -55,7 +55,7 @@ class CartData {
       variationId,
       variationName,
       total;
-  final List<CartAddOn> cartAddOns;
+  List<CartAddOn> cartAddOns;
 
   CartData(
       {this.cartId,
