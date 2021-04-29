@@ -19,7 +19,7 @@ Future<void> main() async {
   await createTables();
   bool credential = await getCredentials();
   runApp(MaterialApp(
-    title: 'Pal Agent',
+    title: 'Crunch',
     theme: ThemeData(
       primarySwatch: cnst.primaryColor,
       visualDensity: VisualDensity.adaptivePlatformDensity,
