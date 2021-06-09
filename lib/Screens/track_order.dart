@@ -130,6 +130,7 @@ class _TrackOrderState extends State<TrackOrder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(
+        context: context,
         title: "Track Order",
         actions: [
           IconButton(
